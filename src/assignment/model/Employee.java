@@ -5,6 +5,8 @@
  */
 package assignment.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -19,7 +21,7 @@ public class Employee {
     private final StringProperty password;
     private final StringProperty firstName;
     private final StringProperty lastName;
-    private final boolean isAdministrator;
+    private final BooleanProperty isAdministrator;
 
     // Why have input as String while variable's nature are SrtingProperty
     // Why equal to new... put not the direct inputs
@@ -29,7 +31,7 @@ public class Employee {
         this.password = new SimpleStringProperty(password);
         this.firstName = new SimpleStringProperty(firstName);
         this.lastName = new SimpleStringProperty(lastName);
-        this.isAdministrator = isAdministrator;
+        this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
     }
     
     public String password() {
@@ -68,7 +70,15 @@ public class Employee {
         return lastName;
     }
     
-    public boolean isAdministrator() {
+    public boolean getIsAdministrator() {
+        return isAdministrator.get();
+    }
+    
+    public void setIsAdministrator(boolean isAdministrator) {
+        this.isAdministrator.set(isAdministrator);
+    }
+    
+    public BooleanProperty isAdministratorProperty() {
         return isAdministrator;
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -58,7 +59,7 @@
                                           <Label text="Number of People" GridPane.rowIndex="3" />
                                           <Label text="Last Name" GridPane.rowIndex="2" />
                                           <Label text="Room No." GridPane.rowIndex="4" />
-                                          <Label text="Date" GridPane.rowIndex="5" />
+                                          <Label text="Created Date" GridPane.rowIndex="5" />
                                           <Label text="Number of Breakfast Date" GridPane.rowIndex="6" />
                                           <Label text="Check In" GridPane.rowIndex="7" />
                                           <Label text="Check Out" GridPane.rowIndex="8" />
@@ -71,10 +72,20 @@
                                           <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                           <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                           <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                          <Label text="Amount Due:" GridPane.rowIndex="9" />
-                                          <Label text="Amount Paid:" GridPane.rowIndex="10" />
+                                          <Label text="Amount Paid" GridPane.rowIndex="9" />
+                                          <Label text="Amount Due" GridPane.rowIndex="10" />
                                           <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                           <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                          <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                             <GridPane.margin>
+                                                <Insets left="180.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                             <GridPane.margin>
+                                                <Insets left="180.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                     <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
@@ -380,5 +391,6 @@
             </Tab>
         </tabs>
       </TabPane>
+      <Button layoutX="976.0" layoutY="47.0" mnemonicParsing="false" text="Log out" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
    </children>
 </AnchorPane>

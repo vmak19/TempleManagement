@@ -212,4 +212,4 @@ public class Booking {
         return lateCheckOut;
     }
 }
-    
+  

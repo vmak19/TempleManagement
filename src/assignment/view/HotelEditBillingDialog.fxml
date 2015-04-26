@@ -13,7 +13,6 @@
             <Label text="Ref. Code" />
             <Label text="Amount Paid" GridPane.rowIndex="1" />
             <Label text="Amount Due" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" />
             <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
                   <Button mnemonicParsing="false" prefWidth="100.0" text="OK" />
@@ -24,6 +23,7 @@
             <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Label" GridPane.columnIndex="1" />
          </children>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="160.0" />
