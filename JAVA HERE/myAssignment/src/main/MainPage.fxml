@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainPageController">
+    <children>
+      <VBox>
+         <children>
+              <BorderPane prefHeight="600.0" prefWidth="1000.0">
+                  <top>
+                      <MenuBar prefWidth="1200.0" BorderPane.alignment="CENTER">
+                          <menus>
+                              <Menu mnemonicParsing="false" text="File">
+                                  <items>
+                                      <MenuItem mnemonicParsing="false" text="Close" />
+                                  </items>
+                              </Menu>
+                              <Menu mnemonicParsing="false" text="Edit">
+                                  <items>
+                                      <MenuItem mnemonicParsing="false" text="Delete" />
+                                  </items>
+                              </Menu>
+                              <Menu mnemonicParsing="false" text="Help">
+                                  <items>
+                                      <MenuItem mnemonicParsing="false" text="About" />
+                                  </items>
+                              </Menu>
+                          </menus>
+                      </MenuBar>
+                  </top>
+               <bottom>
+                    <TabPane prefHeight="600.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                        <tabs>
+                            <Tab text="Booking">
+                                <content>
+                                    <fx:include source="TabBooking.fxml" />
+                                </content>
+                            </Tab>
+                            <Tab text="Room">
+                                <content>
+                                    <fx:include source="TabRoom.fxml" />
+                                </content>
+                            </Tab>
+                            <Tab text="Service">
+                                <content>
+                                    <fx:include source="TabService.fxml" />
+                                </content>
+                            </Tab>
+                            <Tab text="Billing">
+                                <content>
+                                    <fx:include source="TabBilling.fxml" />
+                                </content>
+                            </Tab>
+                            <Tab text="Employee">
+                                <content>
+                                    <fx:include source="TabEmployee.fxml" />
+                                </content>
+                            </Tab>
+                            <Tab text="Log">
+                                <content>
+                                    <fx:include source="TabLog.fxml" />
+                                </content>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
+               </bottom>
+              </BorderPane>
+         </children>
+      </VBox>
+        <Button layoutX="930.0" mnemonicParsing="false" onAction="#goBackToLoginScreen" text="Log out" />
+    </children>
+</AnchorPane>
