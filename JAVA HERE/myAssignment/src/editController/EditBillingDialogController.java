@@ -22,7 +22,6 @@ public class EditBillingDialogController implements Initializable {
     
     private Stage tabBillingStage;
     private Stage myStage;
-    private Button goToTabBilling;
     /**
      * Initializes the controller class.
      */
@@ -32,7 +31,7 @@ public class EditBillingDialogController implements Initializable {
     }    
     
      @FXML
-    public void goBackToTabBilling (ActionEvent e) {
+    public void goBackToTabBillingScreen (ActionEvent e) {
         myStage.close();
         tabBillingStage.show();
     }

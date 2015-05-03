@@ -27,10 +27,10 @@ public class MainApp extends Application {
 
         //------------------------
         // Get the controller of login screen        
-        LoginScreenController controller = (LoginScreenController) myLoader.getController();
+       // LoginScreenController controller = (LoginScreenController) myLoader.getController();
         
         // Give the controller access to the stage it's on
-        controller.setMyStage(primaryStage);
+       // controller.setMyStage(primaryStage);
         //------------------------
 
         // Display
