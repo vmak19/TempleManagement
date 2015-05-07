@@ -42,7 +42,7 @@ public class TabEmployeeController extends HotelOverviewController {
         empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
         
         // Add observable list data to the table
-        employeeTable.setItems(mainApp.getBookingData());
+        //employeeTable.setItems(mainApp.getBookingData());
     }    
     
 }
