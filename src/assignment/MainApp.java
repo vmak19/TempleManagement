@@ -3,6 +3,8 @@ package assignment;
 import assignment.model.Booking;
 import assignment.view.HotelOverviewController;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
@@ -11,7 +13,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -27,15 +28,24 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     private Stage primaryStage;
-    private BorderPane rootLayout;
+    //private BorderPane rootLayout;
+    private AnchorPane hotelOverview;
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
     
-    /**
-     * Returns the data as an observable list of Persons. 
-     * @return
-     */
     public ObservableList<Booking> getBookingData() {
         return bookingData;
+    }
+    
+    public MainApp() {
+        bookingData.add(new Booking("Hans", "Muster"));
+        bookingData.add(new Booking("Ruth", "Mueller"));
+        bookingData.add(new Booking("Heinz", "Kurz"));
+        bookingData.add(new Booking("Cornelia", "Meier"));
+        bookingData.add(new Booking("Werner", "Meyer"));
+        bookingData.add(new Booking("Lydia", "Kunz"));
+        bookingData.add(new Booking("Anna", "Best"));
+        bookingData.add(new Booking("Stefan", "Meier"));
+        bookingData.add(new Booking("Martin", "Mueller"));
     }
     
     @Override
@@ -43,48 +53,23 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
 
-        initRootLayout();
-
         showHotelOverview();
     }
 
-    /**
-     * Initializes the root layout.
-     */
-    public void initRootLayout() {
+    public void showHotelOverview() {
         try {
-            // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
-            rootLayout = (BorderPane) loader.load();
-
-            // Show the scene containing the root layout.
-            Scene scene = new Scene(rootLayout);
+            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
+            hotelOverview = (AnchorPane) loader.load();
+           
+            HotelOverviewController controller = loader.getController();
+            controller.setMainApp(this);
+            
+            Scene scene = new Scene(hotelOverview);
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Shows the person overview inside the root layout.
-     */
-    public void showHotelOverview() {
-        try {
-            // Load person overview.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
-            AnchorPane hotelOverview = (AnchorPane) loader.load();
-
-            // Set person overview into the center of root layout.
-            rootLayout.setCenter(hotelOverview);
-
-            // Give the controller access to the main app.
-            HotelOverviewController controller = loader.getController();
-            controller.setMainApp(this);
-
-        } catch (IOException e) {
+            System.out.println("showHotelOverview() Error!");
             e.printStackTrace();
         }
     }
@@ -97,7 +82,7 @@ public class MainApp extends Application {
      * @param person the person object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showPersonEditDialog(Person person) {
+    /**public boolean showPersonEditDialog(Person person) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -125,13 +110,8 @@ public class MainApp extends Application {
             e.printStackTrace();
             return false;
         }
-    }
+    }*/
 
-    /**
-     * Returns the main stage.
-     *
-     * @return
-     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
