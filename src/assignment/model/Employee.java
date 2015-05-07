@@ -18,20 +18,33 @@ public class Employee {
     
     // Why use StringProperty instead of String
     // Why is all variable Final
+    private final StringProperty userID;
     private final StringProperty password;
-    private final StringProperty firstName;
-    private final StringProperty lastName;
+    private final StringProperty empFirstName;
+    private final StringProperty empLastName;
     private final BooleanProperty isAdministrator;
 
     // Why have input as String while variable's nature are SrtingProperty
     // Why equal to new... put not the direct inputs
     // Why use SimpleStringProperty but not StringProperty or String
-    public Employee(String password, 
-            String firstName, String lastName, boolean isAdministrator) {
+    public Employee(String userID, String password, 
+            String empFirstName, String empLastName, boolean isAdministrator) {
+        this.userID = new SimpleStringProperty(userID);
         this.password = new SimpleStringProperty(password);
-        this.firstName = new SimpleStringProperty(firstName);
-        this.lastName = new SimpleStringProperty(lastName);
+        this.empFirstName = new SimpleStringProperty(empFirstName);
+        this.empLastName = new SimpleStringProperty(empLastName);
         this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
+    }
+    public String userID() {
+        return password.get();
+    }
+    
+    public void setUserID(String userID) {
+        this.userID.set(userID);
+    }
+    
+    public StringProperty userIDProperty() {
+        return userID;        
     }
     
     public String password() {
@@ -46,28 +59,28 @@ public class Employee {
         return password;
     }
     
-    public String getFirstName() {
-        return firstName.get();
+    public String getEmpFirstName() {
+        return empFirstName.get();
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName.set(firstName);
+    public void setEmpFirstName(String empFirstName) {
+        this.empFirstName.set(empFirstName);
     }
 
-    public StringProperty firstNameProperty() {
-        return firstName;
+    public StringProperty empFirstNameProperty() {
+        return empFirstName;
     }
     
-    public String getLastName() {
-        return lastName.get();
+    public String getEmpLastName() {
+        return empLastName.get();
     }
 
-    public void setLastName(String lastName) {
-        this.lastName.set(lastName);
+    public void setEmpLastName(String empLastName) {
+        this.empLastName.set(empLastName);
     }
 
-    public StringProperty lastNameProperty() {
-        return lastName;
+    public StringProperty empLastNameProperty() {
+        return empLastName;
     }
     
     public boolean getIsAdministrator() {
