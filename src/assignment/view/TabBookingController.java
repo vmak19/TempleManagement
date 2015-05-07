@@ -4,11 +4,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import assignment.MainApp;
 import assignment.model.Booking;
+import assignment.util.DateUtil;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.Initializable;
 
-public class TabBookingController extends HotelOverviewController {
-    @FXML public TableView<Booking> bookingTable;
+public class TabBookingController extends HotelOverviewController implements Initializable {
+
+    @FXML TableView<Booking> bookingTable;
     @FXML private TableColumn<Booking, String> custFirstNameColumn;
     @FXML private TableColumn<Booking, String> custLastNameColumn;
 
@@ -16,35 +20,74 @@ public class TabBookingController extends HotelOverviewController {
     @FXML private Label custFirstNameLabel;
     @FXML private Label custLastNameLabel;
     @FXML private Label numPeopleLabel;
-    @FXML private Label roomNum;
-    @FXML private Label createdDate;
-    @FXML private Label numBreakfast;
-    @FXML private Label checkIn;
-    @FXML private Label checkOut;
-    @FXML private Label amountPaid;
-    @FXML private Label amountDue;
-
-    // Reference to the main application.
-    // private MainApp mainApp;
+    @FXML private Label roomNumLabel;
+    @FXML private Label createdDateLabel;
+    @FXML private Label numBreakfastLabel;
+    @FXML private Label checkInLabel;
+    @FXML private Label checkOutLabel;
+    @FXML private Label earlyCheckInLabel;
+    @FXML private Label lateCheckOutLabel;
+    @FXML private Label amountPaidLabel;
+    @FXML private Label amountDueLabel;
 
     /**
-     * The constructor.
-     * The constructor is called before the initialize() method.
+     * The constructor. The constructor is called before the initialize()
+     * method.
      */
-    public TabBookingController() {
+    public TabBookingController() {}
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        try {
+            // Initialize the person table with the two columns.
+            custFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().custFirstNameProperty());
+            custLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().custLastNameProperty());
+
+            // Listen for selection changes and show the booking details when changed.
+            bookingTable.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> showBookingDetails(newValue));
+        } catch (Exception e) {
+            System.out.println("Initilize error!");
+        }
     }
 
     /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
+     * Fills all text fields to show details about the person. If the specified
+     * person is null, all text fields are cleared.
+     *
+     * @param person the person or null
      */
-    @FXML
-    private void initialize() {
-        // Initialize the person table with the two columns.
-        custFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().custFirstNameProperty());
-        custLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().custLastNameProperty());
-        
-        // Add observable list data to the table
-        bookingTable.setItems(mainApp.getBookingData());
+    private void showBookingDetails(Booking booking) {
+        if (booking != null) {
+            // Fill the labels with info from the person object.
+            custFirstNameLabel.setText(booking.getCustFirstName());
+            custLastNameLabel.setText(booking.getCustLastName());
+            numPeopleLabel.setText(Integer.toString(booking.getNumPeople()));
+            roomNumLabel.setText(Integer.toString(booking.getRoomNum()));
+            createdDateLabel.setText(DateUtil.format(booking.getCreatedDate()));
+            numBreakfastLabel.setText(Integer.toString(booking.getNumBreakfast()));
+            checkInLabel.setText(DateUtil.format(booking.getCheckIn()));
+            checkOutLabel.setText(DateUtil.format(booking.getCheckOut()));
+            amountPaidLabel.setText(Double.toString(booking.getAmountPaid()));
+            
+        // TODO: We need a way to convert the birthday into a String! And set early ch/in, late ch/out 
+            // And Ref. Code
+            // birthdayLabel.setText(...);
+        } else {
+            // Person is null, remove all the text.
+            refCodeLabel.setText("");
+            custFirstNameLabel.setText("");
+            custLastNameLabel.setText("");
+            numPeopleLabel.setText("");
+            roomNumLabel.setText("");
+            createdDateLabel.setText("");
+            numBreakfastLabel.setText("");
+            checkInLabel.setText("");
+            checkOutLabel.setText("");
+            earlyCheckInLabel.setText("");
+            lateCheckOutLabel.setText("");
+            amountPaidLabel.setText("");
+            amountDueLabel.setText("");
+        }
     }
 }

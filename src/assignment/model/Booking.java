@@ -10,6 +10,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -32,6 +37,23 @@ public class Booking {
     private final BooleanProperty earlyCheckIn;
     private final BooleanProperty lateCheckOut;
 
+    // Just for testing purpose
+    public Booking(String custFirstName, String custLastName) {
+        this.custFirstName = new SimpleStringProperty(custFirstName);
+        this.custLastName = new SimpleStringProperty(custLastName);
+        
+        this.numPeople = new SimpleIntegerProperty(9);
+        this.roomNum = new SimpleIntegerProperty(8);
+        this.createdDate = new SimpleObjectProperty<LocalDate>(LocalDate.of(1999, 2, 21));
+        this.numBreakfast = new SimpleIntegerProperty(7);
+        this.checkIn = new SimpleObjectProperty<LocalDate>(LocalDate.of(1999, 2, 22));
+        this.checkOut = new SimpleObjectProperty<LocalDate>(LocalDate.of(1999, 2, 23));
+        this.amountPaid = new SimpleDoubleProperty(6);
+        this.amountDue = new SimpleDoubleProperty(5);
+        this.earlyCheckIn = new SimpleBooleanProperty(true);
+        this.lateCheckOut = new SimpleBooleanProperty(false);
+    }
+    
     public Booking(/** StringProperty refCode , */StringProperty custFirstName, 
             StringProperty custLastName, IntegerProperty numPeople, 
             IntegerProperty roomNum, ObjectProperty<LocalDate> createdDate, 
