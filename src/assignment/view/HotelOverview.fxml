@@ -8,20 +8,40 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.HotelOverviewController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Assignment.FXMLController">
    <children>
       <TabPane layoutX="64.0" layoutY="14.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Booking">
                <content>
-                  <fx:include fx:id="tabBooking" source="TabBooking.fxml" />
+                  <fx:include source="TabBooking.fxml" />
                </content>
           </Tab>
-          <Tab text="Room" />
-            <Tab text="Service" />
-            <Tab text="Billing" />
-            <Tab text="Employee" />
-            <Tab text="Log" />
+          <Tab text="Room">
+               <content>
+                  <fx:include source="TabRoom.fxml" />
+               </content>
+          </Tab>
+            <Tab text="Service">
+               <content>
+                  <fx:include source="TabService.fxml" />
+               </content>
+            </Tab>
+            <Tab text="Billing">
+               <content>
+                  <fx:include source="TabBilling.fxml" />
+               </content>
+            </Tab>
+            <Tab text="Employee">
+               <content>
+                  <fx:include source="TabEmployee.fxml" />
+               </content>
+            </Tab>
+            <Tab text="Log">
+               <content>
+                  <fx:include source="TabLog.fxml" />
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
       <Button layoutX="976.0" layoutY="47.0" mnemonicParsing="false" text="Log out" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
