@@ -2,6 +2,7 @@ package assignment;
 
 import assignment.model.Booking;
 import assignment.view.HotelOverviewController;
+import assignment.view.LoginScreenController;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +30,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     //private BorderPane rootLayout;
-    private AnchorPane hotelOverview;
+    private AnchorPane loginScreen;
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
     
     public ObservableList<Booking> getBookingData() {
@@ -53,27 +54,45 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
 
-        showHotelOverview();
+        showLoginScreen();
     }
 
+    public void showLoginScreen() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/LoginScreen.fxml"));
+            loginScreen = (AnchorPane) loader.load();
+           
+            LoginScreenController controller = loader.getController();
+            //controller.setMainApp(this);
+            
+            Scene scene = new Scene(loginScreen);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException e) {
+            System.out.println("showLoginScreen() Error!");
+            e.printStackTrace();
+        }
+    }
+    /*
     public void showHotelOverview() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
-            hotelOverview = (AnchorPane) loader.load();
+            Hotel  = (AnchorPane) loader.load();
            
             HotelOverviewController controller = loader.getController();
-            controller.setMainApp(this);
+            //controller.setMainApp(this);
             
-            Scene scene = new Scene(hotelOverview);
+            Scene scene = new Scene(loginScreen);
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
-            System.out.println("showHotelOverview() Error!");
+            System.out.println("showLoginScreen() Error!");
             e.printStackTrace();
         }
     }
-
+*/
     /**
      * Opens a dialog to edit details for the specified person. If the user
      * clicks OK, the changes are saved into the provided person object and true
