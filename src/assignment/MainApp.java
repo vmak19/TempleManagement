@@ -1,6 +1,7 @@
 package assignment;
 
 import assignment.model.Booking;
+import assignment.model.Employee;
 import assignment.view.HotelOverviewController;
 import assignment.view.LoginScreenController;
 import java.io.IOException;
@@ -32,9 +33,14 @@ public class MainApp extends Application {
     //private BorderPane rootLayout;
     private AnchorPane loginScreen;
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
+    private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
     
     public ObservableList<Booking> getBookingData() {
         return bookingData;
+    }
+    
+    public ObservableList<Employee> getEmployeeData() {
+        return employeeData;
     }
     
     public MainApp() {
@@ -47,9 +53,17 @@ public class MainApp extends Application {
         bookingData.add(new Booking("Anna", "Best"));
         bookingData.add(new Booking("Stefan", "Meier"));
         bookingData.add(new Booking("Martin", "Mueller"));
+        
+        employeeData.add(new Employee(12345, "p1", "Jane", "Chan", false));
+        employeeData.add(new Employee(12245, "p1", "Bill", "Bob", false));
+        employeeData.add(new Employee(12246, "p1", "Mary", "Kim", false));
+        employeeData.add(new Employee(12247, "p1", "Mi", "T", false));
+        employeeData.add(new Employee(12355, "p1", "L", "D", true));
+        employeeData.add(new Employee(12346, "p1", "F", "C", true));        
     }
     
     @Override
+    
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("AddressApp");
