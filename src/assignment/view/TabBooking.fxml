@@ -18,7 +18,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Ref. Code" />
+                        <TableColumn fx:id="refCodeColumn" prefWidth="75.0" text="Ref. Code" />
                         <TableColumn fx:id="custFirstNameColumn" prefWidth="75.0" text="First Name" />
                         <TableColumn fx:id="custLastNameColumn" prefWidth="75.0" text="Last Name" />
                      </columns>

@@ -31,6 +31,9 @@ public class LoginScreenController implements Initializable {
     AnchorPane hotelOverview;
     
     Stage primaryStage;
+    
+    //Sim added this field
+    private MainApp mainApp;
    
     @FXML
     private void switchToMainPage(ActionEvent event) throws IOException {
@@ -50,7 +53,7 @@ public class LoginScreenController implements Initializable {
             hotelOverview  = (AnchorPane) loader.load();
            
             HotelOverviewController controller = loader.getController();
-            MainApp mainApp = new MainApp();
+            // Sim commented this out: MainApp mainApp = new MainApp();
             //initializes records
             controller.setMainApp(mainApp);
             
@@ -62,6 +65,7 @@ public class LoginScreenController implements Initializable {
             e.printStackTrace();
         }
     }
+   
     
     /*Stage myStage;
 
@@ -94,5 +98,10 @@ public class LoginScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+    }
+
+    // Sim added this method
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
     }
 }

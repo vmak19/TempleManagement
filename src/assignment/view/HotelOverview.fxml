@@ -34,7 +34,7 @@
             </Tab>
             <Tab text="Employee">
                <content>
-                  <fx:include source="TabEmployee.fxml" />
+                  <fx:include fx:id="tabEmployee" source="TabEmployee.fxml" />
                </content>
             </Tab>
             <Tab text="Log">
