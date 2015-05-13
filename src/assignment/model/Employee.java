@@ -18,17 +18,12 @@ import javafx.beans.property.StringProperty;
  */
 public class Employee {
     
-    // Why use StringProperty instead of String
-    // Why is all variable Final
-    private final IntegerProperty userID;
-    private final StringProperty password;
-    private final StringProperty empFirstName;
-    private final StringProperty empLastName;
-    private final BooleanProperty isAdministrator;
+    private IntegerProperty userID;
+    private StringProperty password;
+    private StringProperty empFirstName;
+    private StringProperty empLastName;
+    private BooleanProperty isAdministrator;
 
-    // Why have input as String while variable's nature are SrtingProperty
-    // Why equal to new... put not the direct inputs
-    // Why use SimpleStringProperty but not StringProperty or String
     public Employee(int userID, String password, 
             String empFirstName, String empLastName, boolean isAdministrator) {
         this.userID = new SimpleIntegerProperty(userID);
@@ -37,6 +32,16 @@ public class Employee {
         this.empLastName = new SimpleStringProperty(empLastName);
         this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
     }
+    
+    public Employee(String password,String empFirstName, String empLastName, 
+            boolean isAdministrator) {        
+        this.password = new SimpleStringProperty(password);
+        this.empFirstName = new SimpleStringProperty(empFirstName);
+        this.empLastName = new SimpleStringProperty(empLastName);
+        this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
+    }
+    
+    
     public int getUserID() {
         return userID.get();
     }
