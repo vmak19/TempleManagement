@@ -46,7 +46,11 @@ public class MainApp extends Application {
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
     private ObservableList<Room> roomData = FXCollections.observableArrayList();
     private ObservableList<RoomType> roomTypeData = FXCollections.observableArrayList();
-
+    private BookingQueries bookingQueries;
+    private EmployeeQueries employeeQueries;
+    private RoomQueries roomQueries;
+    private RoomTypeQueries roomTypeQueries;
+    
     public ObservableList<Booking> getBookingData() {
         return bookingData;
     }
@@ -62,6 +66,10 @@ public class MainApp extends Application {
     public ObservableList<RoomType> getRoomTypeData() {
         return roomTypeData;
     }
+    
+    public BookingQueries getBookingQueries() {
+        return bookingQueries;
+    }
 
     public MainApp() {
     }
@@ -70,33 +78,30 @@ public class MainApp extends Application {
         try {
             System.out.println("buildData() run");
             DatabaseSetup.setupDatabase();
-            BookingQueries bookingQueries = new BookingQueries();
-            EmployeeQueries employeeQueries = new EmployeeQueries();
-            RoomQueries roomQueries = new RoomQueries();
-            RoomTypeQueries roomTypeQueries = new RoomTypeQueries();
+            bookingQueries = new BookingQueries();
+            employeeQueries = new EmployeeQueries();
+            roomQueries = new RoomQueries();
+            roomTypeQueries = new RoomTypeQueries();
             bookingQueries.insertBooking(new Booking("Hans", "Muster", 2, 12, LocalDate.of(1999, 2, 23), 3, LocalDate.of(2099, 2, 22), LocalDate.of(2199, 2, 2), true, false, 12.2, 12));
             employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
-          //  roomQueries.insertRoom(new Room(1, 2));
-          //  roomTypeQueries.insertRoomType(new RoomType(2, "single", 2500.95, 2));
+            // roomQueries.insertRoom(new Room(1, 2));
+            // roomTypeQueries.insertRoomType(new RoomType(2, "single", 2500.95, 2));
 
             // Copy data from database to ObeservableList
             System.out.println("Bookings in database (in buildData) :" + bookingQueries.getBookings());
             System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
             System.out.println("Rooms in database (in buildData) :" + roomQueries.getRooms());
             System.out.println("RoomTypes in database (in buildData) :" + roomTypeQueries.getRoomTypes());
-            //Sim edit: bookingData = FXCollections.observableArrayList(bookingQueries.getBookings());
+            
             bookingData.addAll(bookingQueries.getBookings()); //Sim edit line added
             employeeData.addAll(employeeQueries.getEmployees());
             roomData.addAll(roomQueries.getRooms());
             roomTypeData.addAll(roomTypeQueries.getRoomTypes());
-            //System.out.println("Booking Data (in buildData) is: " + bookingData); //for testing purposes
         } catch (Exception e) {
             System.out.println("buildData() ERROR!");
         }
     }
 
-    ;
-    
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -124,37 +129,6 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Opens a dialog to edit details for the specified person. If the user
-     * clicks OK, the changes are saved into the provided person object and true
-     * is returned.
-     *
-     * @param person the person object to be edited
-     * @return true if the user clicked OK, false otherwise.
-     */
-    /**
-     * public boolean showPersonEditDialog(Person person) { try { // Load the
-     * fxml file and create a new stage for the popup dialog. FXMLLoader loader
-     * = new FXMLLoader();
-     * loader.setLocation(MainApp.class.getResource("view/PersonEditDialog.fxml"));
-     * AnchorPane page = (AnchorPane) loader.load();
-     *
-     * // Create the dialog Stage. Stage dialogStage = new Stage();
-     * dialogStage.setTitle("Edit Person");
-     * dialogStage.initModality(Modality.WINDOW_MODAL);
-     * dialogStage.initOwner(primaryStage); Scene scene = new Scene(page);
-     * dialogStage.setScene(scene);
-     *
-     * // Set the person into the controller. PersonEditDialogController
-     * controller = loader.getController();
-     * controller.setDialogStage(dialogStage); controller.setPerson(person);
-     *
-     * // Show the dialog and wait until the user closes it
-     * dialogStage.showAndWait();
-     *
-     * return controller.isOkClicked(); } catch (IOException e) {
-     * e.printStackTrace(); return false; } }
-     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }

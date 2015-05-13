@@ -40,7 +40,7 @@ public class TabEmployeeController extends HotelOverviewController implements In
     @FXML
     private Label empLastNameLabel;
     @FXML
-    private CheckBox administratorCheckBox;
+    private CheckBox administratorBox;
 
     /**
      * Initializes the controller class.
@@ -71,9 +71,9 @@ public class TabEmployeeController extends HotelOverviewController implements In
             empFirstNameLabel.setText(employee.getEmpFirstName());
             empLastNameLabel.setText(employee.getEmpLastName());
             if (employee.getIsAdministrator()) {
-                administratorCheckBox.setSelected(true);
+                administratorBox.setSelected(true);
             } else {
-                administratorCheckBox.setSelected(false);
+                administratorBox.setSelected(false);
             }
         } else {
             // Employee is null, remove all the information.
@@ -81,7 +81,7 @@ public class TabEmployeeController extends HotelOverviewController implements In
             passwordLabel.setText("");
             empFirstNameLabel.setText("");
             empLastNameLabel.setText("");
-            administratorCheckBox.setSelected(false);
+            administratorBox.setSelected(false);
         }
     }
 }

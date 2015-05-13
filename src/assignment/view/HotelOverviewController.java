@@ -30,8 +30,9 @@ public class HotelOverviewController implements Initializable {
         System.out.println(mainApp.getBookingData());
         tabBookingController.bookingTable.setItems(mainApp.getBookingData());
         tabEmployeeController.employeeTable.setItems(mainApp.getEmployeeData());
-       // tabRoomController.roomTable.setItems(mainApp.getRoomData());
+        // tabRoomController.roomTable.setItems(mainApp.getRoomData());
         
+        tabBookingController.setMainApp(mainApp);
     }
     
     public void initialize(URL url, ResourceBundle rb) {
