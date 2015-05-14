@@ -11,6 +11,7 @@ public class HotelOverviewController implements Initializable {
     
     @FXML TabBookingController tabBookingController;
     @FXML TabEmployeeController tabEmployeeController;
+    @FXML TabRoomController tabRoomController;
     
     MainApp mainApp;
     
@@ -29,6 +30,7 @@ public class HotelOverviewController implements Initializable {
         System.out.println(mainApp.getBookingData());
         tabBookingController.bookingTable.setItems(mainApp.getBookingData());
         tabEmployeeController.employeeTable.setItems(mainApp.getEmployeeData());
+       // tabRoomController.roomTable.setItems(mainApp.getRoomData());
         
     }
     

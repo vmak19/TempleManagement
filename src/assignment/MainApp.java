@@ -4,8 +4,12 @@ import assignment.database.DatabaseQuery;
 import assignment.database.BookingQueries;
 import assignment.database.DatabaseSetup;
 import assignment.database.EmployeeQueries;
+import assignment.database.RoomQueries;
+import assignment.database.RoomTypeQueries;
 import assignment.model.Booking;
 import assignment.model.Employee;
+import assignment.model.Room;
+import assignment.model.RoomType;
 import assignment.view.HotelOverviewController;
 import assignment.view.LoginScreenController;
 import java.io.IOException;
@@ -40,6 +44,8 @@ public class MainApp extends Application {
     private AnchorPane loginScreen;
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList(); //Sim edit
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
+    private ObservableList<Room> roomData = FXCollections.observableArrayList();
+    private ObservableList<RoomType> roomTypeData = FXCollections.observableArrayList();
 
     public ObservableList<Booking> getBookingData() {
         return bookingData;
@@ -49,13 +55,15 @@ public class MainApp extends Application {
         return employeeData;
     }
 
+    public ObservableList<Room> getRoomData() {
+        return roomData;
+    }
+
+    public ObservableList<RoomType> getRoomTypeData() {
+        return roomTypeData;
+    }
+
     public MainApp() {
-        /*employeeData.add(new Employee(12345, "p1", "Jane", "Chan", false));
-        employeeData.add(new Employee(12245, "p1", "Bill", "Bob", false));
-        employeeData.add(new Employee(12246, "p1", "Mary", "Kim", false));
-        employeeData.add(new Employee(12247, "p1", "Mi", "T", false));
-        employeeData.add(new Employee(12355, "p1", "L", "D", true));
-        employeeData.add(new Employee(12346, "p1", "F", "C", true));*/
     }
 
     public void buildData() {
@@ -64,17 +72,24 @@ public class MainApp extends Application {
             DatabaseSetup.setupDatabase();
             BookingQueries bookingQueries = new BookingQueries();
             EmployeeQueries employeeQueries = new EmployeeQueries();
-            //bookingQueries.insertBooking(new Booking("Hans", "Muster", 2, 12, LocalDate.of(1999, 2, 23), 3, LocalDate.of(2099, 2, 22) ,LocalDate.of(2199, 2, 2) , true, false, 12.2,12));
-            //employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
-            
-            
+            RoomQueries roomQueries = new RoomQueries();
+            RoomTypeQueries roomTypeQueries = new RoomTypeQueries();
+            bookingQueries.insertBooking(new Booking("Hans", "Muster", 2, 12, LocalDate.of(1999, 2, 23), 3, LocalDate.of(2099, 2, 22), LocalDate.of(2199, 2, 2), true, false, 12.2, 12));
+            employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
+          //  roomQueries.insertRoom(new Room(1, 2));
+          //  roomTypeQueries.insertRoomType(new RoomType(2, "single", 2500.95, 2));
+
             // Copy data from database to ObeservableList
             System.out.println("Bookings in database (in buildData) :" + bookingQueries.getBookings());
-            System.out.println("Emplyees in database (in buildData) :" + employeeQueries.getEmployees());
+            System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
+            System.out.println("Rooms in database (in buildData) :" + roomQueries.getRooms());
+            System.out.println("RoomTypes in database (in buildData) :" + roomTypeQueries.getRoomTypes());
             //Sim edit: bookingData = FXCollections.observableArrayList(bookingQueries.getBookings());
             bookingData.addAll(bookingQueries.getBookings()); //Sim edit line added
             employeeData.addAll(employeeQueries.getEmployees());
-            System.out.println("Booking Data (in buildData) is: " + bookingData); //for testing purposes
+            roomData.addAll(roomQueries.getRooms());
+            roomTypeData.addAll(roomTypeQueries.getRoomTypes());
+            //System.out.println("Booking Data (in buildData) is: " + bookingData); //for testing purposes
         } catch (Exception e) {
             System.out.println("buildData() ERROR!");
         }
@@ -138,8 +153,7 @@ public class MainApp extends Application {
      * dialogStage.showAndWait();
      *
      * return controller.isOkClicked(); } catch (IOException e) {
-     * e.printStackTrace(); return false; }
-    }
+     * e.printStackTrace(); return false; } }
      */
     public Stage getPrimaryStage() {
         return primaryStage;

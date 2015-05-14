@@ -52,8 +52,8 @@ public class Employee {
     
     public IntegerProperty userIDProperty() {
         return userID;        
-    }
-    
+    } 
+   
     public String getPassword() {
         return password.get();
     }

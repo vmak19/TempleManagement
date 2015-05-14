@@ -34,11 +34,11 @@ public class TabEmployeeController extends HotelOverviewController implements In
     @FXML
     private Label userIDLabel;
     @FXML
+    private Label passwordLabel;
+    @FXML
     private Label empFirstNameLabel;
     @FXML
     private Label empLastNameLabel;
-    @FXML
-    private Label passwordLabel;
     @FXML
     private CheckBox administratorCheckBox;
 
