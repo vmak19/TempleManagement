@@ -9,6 +9,7 @@ import assignment.database.RoomTypeQueries;
 import assignment.model.Booking;
 import assignment.model.Employee;
 import assignment.model.Room;
+import assignment.model.RoomInfo;
 import assignment.model.RoomType;
 import assignment.view.HotelOverviewController;
 import assignment.view.LoginScreenController;
@@ -44,7 +45,7 @@ public class MainApp extends Application {
     private AnchorPane loginScreen;
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList(); //Sim edit
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
-    private ObservableList<Room> roomData = FXCollections.observableArrayList();
+    private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
     private ObservableList<RoomType> roomTypeData = FXCollections.observableArrayList();
     private BookingQueries bookingQueries;
     private EmployeeQueries employeeQueries;
@@ -59,7 +60,7 @@ public class MainApp extends Application {
         return employeeData;
     }
 
-    public ObservableList<Room> getRoomData() {
+    public ObservableList<RoomInfo> getRoomData() {
         return roomData;
     }
 
@@ -82,14 +83,18 @@ public class MainApp extends Application {
             employeeQueries = new EmployeeQueries();
             roomQueries = new RoomQueries();
             roomTypeQueries = new RoomTypeQueries();
-            bookingQueries.insertBooking(new Booking("Hans", "Muster", 2, 12, LocalDate.of(1999, 2, 23), 3, LocalDate.of(2099, 2, 22), LocalDate.of(2199, 2, 2), true, false, 12.2, 12));
-            employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
-            // roomQueries.insertRoom(new Room(1, 2));
-            // roomTypeQueries.insertRoomType(new RoomType(2, "single", 2500.95, 2));
-
+            System.out.println("Set Queries");
+            
+            // employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
+            roomTypeQueries.insertRoomType(new RoomType("Single", 2500.95));
+            System.out.println("Set RoomType Data");
+            roomQueries.insertRoom(new Room(2));
+            System.out.println("Set Room Data");
+            System.out.println("Set Data");
+            
             // Copy data from database to ObeservableList
             System.out.println("Bookings in database (in buildData) :" + bookingQueries.getBookings());
-            System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
+            //System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
             System.out.println("Rooms in database (in buildData) :" + roomQueries.getRooms());
             System.out.println("RoomTypes in database (in buildData) :" + roomTypeQueries.getRoomTypes());
             
@@ -99,6 +104,7 @@ public class MainApp extends Application {
             roomTypeData.addAll(roomTypeQueries.getRoomTypes());
         } catch (Exception e) {
             System.out.println("buildData() ERROR!");
+            e.printStackTrace();
         }
     }
 

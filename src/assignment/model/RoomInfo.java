@@ -14,66 +14,45 @@ import javafx.beans.property.StringProperty;
 
 /**
  *
- * @author z5018077
+ * @author SONY
  */
-public class RoomType {
-    
-    private IntegerProperty roomTypeID;
+public class RoomInfo {
+    private IntegerProperty roomID;
     private StringProperty description;
     private DoubleProperty baseRate;
 
-    public RoomType(String description, double baseRate) {
+    public RoomInfo(int roomID, String description, double baseRate) {
+        this.roomID = new SimpleIntegerProperty(roomID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
+    }   
+    
+    public int getRoomID() {
+        return roomID.get();
     }
     
-    public RoomType(int roomTypeID, String description, double baseRate) {
-        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
-        this.description = new SimpleStringProperty(description);
-        this.baseRate = new SimpleDoubleProperty(baseRate);
-    }
-
-    // Room type
-    public int getRoomTypeID() {
-        return roomTypeID.get();
-    }
-
-    public void setRoomTypeID(int roomTypeID) {
-        this.roomTypeID.set(roomTypeID);
-    }
-
-    public IntegerProperty roomTypeIDProperty() {
-        return roomTypeID;        
+    public IntegerProperty roomIDProperty() {
+        return roomID;
     }
     
-    // Description
     public String getDescription() {
         return description.get();
-    }
-
-    public void setDescription(String description) {
-        this.description.set(description);
     }
     
     public StringProperty descriptionProperty() {
         return description;        
     }
-
-    //Base rate
+    
     public double getBaseRate() {
         return baseRate.get();
     }
-
-    public void setBaseRate(double baseRate) {
-        this.baseRate.set(baseRate);
-    }
     
     public DoubleProperty baseRateProperty() {
-        return baseRate;        
+        return baseRate;
     }
     
     @Override
     public String toString() {
-        return "RoomType { RoomTypeID=" + roomTypeID + " Description=" + description + " }";
+        return "Room { RoomID=" + roomID + " Description=" + description + " }";
     }
 }

@@ -16,18 +16,18 @@ import javafx.beans.property.SimpleIntegerProperty;
  *
  * @author z5018077
  */
-public class Room extends RoomType {
+public class Room /*extends RoomType*/ {
 
     private IntegerProperty roomID;
+    private IntegerProperty roomTypeID;
 
     public Room(int roomID, int roomTypeID) {
-        super(roomTypeID);
         this.roomID = new SimpleIntegerProperty(roomID);
+        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
     }   
     
-    public Room(int roomID, int roomTypeID, String description, double baseRate, int capacity) {
-        super(roomTypeID, description, baseRate, capacity);
-        this.roomID = new SimpleIntegerProperty(roomID);
+    public Room(int roomTypeID) {
+        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
     }      
             
     public int getRoomID() {
@@ -39,7 +39,19 @@ public class Room extends RoomType {
     }
     
     public IntegerProperty roomIDProperty() {
-        return roomID;        
+        return roomID;
+    }
+    
+    public int getRoomTypeID() {
+        return roomTypeID.get();
+    }
+
+    public void setRoomTypeID(int roomTypeID) {
+        this.roomTypeID.set(roomTypeID);
+    }
+    
+    public IntegerProperty roomTypeIDProperty() {
+        return roomTypeID;
     }
 
 }

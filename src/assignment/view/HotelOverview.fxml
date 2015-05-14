@@ -19,7 +19,7 @@
           </Tab>
           <Tab text="Room">
                <content>
-                  <fx:include source="TabRoom.fxml" />
+                  <fx:include fx:id="tabRoom" source="TabRoom.fxml" />
                </content>
           </Tab>
             <Tab text="Service">

@@ -80,19 +80,19 @@ public class DatabaseSetup extends DatabaseQuery {
 
         try {
 
-            // Determine if the ROOM_TYPE table already exists or not
+            // Determine if the ROOMTYPE table already exists or not
             DatabaseMetaData dbmd = conn.getMetaData();
-            rs = dbmd.getTables(null, "APP", "ROOM_TYPE", null);
+            rs = dbmd.getTables(null, "APP", "ROOMTYPE", null);
             
             if (!rs.next()) {
                 // If the ROOM_TYPE table does not already exist we create it
                 createRoomTypeTable = conn.prepareStatement(
-                        "CREATE TABLE APP.ROOM_TYPE ("
-                        + "\"ROOM_TYPE_ID\" INT not null primary key "
+                        "CREATE TABLE APP.ROOMTYPE ("
+                        + "\"ROOMTYPEID\" INT not null primary key "
                         + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
                         + "\"DESCRIPTION\" VARCHAR(200), "
-                        + "\"BASE_RATE\" DOUBLE, "
-                        + "\"CAPACITY\" INT) ");
+                        + "\"BASERATE\" DOUBLE, "
+                        + "\"CAPACITY\" INT)");
                 createRoomTypeTable.execute();
                 
                 System.out.println("created Table ROOMTYPE");
@@ -111,18 +111,16 @@ public class DatabaseSetup extends DatabaseQuery {
                 // If the ROOM table does not already exist we create it
                 createRoomTable = conn.prepareStatement(
                         "CREATE TABLE APP.ROOM ("
-                        + "\"ROOM_ID\" INT not null primary key "
+                        + "\"ROOMID\" INT not null primary key "
                         + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                        + "\"ROOM_TYPE_ID\" INT,"
-                        + "FOREIGN KEY (ROOM_TYPE_ID) REFERENCES ROOM_TYPE(ROOM_TYPE_ID))");
+                        + "\"ROOMTYPEID\" INT,"
+                        + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
                 createRoomTable.execute();
                 System.out.println("created Table ROOM");
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOM error!");
         }
-
         closeConnection();
     }
-
 }

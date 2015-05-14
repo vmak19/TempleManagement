@@ -28,12 +28,12 @@ public class RoomTypeQueries extends DatabaseQuery{
         roomTypes = new ArrayList<RoomType>();
         openConnection();
         try {
-            getAllRoomTypes = conn.prepareStatement("select * from app.ROOM_TYPE");
+            getAllRoomTypes = conn.prepareStatement("select * from app.ROOMTYPE");
             rs = getAllRoomTypes.executeQuery();
             while (rs.next()) {
                 roomTypes.add(
-                        new RoomType(rs.getInt("roomTypeID"), rs.getString("description"),
-                                rs.getDouble("baseRate"), rs.getInt("capacity")));
+                    new RoomType(rs.getInt("roomTypeID"), rs.getString("description"),
+                            rs.getDouble("baseRate")));
             }
             rs.close();
             getAllRoomTypes.close();
@@ -47,16 +47,12 @@ public class RoomTypeQueries extends DatabaseQuery{
     public int insertRoomType(RoomType toInsert) {
         int returnValue = -1;
         openConnection();
-//System.out.println("1");
         try {
-            insertRoomType = conn.prepareStatement("insert into app.ROOM_TYPE " 
-                    + "(DESCRIPTION, BASE_RATE, CAPACITY)"
-                    + "values (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);           
-//System.out.println("2");
-            insertRoomType.setInt(1, toInsert.getRoomTypeID());
-            insertRoomType.setString(2, toInsert.getDescription());
-            insertRoomType.setDouble(3, toInsert.getBaseRate());
-            insertRoomType.setInt(4, toInsert.getCapacity());
+            insertRoomType = conn.prepareStatement("insert into app.roomtype "
+                    + "(description, baserate) "
+                    + "values (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            insertRoomType.setString(1, toInsert.getDescription());
+            insertRoomType.setDouble(2, toInsert.getBaseRate());
             insertRoomType.executeUpdate();
 
             rs = insertRoomType.getGeneratedKeys();

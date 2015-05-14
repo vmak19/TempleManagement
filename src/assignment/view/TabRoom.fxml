@@ -6,8 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="561.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="assignment.view.TabRoomController">
+<AnchorPane id="AnchorPane" prefHeight="561.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.TabRoomController">
    <children>
       <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0">
          <items>
@@ -18,8 +17,8 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn fx:id="roomIDColumn" prefWidth="75.0" text="Room No." />
-                        <TableColumn fx:id="roomTypeIDColumn" prefWidth="75.0" text="Room Type" />
+                        <TableColumn fx:id="roomNumColumn" prefWidth="75.0" text="Room No." />
+                        <TableColumn fx:id="roomTypeColumn" prefWidth="75.0" text="Room Type" />
                      </columns>
                   </TableView>
                </children>

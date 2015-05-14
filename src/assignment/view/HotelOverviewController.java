@@ -23,16 +23,21 @@ public class HotelOverviewController implements Initializable {
      * @param mainApp
      */
     public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
+        try{
+            this.mainApp = mainApp;
         
-        //Add observable list data to the table
-        System.out.println("Booking Data is: ");
-        System.out.println(mainApp.getBookingData());
-        tabBookingController.bookingTable.setItems(mainApp.getBookingData());
-        tabEmployeeController.employeeTable.setItems(mainApp.getEmployeeData());
-        // tabRoomController.roomTable.setItems(mainApp.getRoomData());
-        
-        tabBookingController.setMainApp(mainApp);
+            //Add observable list data to the table
+            System.out.println("Booking Data is: ");
+            System.out.println(mainApp.getBookingData());
+            tabBookingController.bookingTable.setItems(mainApp.getBookingData());
+            tabEmployeeController.employeeTable.setItems(mainApp.getEmployeeData());
+            tabRoomController.roomTable.setItems(mainApp.getRoomData());
+
+            tabBookingController.setMainApp(mainApp);
+        } catch (Exception e) {
+            System.out.println("ERROR! setMainApp!");
+            e.printStackTrace();
+        }
     }
     
     public void initialize(URL url, ResourceBundle rb) {

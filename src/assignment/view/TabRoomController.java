@@ -6,6 +6,8 @@
 package assignment.view;
 
 import assignment.model.Room;
+import assignment.model.RoomInfo;
+import assignment.model.RoomType;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -19,21 +21,21 @@ import javafx.scene.control.TableView;
  *
  * @author z5018077
  */
-public class TabRoomController extends HotelOverviewController implements Initializable {
+public class TabRoomController implements Initializable {
 
     @FXML
-    TableView<Room> roomTable;
+    TableView<RoomInfo> roomTable;
     @FXML
-    private TableColumn<Room, Integer> roomIDColumn;
+    private TableColumn<RoomInfo, Integer> roomNumColumn;
     @FXML
-    private TableColumn<Room, Integer> roomTypeIDColumn;
+    private TableColumn<RoomInfo, String> roomTypeColumn;
 
     @FXML
-    private Label roomNoLabel;  //aka roomID
+    private Label roomNoLabel;
     @FXML
-    private Label roomTypeLabel;    //aka roomTypeID
+    private Label roomTypeLabel;
     @FXML
-    private Label costPerNightLabel;    //aka base rate + additional
+    private Label costPerNightLabel;
 
     /**
      * Initializes the controller class.
@@ -42,25 +44,25 @@ public class TabRoomController extends HotelOverviewController implements Initia
     public void initialize(URL url, ResourceBundle rb) {
         try {
             // Initialize the person table with the two columns.
-            roomIDColumn.setCellValueFactory(cellData -> cellData.getValue().roomIDProperty().asObject());
-            roomTypeIDColumn.setCellValueFactory(cellData -> cellData.getValue().roomTypeIDProperty().asObject());
+            roomNumColumn.setCellValueFactory(cellData -> cellData.getValue().roomIDProperty().asObject());
+            roomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
 
+            showRoomDetails(null);
+            
             roomTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showRoomDetails(newValue));
-            // Add observable list data to the table
-            //employeeTable.setItems(mainApp.getBookingData());
             System.out.println("TabRoom initialized!");
         } catch (Exception e) {
             System.out.println("Initilize error!");
         }
     }
 
-    private void showRoomDetails(Room room) {
-        if (room != null) {
+    private void showRoomDetails(RoomInfo roomInfo) {
+        if (roomInfo != null) {
             // Fill the labels with info from the room object.
-            roomNoLabel.setText(Integer.toString(room.getRoomID()));
-            roomTypeLabel.setText(Integer.toString(room.getRoomTypeID()));
-            costPerNightLabel.setText(Double.toString(room.getBaseRate()));
+            roomNoLabel.setText(Integer.toString(roomInfo.getRoomID()));
+            roomTypeLabel.setText(roomInfo.getDescription());
+            costPerNightLabel.setText(Double.toString(roomInfo.getBaseRate()));
         } else {
             // Room is null, remove all the information.
             roomNoLabel.setText("");
