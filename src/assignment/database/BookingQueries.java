@@ -24,6 +24,7 @@ public class BookingQueries extends DatabaseQuery{
 
     PreparedStatement insertBooking = null;
     PreparedStatement getAllBookings = null;
+    PreparedStatement deleteBooking = null;
     ResultSet rs = null;
     List<Booking> bookings;
     
@@ -79,7 +80,7 @@ public class BookingQueries extends DatabaseQuery{
             rs = insertBooking.getGeneratedKeys();
             rs.next();
             returnValue = rs.getInt(1);
-            rs.close();
+            rs.close(); 
             insertBooking.close();
         } catch (SQLException ex) {
             System.out.println("ERROR! insertBooking() ERROR!");
@@ -87,5 +88,18 @@ public class BookingQueries extends DatabaseQuery{
 
         closeConnection();
         return returnValue;
+    }
+    
+    public void deleteBooking(Booking toDelete) {
+        openConnection();
+        try {
+            deleteBooking = conn.prepareStatement("delete from app.booking where refcode = ?");
+            deleteBooking.setInt(1, toDelete.getRefCode());
+            deleteBooking.execute();
+            System.out.println("deleted");
+        } catch (SQLException ex) {
+            System.out.println("ERROR! deleteBooking()!");
+        }
+        closeConnection();
     }
 }

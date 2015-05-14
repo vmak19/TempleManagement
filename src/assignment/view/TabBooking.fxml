@@ -85,7 +85,7 @@
                      <children>
                         <Button mnemonicParsing="false" prefWidth="100.0" text="New..." />
                         <Button mnemonicParsing="false" prefWidth="100.0" text="Edit..." />
-                        <Button mnemonicParsing="false" prefWidth="100.0" text="Delete" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteBooking" prefWidth="100.0" text="Delete" />
                      </children>
                   </HBox>
                   <Button layoutX="564.0" layoutY="10.0" mnemonicParsing="false" prefWidth="100.0" text="Pay Bill..." AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />

@@ -8,6 +8,7 @@ package assignment.model;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.sql.Date;
+import java.util.ArrayList;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -39,6 +40,9 @@ public class Booking {
     private BooleanProperty earlyCheckIn;
     private BooleanProperty lateCheckOut;
 
+    /*// For later use when room is stored as an array
+    private ObjectProperty<ArrayList<Integer>> room;*/
+    
     public Booking(int refCode, String custFirstName, String custLastName, 
             int numPeople, int roomNum, LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 

@@ -28,16 +28,13 @@ public class LoginScreenController implements Initializable {
     @FXML 
     private Button loginBtn;
     
-    AnchorPane hotelOverview;
+    private AnchorPane hotelOverview;
+    private Stage primaryStage;
     
-    Stage primaryStage;
-    
-    //Sim added this field
     private MainApp mainApp;
    
     @FXML
     private void switchToMainPage(ActionEvent event) throws IOException {
-
         if (event.getSource() == loginBtn) {
             //get reference to the button's stage         
             primaryStage = (Stage) loginBtn.getScene().getWindow();
@@ -51,10 +48,8 @@ public class LoginScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
             hotelOverview  = (AnchorPane) loader.load();
-           
+            
             HotelOverviewController controller = loader.getController();
-            // Sim commented this out: MainApp mainApp = new MainApp();
-            //initializes records
             controller.setMainApp(mainApp);
             
             Scene scene = new Scene(hotelOverview);
@@ -100,7 +95,6 @@ public class LoginScreenController implements Initializable {
         // TODO
     }
 
-    // Sim added this method
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
