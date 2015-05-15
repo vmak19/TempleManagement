@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
-Fri May 15 16:54:43 AEST 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-014d-565a-84ba-000000bd2d10 
-on database directory E:\HERE\code\hotelDB  with class loader sun.misc.Launcher$AppClassLoader@139a55 
-Loaded from file:/E:/HERE/code/lib/derby.jar
+Sat May 16 02:47:49 AEST 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-014d-5879-8718-00000396cbe0 
+on database directory C:\Users\SONY\SkyDrive\Documents\UNSW\2015 Sem 1\INFS2605\JavaNetBeans\INFS2605_Assignment\hotelDB  with class loader sun.misc.Launcher$AppClassLoader@2a139a55 
+Loaded from file:/C:/Users/SONY/SkyDrive/Documents/UNSW/2015%20Sem%201/INFS2605/JavaNetBeans/INFS2605_Assignment/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_45-b14
-user.dir=E:\HERE\code
+java.runtime.version=1.8.0_40-b26
+user.dir=C:\Users\SONY\SkyDrive\Documents\UNSW\2015 Sem 1\INFS2605\JavaNetBeans\INFS2605_Assignment
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

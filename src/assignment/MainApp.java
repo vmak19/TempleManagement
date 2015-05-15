@@ -45,14 +45,12 @@ public class MainApp extends Application {
     private AnchorPane loginScreen;
     
 
-    public MainApp() {
-    }
+    public MainApp() {}
 
     public void buildData() {
         try {
             System.out.println("buildData() run");
             DatabaseSetup.setupDatabase();
-            
         } catch (Exception e) {
             System.out.println("buildData() ERROR!");
             e.printStackTrace();

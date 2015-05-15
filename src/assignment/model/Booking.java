@@ -43,6 +43,8 @@ public class Booking {
     /*// For later use when room is stored as an array
     private ObjectProperty<ArrayList<Integer>> room;*/
     
+    public Booking() {};
+    
     public Booking(int refCode, String custFirstName, String custLastName, 
             int numPeople, int roomNum, LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
