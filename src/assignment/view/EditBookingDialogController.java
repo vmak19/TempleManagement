@@ -6,6 +6,7 @@
 package assignment.view;
 
 import assignment.model.Booking;
+import assignment.model.Room;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -43,7 +44,7 @@ public class EditBookingDialogController {
     private Stage dialogStage;
     private Booking booking;
     private boolean okClicked = false;
-    private FindRoomDialogController findRoomDialogController;
+  //  private FindRoomDialogController findRoomDialogController;
     
     /**
      * Initializes the controller class. This method is automatically called
@@ -62,7 +63,7 @@ public class EditBookingDialogController {
         this.dialogStage = dialogStage;
     }
     
-    public void setFoundRoom(FindRoomDialogController findRoomDialogController) {
-        this.findRoomDialogController = findRoomDialogController;
-    }
+    //public void setFoundRoom(FindRoomDialogController findRoomDialogController) {
+    //    this.findRoomDialogController = findRoomDialogController;
+    //}
 }

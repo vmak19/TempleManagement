@@ -25,20 +25,20 @@ public class RoomQueries extends DatabaseQuery {
     PreparedStatement getAllAvailableRooms = null;
     ResultSet rs = null;
     List<RoomInfo> rooms;
-    List<AvailableRoom> availableRoom;
+    //List<AvailableRoom> availableRoom;
 
     public List<RoomInfo> getRooms() {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            getAllRooms = conn.prepareStatement("select ROOMID, DESCRIPTION, BASERATE "
+            getAllRooms = conn.prepareStatement("select ROOMID, ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
             rs = getAllRooms.executeQuery();
             while (rs.next()) {
                 rooms.add(
-                        new RoomInfo(rs.getInt("roomID"), rs.getString("description"),
+                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomtypeID"),
                         rs.getDouble("baseRate")));
             }
             rs.close();
@@ -50,28 +50,6 @@ public class RoomQueries extends DatabaseQuery {
         return rooms;
     }
     
-    public List<RoomInfo> getRooms() {
-        rooms = new ArrayList<RoomInfo>();
-        openConnection();
-        try {
-            getAllRooms = conn.prepareStatement("select ROOMID, DESCRIPTION, BASERATE "
-                    + "from app.ROOM "
-                    + "inner join app.ROOMTYPE "
-                    + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
-            rs = getAllRooms.executeQuery();
-            while (rs.next()) {
-                rooms.add(
-                        new RoomInfo(rs.getInt("roomID"), rs.getString("description"),
-                        rs.getDouble("baseRate")));
-            }
-            rs.close();
-            getAllRooms.close();
-        } catch (SQLException ex) {
-            System.out.println("getRoom() error!");
-        }
-        closeConnection();
-        return rooms;
-    }
     
     public int insertRoom(Room toInsert) {
         int returnValue = -1;
@@ -81,7 +59,7 @@ public class RoomQueries extends DatabaseQuery {
             insertRoom = conn.prepareStatement("insert into app.room "
                     + "(roomtypeid) "
                     + "values (?)", Statement.RETURN_GENERATED_KEYS);
-            insertRoom.setInt(1, toInsert.getRoomTypeID());            
+            insertRoom.setString(1, toInsert.getRoomTypeID());            
             insertRoom.executeUpdate();
 
             rs = insertRoom.getGeneratedKeys();
@@ -97,3 +75,4 @@ public class RoomQueries extends DatabaseQuery {
         closeConnection();
         return returnValue;
     }
+}

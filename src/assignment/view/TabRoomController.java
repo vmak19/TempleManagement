@@ -5,11 +5,19 @@
  */
 package assignment.view;
 
+import assignment.database.RoomQueries;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
 import assignment.model.RoomType;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -37,18 +45,66 @@ public class TabRoomController implements Initializable {
     @FXML
     private Label costPerNightLabel;
 
+    private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
+
+    private RoomQueries roomQueries;
+
+    public ObservableList<RoomInfo> getRoomData() {
+        return roomData;
+    }
+
+    public List<RoomInfo> getRoomsFromFile() {
+        List<RoomInfo> rooms = new ArrayList<RoomInfo>();
+        try {
+
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/rooms.csv"));
+
+            //for all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] roomID = s.split(",");
+                String[] description = s.split(",");
+                String[] baseRate = s.split(",");
+
+                RoomInfo newRoomInfo = new RoomInfo(
+                        Integer.parseInt(roomID[0]), // date of enrollment
+                        description[0],
+                        Double.parseDouble(baseRate[0]));
+
+                rooms.add(newRoomInfo);
+            }
+
+            //create room
+            //add to list
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getRoomsFromFile() Error!");
+            ex.printStackTrace();
+        }
+        return rooms;
+    }
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+
+            roomQueries = new RoomQueries();
+
             // Initialize the person table with the two columns.
+            roomData.addAll(getRoomsFromFile());
+            roomTable.setItems(roomData);
+
             roomNumColumn.setCellValueFactory(cellData -> cellData.getValue().roomIDProperty().asObject());
             roomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
 
             showRoomDetails(null);
-            
+
             roomTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showRoomDetails(newValue));
             System.out.println("TabRoom initialized!");

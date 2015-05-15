@@ -18,7 +18,7 @@ import javafx.beans.property.StringProperty;
  */
 public class RoomType {
     
-    private IntegerProperty roomTypeID;
+    private StringProperty roomTypeID;
     private StringProperty description;
     private DoubleProperty baseRate;
 
@@ -27,22 +27,22 @@ public class RoomType {
         this.baseRate = new SimpleDoubleProperty(baseRate);
     }
     
-    public RoomType(int roomTypeID, String description, double baseRate) {
-        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
+    public RoomType(String roomTypeID, String description, double baseRate) {
+        this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
     }
 
     // Room type
-    public int getRoomTypeID() {
+    public String getRoomTypeID() {
         return roomTypeID.get();
     }
 
-    public void setRoomTypeID(int roomTypeID) {
+    public void setRoomTypeID(String roomTypeID) {
         this.roomTypeID.set(roomTypeID);
     }
 
-    public IntegerProperty roomTypeIDProperty() {
+    public StringProperty roomTypeIDProperty() {
         return roomTypeID;        
     }
     

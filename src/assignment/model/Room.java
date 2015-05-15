@@ -7,6 +7,8 @@ package assignment.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 //just test stage 1
 //minimum 5 test
@@ -19,15 +21,15 @@ import javafx.beans.property.SimpleIntegerProperty;
 public class Room /*extends RoomType*/ {
 
     private IntegerProperty roomID;
-    private IntegerProperty roomTypeID;
+    private StringProperty roomTypeID;
 
-    public Room(int roomID, int roomTypeID) {
+    public Room(int roomID, String roomTypeID) {
         this.roomID = new SimpleIntegerProperty(roomID);
-        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
+        this.roomTypeID = new SimpleStringProperty(roomTypeID);
     }   
     
-    public Room(int roomTypeID) {
-        this.roomTypeID = new SimpleIntegerProperty(roomTypeID);
+    public Room(String roomTypeID) {
+        this.roomTypeID = new SimpleStringProperty(roomTypeID);
     }      
             
     public int getRoomID() {
@@ -42,15 +44,15 @@ public class Room /*extends RoomType*/ {
         return roomID;
     }
     
-    public int getRoomTypeID() {
+    public String getRoomTypeID() {
         return roomTypeID.get();
     }
 
-    public void setRoomTypeID(int roomTypeID) {
+    public void setRoomTypeID(String roomTypeID) {
         this.roomTypeID.set(roomTypeID);
     }
     
-    public IntegerProperty roomTypeIDProperty() {
+    public StringProperty roomTypeIDProperty() {
         return roomTypeID;
     }
 

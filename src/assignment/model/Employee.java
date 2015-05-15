@@ -101,4 +101,9 @@ public class Employee {
     public BooleanProperty isAdministratorProperty() {
         return isAdministrator;
     }
+    
+    @Override
+    public String toString() {
+        return "Employee " + userID + empFirstName;
+    }
 }

@@ -43,34 +43,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private AnchorPane loginScreen;
-    private ObservableList<Booking> bookingData = FXCollections.observableArrayList(); //Sim edit
-    private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
-    private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
-    private ObservableList<RoomType> roomTypeData = FXCollections.observableArrayList();
-    private BookingQueries bookingQueries;
-    private EmployeeQueries employeeQueries;
-    private RoomQueries roomQueries;
-    private RoomTypeQueries roomTypeQueries;
     
-    public ObservableList<Booking> getBookingData() {
-        return bookingData;
-    }
-
-    public ObservableList<Employee> getEmployeeData() {
-        return employeeData;
-    }
-
-    public ObservableList<RoomInfo> getRoomData() {
-        return roomData;
-    }
-
-    public ObservableList<RoomType> getRoomTypeData() {
-        return roomTypeData;
-    }
-    
-    public BookingQueries getBookingQueries() {
-        return bookingQueries;
-    }
 
     public MainApp() {
     }
@@ -79,29 +52,7 @@ public class MainApp extends Application {
         try {
             System.out.println("buildData() run");
             DatabaseSetup.setupDatabase();
-            bookingQueries = new BookingQueries();
-            employeeQueries = new EmployeeQueries();
-            roomQueries = new RoomQueries();
-            roomTypeQueries = new RoomTypeQueries();
-            System.out.println("Set Queries");
             
-            // employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
-            roomTypeQueries.insertRoomType(new RoomType("Single", 2500.95));
-            System.out.println("Set RoomType Data");
-            roomQueries.insertRoom(new Room(2));
-            System.out.println("Set Room Data");
-            System.out.println("Set Data");
-            
-            // Copy data from database to ObeservableList
-            System.out.println("Bookings in database (in buildData) :" + bookingQueries.getBookings());
-            //System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
-            System.out.println("Rooms in database (in buildData) :" + roomQueries.getRooms());
-            System.out.println("RoomTypes in database (in buildData) :" + roomTypeQueries.getRoomTypes());
-            
-            bookingData.addAll(bookingQueries.getBookings()); //Sim edit line added
-            employeeData.addAll(employeeQueries.getEmployees());
-            roomData.addAll(roomQueries.getRooms());
-            roomTypeData.addAll(roomTypeQueries.getRoomTypes());
         } catch (Exception e) {
             System.out.println("buildData() ERROR!");
             e.printStackTrace();
