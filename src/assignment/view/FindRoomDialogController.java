@@ -13,6 +13,7 @@ import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -36,6 +38,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 /**
  *
@@ -84,7 +88,11 @@ public class FindRoomDialogController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        availableRoomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().roomTypeIDProperty());
+        availableRoomTypeColumn.setCellValueFactory(
+                cellData -> cellData.getValue().roomTypeIDProperty());
+        
+        setDatePickerFormat();
+        setDisableDatePicker();
         
         // Clear the both tables whenever the checkInDate or checkOutDate is modified
         //checkInField.pressedProperty().addListener(
@@ -94,7 +102,10 @@ public class FindRoomDialogController implements Initializable {
                     availableRoomData.clear();
                     selectedRoomData.clear();
                     availableRoomTable.setItems(availableRoomData);
-                    selectedRoomTable.setItems(selectedRoomData);});
+                    selectedRoomTable.setItems(selectedRoomData);
+                    
+                    // Keep check-out date after check-in date
+                    checkOutField.setValue(checkInField.getValue().plusDays(1));});
         
         checkOutField.focusedProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -103,6 +114,7 @@ public class FindRoomDialogController implements Initializable {
                     selectedRoomData.clear();
                     availableRoomTable.setItems(availableRoomData);
                     selectedRoomTable.setItems(selectedRoomData);});
+        
     }
     
     /**
@@ -117,11 +129,8 @@ public class FindRoomDialogController implements Initializable {
     @FXML
     public void handleSearch() {
         if (isInputValidToSearch()) {
-            System.out.println("Valid to Search");
             availableRoomQueries.setFindRoomDialogController(this);
-            List<AvailableRoom> availableList = availableRoomQueries.getAvailableRooms();
-            if (availableList.isEmpty()) {
-                System.out.println("No result!");
+            if (availableRoomQueries.getAvailableRooms().isEmpty()) {
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.initOwner(findRoomDialogStage);
@@ -136,8 +145,10 @@ public class FindRoomDialogController implements Initializable {
                     availableRoomTable.setItems(availableRoomData);
 
                     // Set values for available room table.
-                    availableRoomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().roomTypeIDProperty());
-                    availableCostColumn.setCellValueFactory(cellData -> cellData.getValue().baseRateProperty().asObject());
+                    availableRoomTypeColumn.setCellValueFactory(
+                            cellData -> cellData.getValue().roomTypeIDProperty());
+                    availableCostColumn.setCellValueFactory(
+                            cellData -> cellData.getValue().baseRateProperty().asObject());
 
                 } catch (Exception e) {
                     System.out.println("Error! handleSearch()!");
@@ -309,6 +320,78 @@ public class FindRoomDialogController implements Initializable {
 
             return false;
         }
+    }
+    
+    public void setDatePickerFormat() {
+        StringConverter converter = new StringConverter<LocalDate>() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        };
+        checkInField.setConverter(converter);
+        checkOutField.setConverter(converter);
+    }
+    
+    /**
+     * Disable all dates that are before today for check-in date 
+     * and before check-in date for check-out date.
+     */
+    public void setDisableDatePicker() {
+        checkInField.setValue(LocalDate.now());
+        final Callback<DatePicker, DateCell> checkInDayCellFactory = 
+            new Callback<DatePicker, DateCell>() {
+                @Override
+                public DateCell call(final DatePicker datePicker) {
+                    return new DateCell() {
+                        @Override
+                        public void updateItem(LocalDate item, boolean empty) {
+                            super.updateItem(item, empty);
+                           
+                            if (item.isBefore(today)) {
+                                setDisable(true);
+                                setStyle("-fx-background-color: #ffc0cb;");
+                            }   
+                        }
+                    };
+                }
+            };
+        checkInField.setDayCellFactory(checkInDayCellFactory);
+        
+        final Callback<DatePicker, DateCell> checkOutDayCellFactory = 
+            new Callback<DatePicker, DateCell>() {
+                @Override
+                public DateCell call(final DatePicker datePicker) {
+                    return new DateCell() {
+                        @Override
+                        public void updateItem(LocalDate item, boolean empty) {
+                            super.updateItem(item, empty);
+                            
+                            
+                            if (item.isBefore(checkInField.getValue().plusDays(1))) {
+                                setDisable(true);
+                                setStyle("-fx-background-color: #ffc0cb;");
+                            }
+                        }
+                    };
+                }
+            };
+        checkOutField.setDayCellFactory(checkOutDayCellFactory);
     }
     
     /**

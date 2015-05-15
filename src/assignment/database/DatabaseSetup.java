@@ -74,37 +74,6 @@ public class DatabaseSetup extends DatabaseQuery {
 
         try {
 
-            // Determine if the booking table already exists or not
-            DatabaseMetaData dbmd = conn.getMetaData();
-            rs = dbmd.getTables(null, "APP", "BOOKING", null);
-
-            if (!rs.next()) {
-                // If the BOOKING table does not already exist we create it
-                createBookingTable = conn.prepareStatement(
-                        "CREATE TABLE APP.BOOKING ("
-                        + "\"REFCODE\" INT not null primary key "
-                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                        + "\"CUSTFIRSTNAME\" VARCHAR(100), "
-                        + "\"CUSTLASTNAME\" VARCHAR(100), "
-                        + "\"NUMPEOPLE\" INT, "
-                        + "\"ROOMID\" INT, "
-                        + "\"CREATEDDATE\" DATE, "
-                        + "\"NUMBREAKFAST\" INT, "
-                        + "\"CHECKIN\" TIMESTAMP, "
-                        + "\"CHECKOUT\" TIMESTAMP, "
-                        + "\"AMOUNTPAID\" DOUBLE, "
-                        + "\"AMOUNTDUE\" DOUBLE, "
-                        + "\"EARLYCHECKIN\" BOOLEAN, "
-                        + "\"LATECHECKOUT\" BOOLEAN, "
-                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
-                createBookingTable.execute();
-            }
-        } catch (SQLException ex) {
-            System.out.println("databaseSetup() for Table BOOKING error!");
-        }
-
-        try {
-
             // Determine if the EMPLOYEE table already exists or not
             DatabaseMetaData dbmd = conn.getMetaData();
             rs = dbmd.getTables(null, "APP", "EMPLOYEE", null);
@@ -167,7 +136,40 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOM error!");
         }
+        
+        try {
+
+            // Determine if the booking table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "BOOKING", null);
+
+            if (!rs.next()) {
+                // If the BOOKING table does not already exist we create it
+                createBookingTable = conn.prepareStatement(
+                        "CREATE TABLE APP.BOOKING ("
+                        + "\"REFCODE\" INT not null primary key "
+                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"CUSTFIRSTNAME\" VARCHAR(100), "
+                        + "\"CUSTLASTNAME\" VARCHAR(100), "
+                        + "\"NUMPEOPLE\" INT, "
+                        + "\"ROOMID\" INT, "
+                        + "\"CREATEDDATE\" DATE, "
+                        + "\"NUMBREAKFAST\" INT, "
+                        + "\"CHECKIN\" TIMESTAMP, "
+                        + "\"CHECKOUT\" TIMESTAMP, "
+                        + "\"AMOUNTPAID\" DOUBLE, "
+                        + "\"AMOUNTDUE\" DOUBLE, "
+                        + "\"EARLYCHECKIN\" BOOLEAN, "
+                        + "\"LATECHECKOUT\" BOOLEAN, "
+                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
+                createBookingTable.execute();
+            }
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table BOOKING error!");
+        }
+        
         closeConnection();
 
+        
     }
 }

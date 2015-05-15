@@ -23,8 +23,8 @@
                <children>
                   <Label minWidth="-Infinity" text="Check-in" />
                   <Label minWidth="-Infinity" text="Check-out" GridPane.columnIndex="1" />
-                  <DatePicker fx:id="checkInField" promptText="DD/MM/YYY" GridPane.rowIndex="1" />
-                  <DatePicker fx:id="checkOutField" promptText="DD/MM/YYY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <DatePicker fx:id="checkInField" promptText="YYYY/MM/DD" GridPane.rowIndex="1" />
+                  <DatePicker fx:id="checkOutField" promptText="YYYY/MM/DD" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <VBox.margin>
                   <Insets />

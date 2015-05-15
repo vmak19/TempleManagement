@@ -38,7 +38,8 @@ public class RoomQueries extends DatabaseQuery {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            getAllRooms = conn.prepareStatement("select ROOMID, ROOMTYPEID, BASERATE "
+            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
+                    + "app.ROOMTYPE.ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
@@ -63,31 +64,34 @@ public class RoomQueries extends DatabaseQuery {
         try {
             Date searchedCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
             Date searchedCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
-            getAllAvailableRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
-                    + "app.ROOM.ROOMTYPEID, BASERATE, CHECKIN, CHECKOUT, EARLYCHECKIN, LATECHECKOUT "
+            getAllAvailableRooms = conn.prepareStatement(
+                    "select * from app.ROOM "
+                    + "inner join app.ROOMTYPE on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+            );
+                    /*"select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
                     + "inner join app.BOOKING "
                     + "on app.BOOKING.ROOMID = app.ROOM.ROOMID "
-                    + "where app.ROOM.ROOMID not in "
-                    + "(select app.BOOKING.ROOMID "
-                    + "from app.BOOKING "
-                    + "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or (CHECKIN > 'searchedCheckIn' and CHECKOUT < 'searchedCheckOut')))");
+                    //+ "where not exists "
+                    //+ "(select app.BOOKING.ROOMID "
+                    //+ "from app.BOOKING "
+                    //+ "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
+                    //+ "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
+                    //+ "or ('searchedCheckIn' between CHECKIN and CHECKOUT)))"
+            );*/
             rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
                 availableRooms.add(
                         new AvailableRoom(rs.getInt("roomID"), rs.getString("roomTypeID"), 
-                                rs.getDouble("baseRate"), rs.getDate("checkIn").toLocalDate(),  
-                                rs.getDate("checkOut").toLocalDate(), 
-                                rs.getBoolean("earlyCheckIn"), rs.getBoolean("lateCheckOut")));
+                                rs.getDouble("baseRate")));
             }
             rs.close();
             getAllAvailableRooms.close();
         } catch (SQLException ex) {
             System.out.println("getRoom() error!");
+            ex.printStackTrace();
         }
         closeConnection();
         return availableRooms;

@@ -26,21 +26,21 @@ public class AvailableRoom {
     private IntegerProperty roomID;
     private StringProperty roomTypeID;
     private DoubleProperty baseRate;
-    private ObjectProperty<LocalDate> checkIn;
+    /*private ObjectProperty<LocalDate> checkIn;
     private ObjectProperty<LocalDate> checkOut;
     private BooleanProperty earlyCheckIn;
-    private BooleanProperty lateCheckOut;
+    private BooleanProperty lateCheckOut;*/
 
-    public AvailableRoom(int roomID, String roomTypeID, double baseRate, 
-            LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
-            boolean lateCheckOut) {
+    public AvailableRoom(int roomID, String roomTypeID, double baseRate/*,
+            LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn,
+    boolean lateCheckOut*/) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
-        this.checkIn = new SimpleObjectProperty(checkIn);
+        /*this.checkIn = new SimpleObjectProperty(checkIn);
         this.checkOut = new SimpleObjectProperty(checkOut);
         this.earlyCheckIn = new SimpleBooleanProperty(earlyCheckIn);
-        this.lateCheckOut = new SimpleBooleanProperty(lateCheckOut);
+        this.lateCheckOut = new SimpleBooleanProperty(lateCheckOut);*/
     }   
     
     // Room ID
@@ -70,57 +70,57 @@ public class AvailableRoom {
         return baseRate;
     }
     
-    // Check In
+    /*// Check In
     public LocalDate getCheckIn() {
-        return checkIn.get();
+    return checkIn.get();
     }
-
+    
     public ObjectProperty<LocalDate> checkInProperty() {
-        return checkIn;
+    return checkIn;
     }
     
     // Covert LocalDate to Date
     public Date getCheckInToDate() {
-        LocalDate localDate = getCheckIn();
-        //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date date = Date.valueOf(localDate);
-        return date;
+    LocalDate localDate = getCheckIn();
+    //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date date = Date.valueOf(localDate);
+    return date;
     }
     
     // Check Out
     public LocalDate getCheckOut() {
-        return checkOut.get();
+    return checkOut.get();
     }
-
+    
     public ObjectProperty<LocalDate> checkOutProperty() {
-        return checkOut;
+    return checkOut;
     }
     
     // Covert LocalDate to Date
     public Date getCheckOutToDate() {
-        LocalDate localDate = getCheckOut();
-        //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date date = Date.valueOf(localDate);
-        return date;
+    LocalDate localDate = getCheckOut();
+    //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    Date date = Date.valueOf(localDate);
+    return date;
     }
     
     // Early check in
     public boolean getEarlyCheckIn() {
-        return earlyCheckIn.get();
+    return earlyCheckIn.get();
     }
     
     public BooleanProperty earlyCheckInProperty() {
-        return earlyCheckIn;
+    return earlyCheckIn;
     }
     
     // Late check out
     public boolean getLateCheckOut() {
-        return lateCheckOut.get();
+    return lateCheckOut.get();
     }
     
     public BooleanProperty lateCheckOutProperty() {
-        return lateCheckOut;
-    }
+    return lateCheckOut;
+    }*/
     
     @Override
     public String toString() {
