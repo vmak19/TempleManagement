@@ -64,12 +64,12 @@ public class TabRoomController implements Initializable {
             while (scanner.hasNext()) {
                 String s = scanner.nextLine();
                 String[] roomID = s.split(",");
-                String[] description = s.split(",");
+                String[] roomTypeID = s.split(",");
                 String[] baseRate = s.split(",");
 
                 RoomInfo newRoomInfo = new RoomInfo(
                         Integer.parseInt(roomID[0]), // date of enrollment
-                        description[0],
+                        roomTypeID[1],
                         Double.parseDouble(baseRate[0]));
 
                 rooms.add(newRoomInfo);
@@ -101,7 +101,7 @@ public class TabRoomController implements Initializable {
             roomTable.setItems(roomData);
 
             roomNumColumn.setCellValueFactory(cellData -> cellData.getValue().roomIDProperty().asObject());
-            roomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+            roomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().roomTypeIDProperty());
 
             showRoomDetails(null);
 
@@ -117,7 +117,7 @@ public class TabRoomController implements Initializable {
         if (roomInfo != null) {
             // Fill the labels with info from the room object.
             roomNoLabel.setText(Integer.toString(roomInfo.getRoomID()));
-            roomTypeLabel.setText(roomInfo.getDescription());
+            roomTypeLabel.setText(roomInfo.getRoomTypeID());
             costPerNightLabel.setText(Double.toString(roomInfo.getBaseRate()));
         } else {
             // Room is null, remove all the information.

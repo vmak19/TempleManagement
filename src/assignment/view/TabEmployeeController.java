@@ -10,6 +10,7 @@ import assignment.database.EmployeeQueries;
 import assignment.model.Employee;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,17 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -51,12 +57,16 @@ public class TabEmployeeController implements Initializable {
     @FXML
     private CheckBox administratorBox;
 
+    Stage myStage;
+
+    void setMyStage(Stage primaryStage) {
+        this.myStage = primaryStage;
+    } 
+    
     MainApp mainApp;
-
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
-
     private EmployeeQueries employeeQueries;
-
+    
     public ObservableList<Employee> getEmployeeData() {
         return employeeData;
     }
@@ -99,6 +109,7 @@ public class TabEmployeeController implements Initializable {
         }
         return employees;
     }
+    
 
     /**
      * Initializes the controller class.

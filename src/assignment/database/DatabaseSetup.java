@@ -28,11 +28,13 @@ public class DatabaseSetup extends DatabaseQuery {
     PreparedStatement createEmployeeTable = null;
     PreparedStatement createRoomTable = null;
     PreparedStatement createRoomTypeTable = null;
+    PreparedStatement createRoomInfoTable = null;
     ResultSet rs = null;
 
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList(); //Sim edit
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
     private ObservableList<RoomType> roomTypeData = FXCollections.observableArrayList();
+    private ObservableList<RoomInfo> roomInfoData = FXCollections.observableArrayList();
     private BookingQueries bookingQueries;
     private EmployeeQueries employeeQueries;
     private RoomTypeQueries roomTypeQueries;
@@ -40,17 +42,23 @@ public class DatabaseSetup extends DatabaseQuery {
     public ObservableList<Booking> getBookingData() {
         return bookingData;
     }
+
     public ObservableList<Employee> getEmployeeData() {
         return employeeData;
     }
-    
+
     public ObservableList<RoomType> getRoomTypeData() {
         return roomTypeData;
     }
+
+    public ObservableList<RoomInfo> getRoomInfoData() {
+        return roomInfoData;
+    }
+
     public BookingQueries getBookingQueries() {
         return bookingQueries;
     }
-    
+
     public static void setupDatabase() {
         DatabaseSetup dbs = new DatabaseSetup();
         dbs.databaseSetup();
@@ -159,8 +167,32 @@ public class DatabaseSetup extends DatabaseQuery {
             System.out.println("databaseSetup() for Table ROOM error!");
         }
         closeConnection();
-    }    
-    
+
+        /*try {
+
+            // Determine if the ROOMINFO table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "ROOMINFO", null);
+
+            if (!rs.next()) {
+                // If the ROOM_INFO table does not already exist we create it
+                createRoomInfoTable = conn.prepareStatement(
+                        "CREATE TABLE APP.ROOMINFO ("
+                        + "\"ROOMID\" INT), "
+                        + "\"ROOMTYPEID\" VARCHAR(50), "
+                        + "\"DESCRIPTION\" VARCHAR(200), "
+                        + "\"BASERATE\" DOUBLE, "
+                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID), "
+                        + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
+                createRoomInfoTable.execute();
+
+                System.out.println("created Table ROOMINFO");
+            }
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table ROOMINFO error!");
+        }*/
+    }
+
 }
 
 /*
