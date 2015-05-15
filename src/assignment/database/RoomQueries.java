@@ -32,7 +32,8 @@ public class RoomQueries extends DatabaseQuery {
     ResultSet rs = null;
     List<RoomInfo> rooms;
     List<AvailableRoom> availableRooms;
-
+    FindRoomDialogController findRoomDialogController;
+    
     public List<RoomInfo> getRooms() {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
@@ -60,12 +61,10 @@ public class RoomQueries extends DatabaseQuery {
         availableRooms = new ArrayList<AvailableRoom>();
         openConnection();
         try {
-            System.out.println("Check1");
-            Date searchedCheckIn = Date.valueOf((new FindRoomDialogController()).checkInField.getValue());
-            Date searchedCheckOut = Date.valueOf((new FindRoomDialogController()).checkOutField.getValue());
-        System.out.println("Check2");
-            getAllAvailableRooms = conn.prepareStatement("select ROOMID, "
-                    + "ROOMTYPEID, BASERATE, CHECKIN, CHECKOUT, EARLYCHECKIN, LATECHECKOUT "
+            Date searchedCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
+            Date searchedCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
+            getAllAvailableRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
+                    + "app.ROOM.ROOMTYPEID, BASERATE, CHECKIN, CHECKOUT, EARLYCHECKIN, LATECHECKOUT "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
@@ -74,10 +73,10 @@ public class RoomQueries extends DatabaseQuery {
                     + "where app.ROOM.ROOMID not in "
                     + "(select app.BOOKING.ROOMID "
                     + "from app.BOOKING "
-                    + "where (CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
+                    + "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
                     + "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or (CHECKIN > 'searchedCheckIn' and CHECKOUT < 'searchedCheckOut'))");
-            rs = getAllRooms.executeQuery();
+                    + "or (CHECKIN > 'searchedCheckIn' and CHECKOUT < 'searchedCheckOut')))");
+            rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
                 availableRooms.add(
                         new AvailableRoom(rs.getInt("roomID"), rs.getString("roomTypeID"), 
@@ -86,7 +85,7 @@ public class RoomQueries extends DatabaseQuery {
                                 rs.getBoolean("earlyCheckIn"), rs.getBoolean("lateCheckOut")));
             }
             rs.close();
-            getAllRooms.close();
+            getAllAvailableRooms.close();
         } catch (SQLException ex) {
             System.out.println("getRoom() error!");
         }
@@ -118,5 +117,9 @@ public class RoomQueries extends DatabaseQuery {
         
         closeConnection();
         return returnValue;
+    }
+    
+    public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
+        this.findRoomDialogController = findRoomDialogController;
     }
 }

@@ -30,7 +30,7 @@ public class Booking {
     private StringProperty custFirstName;
     private StringProperty custLastName;
     private IntegerProperty numPeople;
-    private IntegerProperty roomNum;
+    private IntegerProperty roomID;
     private ObjectProperty<LocalDate> createdDate;
     private IntegerProperty numBreakfast;
     private ObjectProperty<LocalDate> checkIn;
@@ -46,14 +46,14 @@ public class Booking {
     public Booking() {};
     
     public Booking(int refCode, String custFirstName, String custLastName, 
-            int numPeople, int roomNum, LocalDate createdDate, int numBreakfast, 
+            int numPeople, int roomID, LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
             boolean lateCheckOut, double amountPaid, double amountDue) {
         this.refCode = new SimpleIntegerProperty(refCode);
         this.custFirstName = new SimpleStringProperty(custFirstName);
         this.custLastName = new SimpleStringProperty(custLastName);
         this.numPeople = new SimpleIntegerProperty(numPeople);
-        this.roomNum = new SimpleIntegerProperty(roomNum);
+        this.roomID = new SimpleIntegerProperty(roomID);
         this.createdDate = new SimpleObjectProperty(createdDate);
         this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
         this.checkIn = new SimpleObjectProperty(checkIn);
@@ -65,13 +65,13 @@ public class Booking {
     }
     
     public Booking(String custFirstName, String custLastName, 
-            int numPeople, int roomNum, LocalDate createdDate, int numBreakfast, 
+            int numPeople, int roomID, LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
             boolean lateCheckOut, double amountPaid, double amountDue) {
         this.custFirstName = new SimpleStringProperty(custFirstName);
         this.custLastName = new SimpleStringProperty(custLastName);
         this.numPeople = new SimpleIntegerProperty(numPeople);
-        this.roomNum = new SimpleIntegerProperty(roomNum);
+        this.roomID = new SimpleIntegerProperty(roomID);
         this.createdDate = new SimpleObjectProperty(createdDate);
         this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
         this.checkIn = new SimpleObjectProperty(checkIn);
@@ -135,16 +135,16 @@ public class Booking {
     }
     
     // Room Number
-    public int getRoomNum() {
-        return roomNum.get();
+    public int getRoomID() {
+        return roomID.get();
     }
 
-    public void setRoomNum(int roomNum) {
-        this.roomNum.set(roomNum);
+    public void setRoomID(int roomID) {
+        this.roomID.set(roomID);
     }
 
-    public IntegerProperty roomNumProperty() {
-        return roomNum;
+    public IntegerProperty roomIDProperty() {
+        return roomID;
     }
     
     // Birthday

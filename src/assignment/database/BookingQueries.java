@@ -38,7 +38,7 @@ public class BookingQueries extends DatabaseQuery{
                 bookings.add(
                     new Booking(rs.getInt("refCode"), rs.getString("custFirstName"), 
                             rs.getString("custLastName"), rs.getInt("numPeople"), 
-                            rs.getInt("roomNum"), rs.getDate("createdDate").toLocalDate(), 
+                            rs.getInt("roomID"), rs.getDate("createdDate").toLocalDate(), 
                             rs.getInt("numBreakfast"), rs.getDate("checkIn").toLocalDate(),
                             rs.getDate("checkOut").toLocalDate(), rs.getBoolean("earlyCheckIn"), 
                             rs.getBoolean("lateCheckOut"), rs.getDouble("amountPaid"), 
@@ -59,14 +59,14 @@ public class BookingQueries extends DatabaseQuery{
         try {
             
             insertBooking = conn.prepareStatement("insert into app.booking "
-                    + "(custFirstName, custLastName, numPeople, roomNum, "
+                    + "(custFirstName, custLastName, numPeople, roomID, "
                     + "createdDate, numBreakfast, checkIn, checkOut, earlyCheckIn, "
                     + "lateCheckOut, amountPaid, amountDue) "
                     + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertBooking.setString(1, toInsert.getCustFirstName());
             insertBooking.setString(2, toInsert.getCustLastName());
             insertBooking.setInt(3, toInsert.getNumPeople());
-            insertBooking.setInt(4, toInsert.getRoomNum());
+            insertBooking.setInt(4, toInsert.getRoomID());
             insertBooking.setDate(5, toInsert.getCreatedDateToDate());
             insertBooking.setInt(6, toInsert.getNumBreakfast());
             insertBooking.setDate(7, toInsert.getCheckInToDate());

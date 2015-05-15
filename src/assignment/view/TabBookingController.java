@@ -47,7 +47,7 @@ public class TabBookingController implements Initializable {
     @FXML
     private Label numPeopleLabel;
     @FXML
-    private Label roomNumLabel;
+    private Label roomIDLabel;
     @FXML
     private Label createdDateLabel;
     @FXML
@@ -64,7 +64,7 @@ public class TabBookingController implements Initializable {
     private Label amountPaidLabel;
     @FXML
     private Label amountDueLabel;
-
+    
     @FXML
     private Button addButton;
     @FXML
@@ -102,7 +102,7 @@ public class TabBookingController implements Initializable {
                 String[] fname = s.split(",");
                 String[] lname = s.split(",");
                 String[] numPeople = s.split(",");
-                String[] roomNum = s.split(",");
+                String[] roomID = s.split(",");
                 String[] createdDate = s.split(",");
                 String[] numBreakfast = s.split(",");
                 String[] checkIn = s.split(",");
@@ -117,7 +117,7 @@ public class TabBookingController implements Initializable {
                         fname[1],
                         lname[2],
                         Integer.parseInt(numPeople[3]),
-                        Integer.parseInt(roomNum[4]),    
+                        Integer.parseInt(roomID[4]),    
                         DateUtil.parse(createdDate[5]),
                         Integer.parseInt(numBreakfast[6]),
                         DateUtil.parse(checkIn[7]),
@@ -176,7 +176,7 @@ public class TabBookingController implements Initializable {
             custFirstNameLabel.setText(booking.getCustFirstName());
             custLastNameLabel.setText(booking.getCustLastName());
             numPeopleLabel.setText(Integer.toString(booking.getNumPeople()));
-            roomNumLabel.setText(Integer.toString(booking.getRoomNum()));
+            roomIDLabel.setText(Integer.toString(booking.getRoomID()));
             createdDateLabel.setText(DateUtil.format(booking.getCreatedDate()));
             numBreakfastLabel.setText(Integer.toString(booking.getNumBreakfast()));
             checkInLabel.setText(DateUtil.format(booking.getCheckIn()));
@@ -199,7 +199,7 @@ public class TabBookingController implements Initializable {
             custFirstNameLabel.setText("");
             custLastNameLabel.setText("");
             numPeopleLabel.setText("");
-            roomNumLabel.setText("");
+            roomIDLabel.setText("");
             createdDateLabel.setText("");
             numBreakfastLabel.setText("");
             checkInLabel.setText("");
@@ -245,9 +245,9 @@ public class TabBookingController implements Initializable {
     private void handleNewBooking() {
         Booking tempBooking = new Booking();
         boolean okClicked = showFindRoomDialog(tempBooking);
-        if (okClicked) {
-            getBookingData().add(tempBooking);
-        }
+        //if (okClicked) {
+        //    getBookingData().add(tempBooking);
+        //}
     }
     
     /**

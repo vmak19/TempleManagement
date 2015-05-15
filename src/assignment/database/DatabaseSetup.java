@@ -87,7 +87,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"CUSTFIRSTNAME\" VARCHAR(100), "
                         + "\"CUSTLASTNAME\" VARCHAR(100), "
                         + "\"NUMPEOPLE\" INT, "
-                        + "\"ROOMNUM\" INT, "
+                        + "\"ROOMID\" INT, "
                         + "\"CREATEDDATE\" DATE, "
                         + "\"NUMBREAKFAST\" INT, "
                         + "\"CHECKIN\" TIMESTAMP, "
@@ -95,7 +95,8 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"AMOUNTPAID\" DOUBLE, "
                         + "\"AMOUNTDUE\" DOUBLE, "
                         + "\"EARLYCHECKIN\" BOOLEAN, "
-                        + "\"LATECHECKOUT\" BOOLEAN)");
+                        + "\"LATECHECKOUT\" BOOLEAN, "
+                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
                 createBookingTable.execute();
             }
         } catch (SQLException ex) {
@@ -168,55 +169,5 @@ public class DatabaseSetup extends DatabaseQuery {
         }
         closeConnection();
 
-        /*try {
-
-            // Determine if the ROOMINFO table already exists or not
-            DatabaseMetaData dbmd = conn.getMetaData();
-            rs = dbmd.getTables(null, "APP", "ROOMINFO", null);
-
-            if (!rs.next()) {
-                // If the ROOM_INFO table does not already exist we create it
-                createRoomInfoTable = conn.prepareStatement(
-                        "CREATE TABLE APP.ROOMINFO ("
-                        + "\"ROOMID\" INT), "
-                        + "\"ROOMTYPEID\" VARCHAR(50), "
-                        + "\"DESCRIPTION\" VARCHAR(200), "
-                        + "\"BASERATE\" DOUBLE, "
-                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID), "
-                        + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
-                createRoomInfoTable.execute();
-
-                System.out.println("created Table ROOMINFO");
-            }
-        } catch (SQLException ex) {
-            System.out.println("databaseSetup() for Table ROOMINFO error!");
-        }*/
     }
-
 }
-
-/*
-
- System.out.println("Set Queries");
-
- //bookingQueries.insertBooking(new Booking("Hans", "Muster", 2, 12, LocalDate.of(1999, 2, 23), 3, LocalDate.of(2099, 2, 22), LocalDate.of(2199, 2, 2), true, false, 12.2, 12));
- //employeeQueries.insertEmployee(new Employee("pw2", "Bob", "Dylan", true));
- //employeeQueries.insertEmployee(new Employee("pw1", "Jane", "Chan", false));
- System.out.println("1");
- roomTypeQueries.insertRoomType(new RoomType("Single", "hj", 2500.95));
- System.out.println("2");
- roomQueries.insertRoom(new Room("Single"));
- System.out.println("3");
- System.out.println("Set Data");
-
- // Copy data from database to ObeservableList
- System.out.println("Bookings in database (in buildData) :" + bookingQueries.getBookings());
- //System.out.println("Employees in database (in buildData) :" + employeeQueries.getEmployees());
- //System.out.println("Rooms in database (in buildData) :" + roomQueries.getRooms());
- System.out.println("RoomTypes in database (in buildData) :" + roomTypeQueries.getRoomTypes());
-
- bookingData.addAll(bookingQueries.getBookings()); //Sim edit line added
- employeeData.addAll(employeeQueries.getEmployees());
- roomData.addAll(roomQueries.getRooms());
- roomTypeData.addAll(roomTypeQueries.getRoomTypes());
- */

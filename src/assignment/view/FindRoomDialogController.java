@@ -13,6 +13,7 @@ import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -72,7 +74,7 @@ public class FindRoomDialogController implements Initializable {
     private ObservableList<AvailableRoom> availableRoomData = FXCollections.observableArrayList();
     private ObservableList<Booking> selectedRoomData = FXCollections.observableArrayList();
     
-    private RoomQueries availableRoomQueries; // TO-DO: Create this query
+    private RoomQueries availableRoomQueries = new RoomQueries(); // TO-DO: Create this query
     private Stage editBookingDialogStage;
     private Stage findRoomDialogStage;
     private boolean bookClicked = false;
@@ -116,9 +118,9 @@ public class FindRoomDialogController implements Initializable {
     public void handleSearch() {
         if (isInputValidToSearch()) {
             System.out.println("Valid to Search");
-            
-            
-            if (availableRoomQueries.getAvailableRooms().isEmpty()) {
+            availableRoomQueries.setFindRoomDialogController(this);
+            List<AvailableRoom> availableList = availableRoomQueries.getAvailableRooms();
+            if (availableList.isEmpty()) {
                 System.out.println("No result!");
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
