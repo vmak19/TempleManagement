@@ -6,9 +6,11 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.AvailableRoomQueries;
 import assignment.database.RoomQueries;
 import assignment.model.AvailableRoom;
 import assignment.model.Booking;
+import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
@@ -48,8 +50,8 @@ import javafx.util.StringConverter;
 public class FindRoomDialogController implements Initializable {
     
     @FXML private TableView availableRoomTable;
-    @FXML private TableColumn<AvailableRoom, String> availableRoomTypeColumn;
-    @FXML private TableColumn<AvailableRoom, Double> availableCostColumn;
+    @FXML private TableColumn<RoomInfo, String> availableRoomTypeColumn;
+    @FXML private TableColumn<RoomInfo, Double> availableCostColumn;
     
     @FXML private TableView selectedRoomTable;
     @FXML private TableColumn<Booking, String> selectedRoomTypeColumn;
@@ -75,10 +77,11 @@ public class FindRoomDialogController implements Initializable {
     @FXML private Button bookButton;
     @FXML private Button cancelButton;
     
-    private ObservableList<AvailableRoom> availableRoomData = FXCollections.observableArrayList();
+    private ObservableList<RoomInfo> availableRoomData = FXCollections.observableArrayList();
     private ObservableList<Booking> selectedRoomData = FXCollections.observableArrayList();
     
-    private RoomQueries availableRoomQueries = new RoomQueries(); // TO-DO: Create this query
+    private RoomQueries availableRoomQueries = new RoomQueries();
+    //private RoomQueries availableRoomQueries = new RoomQueries(); // TO-DO: Create this query
     private Stage editBookingDialogStage;
     private Stage findRoomDialogStage;
     private boolean bookClicked = false;
@@ -129,18 +132,18 @@ public class FindRoomDialogController implements Initializable {
     @FXML
     public void handleSearch() {
         if (isInputValidToSearch()) {
-            availableRoomQueries.setFindRoomDialogController(this);
-            if (availableRoomQueries.getAvailableRooms().isEmpty()) {
+            //availableRoomQueries.setFindRoomDialogController(this);
+            if (availableRoomQueries.getRooms().isEmpty()) {
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.initOwner(findRoomDialogStage);
-                alert.setTitle("Unavailble room");
+                alert.setTitle("Unavailable room");
                 alert.setContentText("No room is available!");
 
                 alert.showAndWait();
             } else {
                 try {
-                    availableRoomData.addAll(availableRoomQueries.getAvailableRooms()); // TO-DO: Create this method in the query
+                    availableRoomData.addAll(availableRoomQueries.getRooms()); // TO-DO: Create this method in the query
 
                     availableRoomTable.setItems(availableRoomData);
 
@@ -303,7 +306,7 @@ public class FindRoomDialogController implements Initializable {
     private boolean isInputValidToBook() {
         String errorMessage = "";
         
-        if (selectedRoomData == null) {
+        if (selectedRoomData.isEmpty()) {
             errorMessage += "No room is added!\n";
         }
         if (errorMessage.length() == 0) {

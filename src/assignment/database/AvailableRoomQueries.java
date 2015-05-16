@@ -6,17 +6,12 @@
 package assignment.database;
 
 import assignment.model.AvailableRoom;
-import assignment.model.Room;
 import assignment.model.RoomInfo;
-import assignment.util.DateUtil;
 import assignment.view.FindRoomDialogController;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,61 +19,62 @@ import java.util.List;
  *
  * @author z5018077
  */
-public class RoomQueries extends DatabaseQuery {
+public class AvailableRoomQueries extends DatabaseQuery {
 
-    PreparedStatement insertRoom = null;
-    PreparedStatement getAllRooms = null;
     PreparedStatement getAllAvailableRooms = null;
     ResultSet rs = null;
-    List<RoomInfo> rooms;
-    List<AvailableRoom> availableRooms;
+    List<RoomInfo> availableRooms;
     FindRoomDialogController findRoomDialogController;
     
-    public List<RoomInfo> getRooms() {
-        rooms = new ArrayList<RoomInfo>();
+    public List<RoomInfo> getAvailableRooms() {
+        availableRooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
+            getAllAvailableRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
                     + "app.ROOMTYPE.ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
-            rs = getAllRooms.executeQuery();
+            rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
-                rooms.add(
+                availableRooms.add(
                         new RoomInfo(rs.getInt("roomID"), rs.getString("roomtypeID"),
                         rs.getDouble("baseRate")));
             }
             rs.close();
-            getAllRooms.close();
+            getAllAvailableRooms.close();
         } catch (SQLException ex) {
             System.out.println("getRoom() error!");
         }
         closeConnection();
-        return rooms;
+        return availableRooms;
     }
     
-    public List<AvailableRoom> getAvailableRooms() {
+    /*public List<AvailableRoom> getAvailableRooms() {
         availableRooms = new ArrayList<AvailableRoom>();
         openConnection();
         try {
             Date searchedCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
             Date searchedCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
-            getAllAvailableRooms = conn.prepareStatement(
-                    "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE "
+            getAllAvailableRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
+                    + "app.ROOMTYPE.ROOMTYPEID, BASERATE "
+                    + "from app.ROOM "
+                    + "inner join app.ROOMTYPE "
+                    + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
+                    /*"select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
                     + "inner join app.BOOKING "
                     + "on app.BOOKING.ROOMID = app.ROOM.ROOMID "
-                    + "where not exists "
-                    + "(select app.BOOKING.ROOMID "
-                    + "from app.BOOKING "
-                    + "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or ('searchedCheckIn' between CHECKIN and CHECKOUT)))"
-            );
-            rs = getAllAvailableRooms.executeQuery();
+                    //+ "where not exists "
+                    //+ "(select app.BOOKING.ROOMID "
+                    //+ "from app.BOOKING "
+                    //+ "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
+                    //+ "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
+                    //+ "or ('searchedCheckIn' between CHECKIN and CHECKOUT)))"
+            );*/
+            /*rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
                 availableRooms.add(
                         new AvailableRoom(rs.getInt("roomID"), rs.getString("roomTypeID"), 
@@ -92,27 +88,7 @@ public class RoomQueries extends DatabaseQuery {
         }
         closeConnection();
         return availableRooms;
-    }
-
-    
-    public void insertRoom(Room toInsert) {
-        openConnection();
-        
-        try {                
-            insertRoom = conn.prepareStatement("insert into app.room "
-                    + "(roomid, roomtypeid) "
-                    + "values (?, ?)");
-            insertRoom.setInt(1, toInsert.getRoomID());  
-            insertRoom.setString(2, toInsert.getRoomTypeID());            
-            insertRoom.executeUpdate();
-            
-            insertRoom.close();
-        } catch (SQLException ex) {
-            System.out.println("insertRoom() ERROR!");
-            ex.printStackTrace();
-        }
-        closeConnection();
-    }
+    }*/
     
     public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
         this.findRoomDialogController = findRoomDialogController;

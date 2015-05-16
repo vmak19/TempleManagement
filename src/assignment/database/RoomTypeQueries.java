@@ -44,8 +44,7 @@ public class RoomTypeQueries extends DatabaseQuery {
         return roomTypes;
     }
 
-    public int insertRoomType(RoomType toInsert) {
-        int returnValue = -1;
+    public void insertRoomType(RoomType toInsert) {
         openConnection();
         try {
             insertRoomType = conn.prepareStatement("insert into app.roomtype "
@@ -55,10 +54,7 @@ public class RoomTypeQueries extends DatabaseQuery {
             insertRoomType.setString(2, toInsert.getDescription());
             insertRoomType.setDouble(3, toInsert.getBaseRate());
             insertRoomType.executeUpdate();
-
-            rs.next();
-            returnValue = rs.getInt(1);
-            rs.close();
+            
             insertRoomType.close();
         } catch (SQLException ex) {
             System.out.println("insertRoomType() ERROR!");
@@ -66,6 +62,5 @@ public class RoomTypeQueries extends DatabaseQuery {
         }
 
         closeConnection();
-        return returnValue;
     }
 }

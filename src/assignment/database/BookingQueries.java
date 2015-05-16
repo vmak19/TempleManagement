@@ -84,6 +84,7 @@ public class BookingQueries extends DatabaseQuery{
             insertBooking.close();
         } catch (SQLException ex) {
             System.out.println("ERROR! insertBooking() ERROR!");
+            ex.printStackTrace();
         }
 
         closeConnection();
@@ -99,6 +100,7 @@ public class BookingQueries extends DatabaseQuery{
             System.out.println("deleted");
         } catch (SQLException ex) {
             System.out.println("ERROR! deleteBooking()!");
+            ex.printStackTrace();
         }
         closeConnection();
     }

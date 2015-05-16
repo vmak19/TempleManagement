@@ -43,7 +43,6 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private AnchorPane loginScreen;
-    
 
     public MainApp() {}
 

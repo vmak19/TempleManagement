@@ -8,14 +8,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import assignment.model.Booking;
 import assignment.util.DateUtil;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -72,10 +67,9 @@ public class TabBookingController implements Initializable {
 
     MainApp mainApp;
 
-
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
 
-    private BookingQueries bookingQueries;
+    private BookingQueries bookingQueries = new BookingQueries();
 
     public ObservableList<Booking> getBookingData() {
         return bookingData;
@@ -85,68 +79,12 @@ public class TabBookingController implements Initializable {
      * The constructor. The constructor is called before the initialize()
      * method.
      */
-    public TabBookingController() {
-    }
-
-    public List<Booking> getBookingsFromFile() {
-        List<Booking> bookings = new ArrayList<Booking>();
-        try {
-
-            // Open the file
-            Scanner scanner = new Scanner(new File("resources/bookings.csv"));
-
-            //for all lines in file
-            while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                String[] refCode = s.split(",");
-                String[] fname = s.split(",");
-                String[] lname = s.split(",");
-                String[] numPeople = s.split(",");
-                String[] roomID = s.split(",");
-                String[] createdDate = s.split(",");
-                String[] numBreakfast = s.split(",");
-                String[] checkIn = s.split(",");
-                String[] checkOut = s.split(",");
-                String[] amountPaid = s.split(",");
-                String[] amountDue = s.split(",");
-                String[] earlyCheckIn = s.split(",");
-                String[] lateCheckOut = s.split(",");
-
-                Booking newBooking = new Booking(
-                        Integer.parseInt(refCode[0]),
-                        fname[1],
-                        lname[2],
-                        Integer.parseInt(numPeople[3]),
-                        Integer.parseInt(roomID[4]),    
-                        DateUtil.parse(createdDate[5]),
-                        Integer.parseInt(numBreakfast[6]),
-                        DateUtil.parse(checkIn[7]),
-                        DateUtil.parse(checkOut[8]),
-                        Boolean.parseBoolean(earlyCheckIn[9]),
-                        Boolean.parseBoolean(lateCheckOut[10]),
-                        Double.parseDouble(amountPaid[11]),
-                        Double.parseDouble(amountDue[12]));
-                bookings.add(newBooking);
-            }
-
-            //create room
-            //add to list
-            // Close the file
-            scanner.close();
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("getBookingsFromFile() Error!");
-            ex.printStackTrace();
-        }
-        return bookings;
-    }
+    public TabBookingController() {}
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            bookingQueries = new BookingQueries();
-
-            bookingData.addAll(getBookingsFromFile());
+            bookingData.addAll(bookingQueries.getBookings());
             bookingTable.setItems(bookingData);
 
             // Initialize the booking table with the three columns.
@@ -218,7 +156,7 @@ public class TabBookingController implements Initializable {
             int selectedIndex = bookingTable.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
                 // Delete record in the database
-               // mainApp.getBookingQueries().deleteBooking(bookingTable.getSelectionModel().getSelectedItem());
+                bookingQueries.deleteBooking(bookingTable.getSelectionModel().getSelectedItem());
 
                 // Delete record on the table
                 bookingTable.getItems().remove(selectedIndex);

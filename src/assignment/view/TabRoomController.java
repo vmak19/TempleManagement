@@ -46,45 +46,10 @@ public class TabRoomController implements Initializable {
     private Label costPerNightLabel;
 
     private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
-
-    private RoomQueries roomQueries;
+    private RoomQueries roomQueries = new RoomQueries();
 
     public ObservableList<RoomInfo> getRoomData() {
         return roomData;
-    }
-
-    public List<RoomInfo> getRoomsFromFile() {
-        List<RoomInfo> rooms = new ArrayList<RoomInfo>();
-        try {
-
-            // Open the file
-            Scanner scanner = new Scanner(new File("resources/rooms.csv"));
-
-            //for all lines in file
-            while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                String[] roomID = s.split(",");
-                String[] roomTypeID = s.split(",");
-                String[] baseRate = s.split(",");
-
-                RoomInfo newRoomInfo = new RoomInfo(
-                        Integer.parseInt(roomID[0]), // date of enrollment
-                        roomTypeID[1],
-                        Double.parseDouble(baseRate[0]));
-
-                rooms.add(newRoomInfo);
-            }
-
-            //create room
-            //add to list
-            // Close the file
-            scanner.close();
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("getRoomsFromFile() Error!");
-            ex.printStackTrace();
-        }
-        return rooms;
     }
 
     /**
@@ -93,11 +58,8 @@ public class TabRoomController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-
-            roomQueries = new RoomQueries();
-
             // Initialize the person table with the two columns.
-            roomData.addAll(getRoomsFromFile());
+            roomData.addAll(roomQueries.getRooms());
             roomTable.setItems(roomData);
 
             roomNumColumn.setCellValueFactory(cellData -> cellData.getValue().roomIDProperty().asObject());
