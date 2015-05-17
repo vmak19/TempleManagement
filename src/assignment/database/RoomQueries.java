@@ -36,7 +36,7 @@ public class RoomQueries extends DatabaseQuery {
         openConnection();
         try {
             getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
-                    + "app.ROOMTYPE.ROOMTYPEID, BASERATE "
+                    + "app.ROOMTYPE.ROOMTYPEID, BASERATE, CAPACITY "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
@@ -65,7 +65,7 @@ public class RoomQueries extends DatabaseQuery {
             System.out.println(findRoomDialogController.getSearchRoomType());
             
             getAllAvailableRooms = conn.prepareStatement(
-                    "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE "
+                    "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
@@ -86,6 +86,7 @@ public class RoomQueries extends DatabaseQuery {
             getAllAvailableRooms.setDate(4, searchCheckOut);
             getAllAvailableRooms.setDate(5, searchCheckIn);
             getAllAvailableRooms.setDate(6, searchCheckIn);
+            //getAllAvailableRooms.setArray(7, conn.createArrayOf("VARCHAR", findRoomDialogController.getSearchRoomTypeArray()));
             getAllAvailableRooms.setString(7, findRoomDialogController.getSearchRoomType());
             //getAllAvailableRooms.setBoolean(7, findRoomDialogController.getSearchEarlyCheckIn());
             //getAllAvailableRooms.setBoolean(8, findRoomDialogController.getSearchLateCheckOut());

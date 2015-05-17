@@ -27,6 +27,7 @@ public class RoomInfo {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
+        this.capacity = new SimpleIntegerProperty(capacity);
     }   
 
     public RoomInfo(int roomID, String roomTypeID, String description, double baseRate) {
