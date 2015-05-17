@@ -6,23 +6,19 @@
 package assignment.view;
 
 import assignment.MainApp;
-import assignment.database.AvailableRoomQueries;
 import assignment.database.RoomQueries;
 import assignment.model.AvailableRoom;
 import assignment.model.Booking;
+import assignment.model.Room;
 import assignment.model.RoomInfo;
-import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -33,11 +29,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -54,8 +48,8 @@ public class FindRoomDialogController implements Initializable {
     @FXML private TableColumn<RoomInfo, Double> availableCostColumn;
     
     @FXML private TableView selectedRoomTable;
-    @FXML private TableColumn<Booking, String> selectedRoomTypeColumn;
-    @FXML private TableColumn<Booking, Double> selectedCostColumn;
+    @FXML private TableColumn<RoomInfo, String> selectedRoomTypeColumn;
+    @FXML private TableColumn<RoomInfo, Double> selectedCostColumn;
     @FXML private TableColumn<Booking, Integer> selectedNumPeopleColumn;
     
     @FXML public DatePicker checkInField;
@@ -78,80 +72,78 @@ public class FindRoomDialogController implements Initializable {
     @FXML private Button cancelButton;
     
     private ObservableList<RoomInfo> availableRoomData = FXCollections.observableArrayList();
-    private ObservableList<Booking> selectedRoomData = FXCollections.observableArrayList();
+    private ObservableList<RoomInfo> selectedRoomData = FXCollections.observableArrayList();
     
     private RoomQueries availableRoomQueries = new RoomQueries();
-    //private RoomQueries availableRoomQueries = new RoomQueries(); // TO-DO: Create this query
-    private Stage editBookingDialogStage;
-    private Stage findRoomDialogStage;
-    private boolean bookClicked = false;
+    private Stage bookingDialogStage;
+    private boolean confirmClicked = false;
     private final LocalDate today = LocalDate.now();
     MainApp mainApp;
     private Booking booking;
     
+    public FindRoomDialogController() {}
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        availableRoomTypeColumn.setCellValueFactory(
-                cellData -> cellData.getValue().roomTypeIDProperty());
         
         setDatePickerFormat();
         setDisableDatePicker();
         
         // Clear the both tables whenever the checkInDate or checkOutDate is modified
-        //checkInField.pressedProperty().addListener(
         checkInField.focusedProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    // Clear ObservableLists and update the tables
-                    availableRoomData.clear();
+                    // Clear selected room list and update the table
                     selectedRoomData.clear();
-                    availableRoomTable.setItems(availableRoomData);
                     selectedRoomTable.setItems(selectedRoomData);
                     
                     // Keep check-out date after check-in date
-                    checkOutField.setValue(checkInField.getValue().plusDays(1));});
+                    if (checkOutField.getValue() == null || 
+                            !checkOutField.getValue().isAfter(checkInField.getValue())) {
+                        checkOutField.setValue(checkInField.getValue().plusDays(1));
+                    }
+                });
         
         checkOutField.focusedProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    // Clear ObservableLists and update the tables
-                    availableRoomData.clear();
+                    // Clear selected room list and update the table
                     selectedRoomData.clear();
-                    availableRoomTable.setItems(availableRoomData);
                     selectedRoomTable.setItems(selectedRoomData);});
         
     }
     
     /**
      * Returns true if the user clicked OK, false otherwise.
-     * 
-     * @return
      */
-    public boolean isBookClicked() {
-        return bookClicked;
+    public boolean isConfirmClicked() {
+        return confirmClicked;
     }
     
     @FXML
     public void handleSearch() {
         if (isInputValidToSearch()) {
-            //availableRoomQueries.setFindRoomDialogController(this);
-            if (availableRoomQueries.getRooms().isEmpty()) {
+            availableRoomQueries.setFindRoomDialogController(this);
+            if (availableRoomQueries.getAvailableRooms().isEmpty()) {
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
-                alert.initOwner(findRoomDialogStage);
+                alert.initOwner(bookingDialogStage);
                 alert.setTitle("Unavailable room");
                 alert.setContentText("No room is available!");
 
                 alert.showAndWait();
             } else {
                 try {
-                    availableRoomData.addAll(availableRoomQueries.getRooms()); // TO-DO: Create this method in the query
-
+                    availableRoomData.clear();
+                    availableRoomData.addAll(availableRoomQueries.getAvailableRooms()); // TO-DO: Create this method in the query
                     availableRoomTable.setItems(availableRoomData);
-
+                    
+                    
                     // Set values for available room table.
                     availableRoomTypeColumn.setCellValueFactory(
                             cellData -> cellData.getValue().roomTypeIDProperty());
                     availableCostColumn.setCellValueFactory(
                             cellData -> cellData.getValue().baseRateProperty().asObject());
+
+
 
                 } catch (Exception e) {
                     System.out.println("Error! handleSearch()!");
@@ -163,15 +155,32 @@ public class FindRoomDialogController implements Initializable {
     @FXML
     public void handleAdd() {
         if (isInputValidToAdd()) {
-            // TO-DO: Add selected room type to selectedRoomData and delete it in availableRoomData. (in Database)
-            // TO-DO (Second thought): Delete selectedRoomData from observableList and add it into the other side.
+            int selectedIndex = availableRoomTable.getSelectionModel().getSelectedIndex();
+            
+            // Copy data from one table to another
+            RoomInfo selectedRoom = availableRoomData.get(selectedIndex);
+            selectedRoomData.add(selectedRoom);
+            selectedRoomTable.setItems(selectedRoomData);
+            availableRoomData.remove(selectedIndex);
+            
+            // Set values for selected room table.
+            selectedRoomTypeColumn.setCellValueFactory(
+                    cellData -> cellData.getValue().roomTypeIDProperty());
+            selectedCostColumn.setCellValueFactory(
+                    cellData -> cellData.getValue().baseRateProperty().asObject());
         }
     }
     
     @FXML
     public void handleRemove() {
         if (isInputValidToRemove()) {
-            // TO-DO: Opposite with handleAdd()
+            int selectedIndex = selectedRoomTable.getSelectionModel().getSelectedIndex();
+            
+            // Copy data from one table to another
+            RoomInfo selectedRoom = selectedRoomData.get(selectedIndex);
+            availableRoomData.add(selectedRoom);
+            availableRoomTable.setItems(availableRoomData);
+            selectedRoomData.remove(selectedIndex);
         }
     }
     
@@ -179,23 +188,23 @@ public class FindRoomDialogController implements Initializable {
      * Called when the user clicks book to pass all values to EditBookingController.
      */
     @FXML
-    public void handleBook() {
+    public void handleBook (ActionEvent event) throws IOException {
+        
         if (isInputValidToBook()) {
+            
             try {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource("view/EditBookingDialog.fxml"));
                 AnchorPane editBookingDialog = (AnchorPane) loader.load();
                 EditBookingDialogController controller = loader.getController();
-                //controller.setFoundRoom(this);
-                
-                bookClicked = true;
-                findRoomDialogStage.close();
-                // Show the scene containing the root layout.
+                controller.setFoundRoom(this);
+                controller.setBookingDialogStage(bookingDialogStage);
                 Scene scene = new Scene(editBookingDialog);
-                editBookingDialogStage.setScene(scene);
-                editBookingDialogStage.show();
+                bookingDialogStage.setScene(scene);
+                bookingDialogStage.show();
             } catch (IOException ex) {
                 System.out.println("ERROR! handleBook()!");
+                ex.printStackTrace();
             }
         }
     }
@@ -205,7 +214,7 @@ public class FindRoomDialogController implements Initializable {
      */
     @FXML
     public void handleCancel() {
-        findRoomDialogStage.close();
+        bookingDialogStage.close();
     }
 
     /**
@@ -226,14 +235,14 @@ public class FindRoomDialogController implements Initializable {
         if (!singleBox.isSelected() && !doubleBox.isSelected() && !queenBox.isSelected() && 
                 !kingBox.isSelected() && !twinBox.isSelected() && 
                 !doubleDoubleBox.isSelected() && !suiteBox.isSelected()) {
-            errorMessage += "No valid room type!\n"; 
+            errorMessage += "No room type is selected!\n"; 
         }
         if (errorMessage.length() == 0) {
             return true;
         } else {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(findRoomDialogStage);
+            alert.initOwner(bookingDialogStage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
@@ -252,15 +261,15 @@ public class FindRoomDialogController implements Initializable {
     private boolean isInputValidToAdd() {
         String errorMessage = "";
         
-        if (availableRoomTable.getSelectionModel().selectedItemProperty() == null) {
-            errorMessage = "No room is selected!\n";
+        if (availableRoomTable.getSelectionModel().getSelectedItem() == null) {
+            errorMessage = "No available room is selected!\n";
         }
         if (errorMessage.length() == 0) {
             return true;
         } else {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(findRoomDialogStage);
+            alert.initOwner(bookingDialogStage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
@@ -279,7 +288,7 @@ public class FindRoomDialogController implements Initializable {
     private boolean isInputValidToRemove() {
         String errorMessage = "";
         
-        if (selectedRoomTable.getSelectionModel().selectedItemProperty() == null) {
+        if (selectedRoomTable.getSelectionModel().getSelectedItem() == null) {
             errorMessage = "No room is selected!\n";
         }
         if (errorMessage.length() == 0) {
@@ -287,7 +296,7 @@ public class FindRoomDialogController implements Initializable {
         } else {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(findRoomDialogStage);
+            alert.initOwner(bookingDialogStage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
@@ -314,7 +323,7 @@ public class FindRoomDialogController implements Initializable {
         } else {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(findRoomDialogStage);
+            alert.initOwner(bookingDialogStage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
@@ -325,6 +334,75 @@ public class FindRoomDialogController implements Initializable {
         }
     }
     
+    /**
+     * Is called by the room queries.
+     * 
+     * @return String of selected room types
+     */
+    public String getSearchRoomType() {
+        String searchRoomType = "";
+        String separator =  ", ";
+        if (singleBox.isSelected()) {
+            searchRoomType += "Single";
+        }
+        if (doubleBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "Double";
+        }
+        if (queenBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "Queen";
+        }
+        if (kingBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "King";
+        }
+        if (twinBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "Twin";
+        }
+        if (doubleDoubleBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "Double-double";
+        }
+        if (suiteBox.isSelected()) {
+            if (searchRoomType.length() != 0) {
+                searchRoomType += separator;
+            }
+            searchRoomType += "Suite";
+        }
+        return searchRoomType;
+    }
+    
+    /**
+     * Is called by the roomQueries and editBookingDialog to check if the user 
+     * choose early check-in.
+     */
+    public boolean getSearchEarlyCheckIn() {
+        return earlyCheckInBox.isSelected();
+    }
+    
+    /**
+     * Is called by the roomQueries and editBookingDialog to check if the user 
+     * choose late check-out.
+     */
+    public boolean getSearchLateCheckOut() {
+        return lateCheckOutBox.isSelected();
+    }
+    
+    /**
+     * Format DatePicker as yyyy-MM-dd.
+     */
     public void setDatePickerFormat() {
         StringConverter converter = new StringConverter<LocalDate>() {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -365,7 +443,7 @@ public class FindRoomDialogController implements Initializable {
                         @Override
                         public void updateItem(LocalDate item, boolean empty) {
                             super.updateItem(item, empty);
-                           
+                            
                             if (item.isBefore(today)) {
                                 setDisable(true);
                                 setStyle("-fx-background-color: #ffc0cb;");
@@ -385,7 +463,6 @@ public class FindRoomDialogController implements Initializable {
                         public void updateItem(LocalDate item, boolean empty) {
                             super.updateItem(item, empty);
                             
-                            
                             if (item.isBefore(checkInField.getValue().plusDays(1))) {
                                 setDisable(true);
                                 setStyle("-fx-background-color: #ffc0cb;");
@@ -400,12 +477,15 @@ public class FindRoomDialogController implements Initializable {
     /**
      * Sets the stage of this dialog.
      * 
-     * @param dialogStage
+     * @param bookingDialogStage
      */
-    public void setFindRoomDialogStage(Stage findRoomDialogStage) {
-        this.findRoomDialogStage = findRoomDialogStage;
+    public void setBookingDialogStage(Stage bookingDialogStage) {
+        this.bookingDialogStage = bookingDialogStage;
     }
     
+    /**
+     * Is called by tab booking controller.
+     */
     public void setBooking(Booking booking) {
         this.booking = booking;
     }

@@ -183,9 +183,9 @@ public class TabBookingController implements Initializable {
     private void handleNewBooking() {
         Booking tempBooking = new Booking();
         boolean okClicked = showFindRoomDialog(tempBooking);
-        //if (okClicked) {
-        //    getBookingData().add(tempBooking);
-        //}
+        if (okClicked) {
+           bookingData.add(tempBooking);
+        }
     }
     
     /**
@@ -204,28 +204,32 @@ public class TabBookingController implements Initializable {
             AnchorPane page = (AnchorPane) loader.load();
 
             // Create the dialog Stage.
-            Stage findRoomDialogStage = new Stage();
-            findRoomDialogStage.setTitle("Find Room");
-            findRoomDialogStage.initModality(Modality.WINDOW_MODAL);
-            //findRoomDialogStage.initOwner(primaryStage);
+            Stage bookingDialogStage = new Stage();
+            bookingDialogStage.setTitle("Find Room");
+            bookingDialogStage.initModality(Modality.WINDOW_MODAL);
+            //bookingDialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
-            findRoomDialogStage.setScene(scene);
+            bookingDialogStage.setScene(scene);
 
             // Set the person into the controller.
             FindRoomDialogController controller = loader.getController();
-            controller.setFindRoomDialogStage(findRoomDialogStage);
+            controller.setBookingDialogStage(bookingDialogStage);
             controller.setBooking(booking);
             
             // Show the dialog and wait until the user closes it
-            findRoomDialogStage.showAndWait();
+            bookingDialogStage.showAndWait();
 
-            return controller.isBookClicked();
+            return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
     
+    /**
+     * Is called by hotel overview controller to give a reference back to the
+     * main application.
+     */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }

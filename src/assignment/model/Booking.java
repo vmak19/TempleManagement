@@ -147,7 +147,7 @@ public class Booking {
         return roomID;
     }
     
-    // Birthday
+    // Created Date
     public LocalDate getCreatedDate() {
         return createdDate.get();
     }
@@ -196,7 +196,6 @@ public class Booking {
     // Covert LocalDate to Date
     public Date getCheckInToDate() {
         LocalDate localDate = getCheckIn();
-        //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date date = Date.valueOf(localDate);
         return date;
     }

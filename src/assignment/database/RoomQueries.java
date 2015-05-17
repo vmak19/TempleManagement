@@ -8,15 +8,12 @@ package assignment.database;
 import assignment.model.AvailableRoom;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
-import assignment.util.DateUtil;
 import assignment.view.FindRoomDialogController;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +28,7 @@ public class RoomQueries extends DatabaseQuery {
     PreparedStatement getAllAvailableRooms = null;
     ResultSet rs = null;
     List<RoomInfo> rooms;
-    List<AvailableRoom> availableRooms;
+    List<RoomInfo> availableRooms;
     FindRoomDialogController findRoomDialogController;
     
     public List<RoomInfo> getRooms() {
@@ -58,12 +55,15 @@ public class RoomQueries extends DatabaseQuery {
         return rooms;
     }
     
-    public List<AvailableRoom> getAvailableRooms() {
-        availableRooms = new ArrayList<AvailableRoom>();
+    public List<RoomInfo> getAvailableRooms() {
+        availableRooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            Date searchedCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
-            Date searchedCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
+            Date searchCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
+            Date searchCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
+            
+            System.out.println(findRoomDialogController.getSearchRoomType());
+            
             getAllAvailableRooms = conn.prepareStatement(
                     "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE "
                     + "from app.ROOM "
@@ -71,17 +71,30 @@ public class RoomQueries extends DatabaseQuery {
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
                     + "inner join app.BOOKING "
                     + "on app.BOOKING.ROOMID = app.ROOM.ROOMID "
-                    + "where not exists "
-                    + "(select app.BOOKING.ROOMID "
-                    + "from app.BOOKING "
-                    + "where ((CHECKIN between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or (CHECKOUT between 'searchedCheckIn' and 'searchedCheckOut') "
-                    + "or ('searchedCheckIn' between CHECKIN and CHECKOUT)))"
+                    + "where ((CHECKIN < ? or CHECKIN >= ?) "
+                    + "and (CHECKOUT <= ? or CHECKOUT > ?) "
+                    + "and (CHECKIN < ? or CHECKOUT >= ?) "
+                    + "and (app.ROOMTYPE.ROOMTYPEID in (?)))"
+                    //+ "and (EARLYCHECKIN != ?) "
+                    //+ "and (LATECHECKOUT != ?))"
+                    
             );
+            
+            getAllAvailableRooms.setDate(1, searchCheckIn);
+            getAllAvailableRooms.setDate(2, searchCheckOut);
+            getAllAvailableRooms.setDate(3, searchCheckIn);
+            getAllAvailableRooms.setDate(4, searchCheckOut);
+            getAllAvailableRooms.setDate(5, searchCheckIn);
+            getAllAvailableRooms.setDate(6, searchCheckIn);
+            getAllAvailableRooms.setString(7, findRoomDialogController.getSearchRoomType());
+            //getAllAvailableRooms.setBoolean(7, findRoomDialogController.getSearchEarlyCheckIn());
+            //getAllAvailableRooms.setBoolean(8, findRoomDialogController.getSearchLateCheckOut());
+            
             rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
+                
                 availableRooms.add(
-                        new AvailableRoom(rs.getInt("roomID"), rs.getString("roomTypeID"), 
+                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"), 
                                 rs.getDouble("baseRate")));
             }
             rs.close();
@@ -114,7 +127,7 @@ public class RoomQueries extends DatabaseQuery {
         closeConnection();
     }
     
-    public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
-        this.findRoomDialogController = findRoomDialogController;
-    }
+        public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
+            this.findRoomDialogController = findRoomDialogController;
+        }
 }

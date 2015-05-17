@@ -46,7 +46,7 @@ public class RoomInfo {
     public String getRoomTypeID() {
         return roomTypeID.get();
     }
-
+    
     public void setRoomTypeID(String roomTypeID) {
         this.roomTypeID.set(roomTypeID);
     }
