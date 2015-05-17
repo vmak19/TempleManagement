@@ -97,8 +97,9 @@ public class FindRoomDialogController implements Initializable {
                     selectedRoomTable.setItems(selectedRoomData);
                     
                     // Keep check-out date after check-in date
-                    if (checkOutField.getValue() == null || 
-                            !checkOutField.getValue().isAfter(checkInField.getValue())) {
+                    if (checkInField.getValue() != null && 
+                            (checkOutField.getValue() == null || 
+                            !checkOutField.getValue().isAfter(checkInField.getValue()))) {
                         checkOutField.setValue(checkInField.getValue().plusDays(1));
                     }
                 });
@@ -462,8 +463,13 @@ public class FindRoomDialogController implements Initializable {
                         @Override
                         public void updateItem(LocalDate item, boolean empty) {
                             super.updateItem(item, empty);
-                            
-                            if (item.isBefore(checkInField.getValue().plusDays(1))) {
+                           
+                            if (checkInField.getValue() != null) {
+                                if (item.isBefore(checkInField.getValue().plusDays(1))) {
+                                    setDisable(true);
+                                    setStyle("-fx-background-color: #ffc0cb;");
+                                }
+                            } else {
                                 setDisable(true);
                                 setStyle("-fx-background-color: #ffc0cb;");
                             }

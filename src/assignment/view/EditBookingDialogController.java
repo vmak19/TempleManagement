@@ -5,6 +5,7 @@
  */
 package assignment.view;
 
+import assignment.database.BookingQueries;
 import assignment.model.Booking;
 import assignment.model.Room;
 import assignment.util.DateUtil;
@@ -56,21 +57,22 @@ public class EditBookingDialogController implements Initializable {
         
     }
     
-    
-    
     /**
      * Called when the user clicks confirm.
      */
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            /*booking.setCustFirstName(firstNameField.getText());
+            
+            booking.setCustFirstName(firstNameField.getText());
             booking.setCustLastName(lastNameField.getText());
-            person.setStreet(streetField.getText());
-            person.setPostalCode(Integer.parseInt(postalCodeField.getText()));
-            person.setCity(cityField.getText());
-            person.setBirthday(DateUtil.parse(birthdayField.getText()));
-            */
+            booking.setNumBreakfast(Integer.parseInt(numBreakfastField.getText()));
+            booking.setCheckIn(DateUtil.parse(checkInField.getText()));
+            booking.setCheckOut(DateUtil.parse(checkOutField.getText()));
+            booking.setEarlyCheckIn(earlyCheckInBox.isSelected());
+            booking.setLateCheckOut(lateCheckOutBox.isSelected());
+            booking.setAmountPaid(Double.parseDouble(amountPaidField.getText()));
+            booking.setAmountDue(Double.parseDouble(amountDueField.getText()));
             
             confirmClicked = true;
             bookingDialogStage.close();
@@ -134,6 +136,7 @@ public class EditBookingDialogController implements Initializable {
         earlyCheckInBox.setSelected(foundRoom.getSearchEarlyCheckIn());
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
+        // TO-DO dsiplay selectedRoomTable.
     }
     
     /**
@@ -143,7 +146,6 @@ public class EditBookingDialogController implements Initializable {
      */
     public void setFoundRoom(FindRoomDialogController foundRoom) {
         this.foundRoom = foundRoom;
-        
         setRoomData();
     }
     

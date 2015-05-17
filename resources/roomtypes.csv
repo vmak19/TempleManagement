@@ -2,6 +2,6 @@ Single,A room assigned to one person. May have one or more beds.,200,1
 Double,A room assigned to two people. May have one or more beds.,380,2
 Queen,A room with a queen sized bed. May be occupied by one or more people.,350,5
 King,A room with a king sized bed. May be occupied by one or more people.,370,5
-Twin,A room with two twin beds. May be occupied by one or more people.,380,5
+Twin,A room with two twin beds. May be occupied by one or more people.,380,2
 Double-double,A room with two double (or perhaps queen) beds. May be occupied by one or more person.,680,5
 Suite,A parlour or living room connected with to one or more bedrooms.,1800,5

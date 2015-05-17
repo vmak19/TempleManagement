@@ -184,6 +184,7 @@ public class TabBookingController implements Initializable {
         Booking tempBooking = new Booking();
         boolean okClicked = showFindRoomDialog(tempBooking);
         if (okClicked) {
+           bookingQueries.insertBooking(tempBooking);
            bookingData.add(tempBooking);
         }
     }

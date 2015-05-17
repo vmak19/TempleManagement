@@ -44,7 +44,7 @@ public class RoomQueries extends DatabaseQuery {
             while (rs.next()) {
                 rooms.add(
                         new RoomInfo(rs.getInt("roomID"), rs.getString("roomtypeID"),
-                        rs.getDouble("baseRate")));
+                        rs.getDouble("baseRate"), rs.getInt("capacity")));
             }
             rs.close();
             getAllRooms.close();
@@ -95,7 +95,7 @@ public class RoomQueries extends DatabaseQuery {
                 
                 availableRooms.add(
                         new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"), 
-                                rs.getDouble("baseRate")));
+                                rs.getDouble("baseRate"), rs.getInt("capacity")));
             }
             rs.close();
             getAllAvailableRooms.close();
