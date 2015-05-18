@@ -21,16 +21,24 @@ public class RoomType {
     private StringProperty roomTypeID;
     private StringProperty description;
     private DoubleProperty baseRate;
+    private IntegerProperty capacity;
 
     public RoomType(String description, double baseRate) {
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
     }
     
-    public RoomType(String roomTypeID, String description, double baseRate) {
+    public RoomType(String description, double baseRate, int capacity) {
+        this.description = new SimpleStringProperty(description);
+        this.baseRate = new SimpleDoubleProperty(baseRate);
+        this.capacity = new SimpleIntegerProperty(capacity);
+    }
+    
+    public RoomType(String roomTypeID, String description, double baseRate, int capacity) {
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
+        this.capacity = new SimpleIntegerProperty(capacity);
     }
 
     // Room type
@@ -70,6 +78,19 @@ public class RoomType {
     
     public DoubleProperty baseRateProperty() {
         return baseRate;        
+    }
+    
+    //capacity
+    public int getCapacity() {
+        return capacity.get();
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity.set(capacity);
+    }
+    
+    public IntegerProperty capacityProperty() {
+        return capacity;        
     }
     
     @Override

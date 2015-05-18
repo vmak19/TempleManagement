@@ -7,6 +7,9 @@ package assignment.model;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -19,35 +22,45 @@ public class Service {
     private StringProperty serviceDesc;
     private DoubleProperty cost;
 
-    public Service(IntegerProperty serviceID, StringProperty serviceDesc, DoubleProperty cost) {
-        this.serviceID = serviceID;
-        this.serviceDesc = serviceDesc;
-        this.cost = cost;
+    public Service(int serviceID, String serviceDesc, double cost) {
+        this.serviceID = new SimpleIntegerProperty(serviceID);
+        this.serviceDesc = new SimpleStringProperty(serviceDesc);
+        this.cost = new SimpleDoubleProperty(cost);
     }
 
-    public IntegerProperty getServiceID() {
-        return serviceID;
+    public int getServiceID() {
+        return serviceID.get();
     }
 
-    public void setServiceID(IntegerProperty serviceID) {
-        this.serviceID = serviceID;
+    public void setServiceID(int serviceID) {
+        this.serviceID.set(serviceID);
+    }
+    
+    public IntegerProperty serviceIDProperty() {
+        return serviceID;        
+    } 
+
+    public String getServiceDesc() {
+        return serviceDesc.get();
     }
 
-    public StringProperty getServiceDesc() {
+    public void setServiceDesc(String serviceDesc) {
+        this.serviceDesc.set(serviceDesc);
+    }
+    
+    public StringProperty serviceDescProperty() {
         return serviceDesc;
     }
 
-    public void setServiceDesc(StringProperty serviceDesc) {
-        this.serviceDesc = serviceDesc;
+    public double getCost() {
+        return cost.get();
     }
 
-    public DoubleProperty getCost() {
-        return cost;
-    }
-
-    public void setCost(DoubleProperty cost) {
-        this.cost = cost;
+    public void setCost(double cost) {
+        this.cost.set(cost);
     }
     
-    
+    public DoubleProperty costProperty() {
+        return cost;        
+    } 
 }

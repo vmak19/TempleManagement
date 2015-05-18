@@ -44,6 +44,8 @@ public class TabRoomController implements Initializable {
     private Label roomTypeLabel;
     @FXML
     private Label costPerNightLabel;
+    @FXML
+    private Label capacity;
 
     private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
     private RoomQueries roomQueries = new RoomQueries();
@@ -81,11 +83,13 @@ public class TabRoomController implements Initializable {
             roomNoLabel.setText(Integer.toString(roomInfo.getRoomID()));
             roomTypeLabel.setText(roomInfo.getRoomTypeID());
             costPerNightLabel.setText(Double.toString(roomInfo.getBaseRate()));
+            capacity.setText(Integer.toString(roomInfo.getCapacity()));
         } else {
             // Room is null, remove all the information.
             roomNoLabel.setText("");
             roomTypeLabel.setText("");
             costPerNightLabel.setText("");
+            capacity.setText("");
         }
     }
 }

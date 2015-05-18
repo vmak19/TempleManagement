@@ -26,10 +26,12 @@ import javafx.collections.ObservableList;
 public class DatabaseSetup extends DatabaseQuery {
 
     PreparedStatement createBookingTable = null;
-    PreparedStatement createEmployeeTable = null;
     PreparedStatement createRoomTable = null;
     PreparedStatement createRoomTypeTable = null;
     PreparedStatement createRoomInfoTable = null;
+    PreparedStatement createBillingTable = null;
+    PreparedStatement createEmployeeTable = null;
+    PreparedStatement createLogTable = null;
     ResultSet rs = null;
 
     public static void setupDatabase() {
@@ -85,8 +87,7 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOMTYPE error!");
         }
-        
-        
+
         try {
 
             // Determine if the ROOM table already exists or not
@@ -101,15 +102,14 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"ROOMTYPEID\" VARCHAR(50),"
                         + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
                 createRoomTable.execute();
-                
+
                 getRoomsFromFile();
                 System.out.println("created Table ROOM");
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOM error!");
         }
-        
-        
+
         try {
 
             // Determine if the booking table already exists or not
@@ -141,10 +141,54 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table BOOKING error!");
         }
-        
+
+        try {
+
+            // Determine if the BILLING table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "BILLING", null);
+
+            if (!rs.next()) {
+                // If the BILLING table does not already exist we create it
+                createBillingTable = conn.prepareStatement(
+                        "CREATE TABLE APP.BILLING ("
+                        + "\"BILLINGID\" INT not null primary key "
+                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"AMOUNTPAID\" DOUBLE, "
+                        + "\"AMOUNTDUE\" DOUBLE, "
+                        + "\"DATE\" DATE)");
+                createBillingTable.execute();
+            }
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table BILLING error!");
+        }
+
+        try {
+
+            // Determine if the LOG table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "LOG", null);
+
+            if (!rs.next()) {
+                // If the LOG table does not already exist we create it
+                createLogTable = conn.prepareStatement(
+                        "CREATE TABLE APP.LOG ("
+                        + "\"LOGID\" INT not null primary key "
+                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"EMPFIRSTNAME\" VARCHAR(100), "
+                        + "\"EMPLASTNAME\" VARCHAR(100), "
+                        + "\"DATEMOD\" DATE, "
+                        + "\"ITEMMODIFIED\" VARCHAR(200))");
+                createLogTable.execute();
+            }
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table LOG error!");
+            ex.printStackTrace();
+        }
+
         closeConnection();
     }
-    
+
     public void getRoomTypesFromFile() {
         try {
             // Open the file
@@ -156,13 +200,15 @@ public class DatabaseSetup extends DatabaseQuery {
                 String[] roomTypeID = s.split(",");
                 String[] description = s.split(",");
                 String[] baseRate = s.split(",");
+                String[] capacity = s.split(",");
 
                 RoomTypeQueries roomTypeQueries = new RoomTypeQueries();
-                
+
                 roomTypeQueries.insertRoomType(new RoomType(
                         roomTypeID[0],
                         description[1],
-                        Double.parseDouble(baseRate[2])));
+                        Double.parseDouble(baseRate[2]),
+                        Integer.parseInt(capacity[3])));
             }
 
             // Close the file
@@ -173,7 +219,7 @@ public class DatabaseSetup extends DatabaseQuery {
             ex.printStackTrace();
         }
     }
-    
+
     public void getRoomsFromFile() {
         try {
             // Open the file
@@ -186,7 +232,7 @@ public class DatabaseSetup extends DatabaseQuery {
                 String[] roomTypeID = s.split(",");
 
                 RoomQueries roomQueries = new RoomQueries();
-                
+
                 roomQueries.insertRoom(new Room(
                         Integer.parseInt(roomID[0]),
                         roomTypeID[1]));
@@ -200,7 +246,7 @@ public class DatabaseSetup extends DatabaseQuery {
             ex.printStackTrace();
         }
     }
-    
+
     public void getBookingsFromFile() {
         //List<Booking> bookings = new ArrayList<Booking>();
         try {
@@ -223,15 +269,15 @@ public class DatabaseSetup extends DatabaseQuery {
                 String[] amountDue = s.split(",");
                 String[] earlyCheckIn = s.split(",");
                 String[] lateCheckOut = s.split(",");
-                
+
                 BookingQueries bookingQueries = new BookingQueries();
-                
+
                 bookingQueries.insertBooking(new Booking(
                         Integer.parseInt(refCode[0]),
                         fname[1],
                         lname[2],
                         Integer.parseInt(numPeople[3]),
-                        Integer.parseInt(roomID[4]),    
+                        Integer.parseInt(roomID[4]),
                         DateUtil.parse(createdDate[5]),
                         Integer.parseInt(numBreakfast[6]),
                         DateUtil.parse(checkIn[7]),
@@ -241,7 +287,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         Double.parseDouble(amountPaid[11]),
                         Double.parseDouble(amountDue[12])));
             }
-            
+
             // Close the file
             scanner.close();
 
@@ -250,6 +296,5 @@ public class DatabaseSetup extends DatabaseQuery {
             ex.printStackTrace();
         }
     }
-    
-    
+
 }

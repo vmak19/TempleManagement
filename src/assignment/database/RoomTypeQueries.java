@@ -33,7 +33,7 @@ public class RoomTypeQueries extends DatabaseQuery {
             while (rs.next()) {
                 roomTypes.add(
                         new RoomType(rs.getString("roomTypeID"), rs.getString("description"),
-                                rs.getDouble("baseRate")));
+                                rs.getDouble("baseRate"), rs.getInt("capacity")));
             }
             rs.close();
             getAllRoomTypes.close();
@@ -48,11 +48,12 @@ public class RoomTypeQueries extends DatabaseQuery {
         openConnection();
         try {
             insertRoomType = conn.prepareStatement("insert into app.roomtype "
-                    + "(roomtypeID, description, baserate) "
-                    + "values (?, ?, ?)");
+                    + "(roomtypeID, description, baserate, capacity) "
+                    + "values (?, ?, ?, ?)");
             insertRoomType.setString(1, toInsert.getRoomTypeID());
             insertRoomType.setString(2, toInsert.getDescription());
             insertRoomType.setDouble(3, toInsert.getBaseRate());
+            insertRoomType.setInt(4, toInsert.getCapacity());
             insertRoomType.executeUpdate();
             
             insertRoomType.close();
