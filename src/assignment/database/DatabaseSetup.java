@@ -60,6 +60,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"EMPLASTNAME\" VARCHAR(100), "
                         + "\"ISADMINISTRATOR\" BOOLEAN)");
                 createEmployeeTable.execute();
+                getEmployeesFromFile();
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table EMPLOYEE error!");
@@ -100,6 +101,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         "CREATE TABLE APP.ROOM ("
                         + "\"ROOMID\" INT not null primary key, "
                         + "\"ROOMTYPEID\" VARCHAR(50),"
+                        + "\"NOOFBEDS\" INT,"
                         + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
                 createRoomTable.execute();
 
@@ -230,12 +232,14 @@ public class DatabaseSetup extends DatabaseQuery {
                 String s = scanner.nextLine();
                 String[] roomID = s.split(",");
                 String[] roomTypeID = s.split(",");
+                String[] noOfBeds = s.split(",");
 
                 RoomQueries roomQueries = new RoomQueries();
 
                 roomQueries.insertRoom(new Room(
                         Integer.parseInt(roomID[0]),
-                        roomTypeID[1]));
+                        roomTypeID[1],
+                        Integer.parseInt(noOfBeds[2])));
             }
 
             // Close the file
@@ -293,6 +297,39 @@ public class DatabaseSetup extends DatabaseQuery {
 
         } catch (FileNotFoundException ex) {
             System.out.println("getBookingsFromFile() Error!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void getEmployeesFromFile() {
+        try {
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/employees.csv"));
+
+            //for all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] userID = s.split(",");
+                String[] password = s.split(",");
+                String[] fname = s.split(",");
+                String[] lname = s.split(",");
+                String[] admin = s.split(",");
+
+                EmployeeQueries employeeQueries = new EmployeeQueries();
+
+                employeeQueries.insertEmployee(new Employee(
+                        Integer.parseInt(userID[0]),
+                        password[1],
+                        fname[2],
+                        lname[3],
+                        Boolean.parseBoolean(admin[4])));
+            }
+
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getEmployeesFromFile() Error!");
             ex.printStackTrace();
         }
     }

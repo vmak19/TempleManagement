@@ -16,9 +16,12 @@
          </font>
       </Label>
       <Label layoutX="288.0" layoutY="246.0" text="Username" />
-      <Label layoutX="288.0" layoutY="299.0" text="Password" />
-      <PasswordField layoutX="405.0" layoutY="295.0" />
-      <TextField layoutX="405.0" layoutY="242.0" />
-      <Button fx:id="loginBtn" layoutX="500.0" layoutY="364.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Log in" />
+      <Label layoutX="288.0" layoutY="299.0" text="Password" />      
+      <TextField fx:id="userIDField" layoutX="405.0" layoutY="242.0" />
+      <PasswordField fx:id="passwordField" layoutX="405.0" layoutY="295.0" />
+      <Button fx:id="loginBtn" layoutX="500.0" layoutY="364.0" mnemonicParsing="false" onAction="#checkPassword" text="Log in" />
+      <Button fx:id="loginBtnOverride" layoutX="500.0" layoutY="416.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Override" />
+      <Label fx:id="incorrectUsernameLabel" layoutX="574.0" layoutY="246.0" text="Incorrect username!" textFill="#c6301c" />
+      <Label fx:id="incorrectPasswordLabel" layoutX="574.0" layoutY="299.0" text="Incorrect password!" textFill="#c6031c" />
    </children>
 </AnchorPane>

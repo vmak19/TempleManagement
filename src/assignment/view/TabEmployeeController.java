@@ -23,11 +23,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -56,19 +60,26 @@ public class TabEmployeeController implements Initializable {
     private Label empLastNameLabel;
     @FXML
     private CheckBox administratorBox;
+    @FXML
+    private Button editBtn;
+    @FXML
+    private Button newBtn;
+    @FXML
+    private Button deleteBtn;
 
-    Stage myStage;
-
-    void setMyStage(Stage primaryStage) {
-        this.myStage = primaryStage;
-    } 
-    
     MainApp mainApp;
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
-    private EmployeeQueries employeeQueries;
-    
+    private EmployeeQueries employeeQueries = new EmployeeQueries();
+
     public ObservableList<Employee> getEmployeeData() {
         return employeeData;
+    }
+
+    /**
+     * The constructor. The constructor is called before the initialize()
+     * method.
+     */
+    public TabEmployeeController() {
     }
 
     public List<Employee> getEmployeesFromFile() {
@@ -97,10 +108,6 @@ public class TabEmployeeController implements Initializable {
 
                 employees.add(newEmployee);
             }
-
-            //create room
-            //add to list
-            // Close the file
             scanner.close();
 
         } catch (FileNotFoundException ex) {
@@ -109,37 +116,70 @@ public class TabEmployeeController implements Initializable {
         }
         return employees;
     }
-    
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    @FXML
+    private void handleDeleteEmployee() {
         try {
+            int selectedIndex = employeeTable.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 0) {
+                // Delete record in the database
+                employeeQueries.deleteEmployee(employeeTable.getSelectionModel().getSelectedItem());
 
-            employeeQueries = new EmployeeQueries();
+                // Delete record on the table
+                employeeTable.getItems().remove(selectedIndex);
+            } else {
+                // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Selection");
+                alert.setHeaderText("No Person Selected");
+                alert.setContentText("Please select a person in the table.");
 
-            employeeData.addAll(getEmployeesFromFile());
-            employeeTable.setItems(employeeData);
-
-            // Initialize the person table with the two columns.
-            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
-            empFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().empFirstNameProperty());
-            empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
-
-            // Clear booking details.
-            showEmployeeDetails(null);
-
-            employeeTable.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldValue, newValue) -> showEmployeeDetails(newValue));
-            // Add observable list data to the table
-            //employeeTable.setItems(mainApp.getBookingData());
-            System.out.println("TabEmployee initialized!");
+                alert.showAndWait();
+            }
         } catch (Exception e) {
-            System.out.println("TabEmployee initilize error!");
+            System.out.println("Error! handleDeleteEmployee()!");
         }
     }
+/*
+    @FXML
+    private void handleNewEmployee() {
+        Employee tempEmployee = new Employee();
+        boolean okClicked = showFindRoomDialog(tempEmployee);
+        if (okClicked) {
+            employeeQueries.insertEmployee(tempEmployee);
+            employeeData.add(tempEmployee);
+        }
+    }*/
+
+    /*public boolean showHotelEditEmployeeDialog(Employee employee) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("EditEmployeeDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage employeeDialogStage = new Stage();
+            employeeDialogStage.setTitle("Edit Employee");
+            employeeDialogStage.initModality(Modality.WINDOW_MODAL);            
+            Scene scene = new Scene(page);
+            employeeDialogStage.setScene(scene);
+
+            // Set the person into the controller.
+            EditEmployeeDialogController controller = loader.getController();
+            controller.setEmployeeDialogStage(employeeDialogStage);
+            controller.setEmployee(employee);
+
+            // Show the dialog and wait until the user closes it
+            employeeDialogStage.showAndWait();
+
+            return controller.isConfirmClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }*/
 
     private void showEmployeeDetails(Employee employee) {
         if (employee != null) {
@@ -160,6 +200,38 @@ public class TabEmployeeController implements Initializable {
             empFirstNameLabel.setText("");
             empLastNameLabel.setText("");
             administratorBox.setSelected(false);
+        }
+    }
+
+    /**
+     * Initializes the controller class.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        try {
+            employeeQueries = new EmployeeQueries();
+
+            //employeeData.addAll(getEmployeesFromFile());
+            employeeData.addAll(employeeQueries.getEmployees());
+            employeeTable.setItems(employeeData);
+
+            System.out.println("Emp data in database: " + employeeQueries.getEmployees());
+
+            // Initialize the person table with the two columns.
+            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
+            empFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().empFirstNameProperty());
+            empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
+
+            // Clear booking details.
+            showEmployeeDetails(null);
+
+            employeeTable.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> showEmployeeDetails(newValue));
+            // Add observable list data to the table
+            //employeeTable.setItems(mainApp.getBookingData());
+            System.out.println("TabEmployee initialized!");
+        } catch (Exception e) {
+            System.out.println("TabEmployee initilize error!");
         }
     }
 

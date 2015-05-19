@@ -24,6 +24,7 @@ public class EmployeeQueries extends DatabaseQuery{
 
     PreparedStatement insertEmployee = null;
     PreparedStatement getAllEmployees = null;
+    PreparedStatement deleteEmployee = null;
     ResultSet rs = null;
     List<Employee> employees;
     
@@ -73,5 +74,19 @@ public class EmployeeQueries extends DatabaseQuery{
 
         closeConnection();
         return returnValue;
+    }
+    
+    public void deleteEmployee(Employee toDelete) {
+        openConnection();
+        try {
+            deleteEmployee = conn.prepareStatement("delete from app.EMPLOYEE where USERID = ?");
+            deleteEmployee.setInt(1, toDelete.getUserID());
+            deleteEmployee.execute();
+            System.out.println("deleted");
+        } catch (SQLException ex) {
+            System.out.println("ERROR! deleteEmployee()!");
+            ex.printStackTrace();
+        }
+        closeConnection();
     }
 }

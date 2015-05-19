@@ -30,13 +30,13 @@ public class RoomQueries extends DatabaseQuery {
     List<RoomInfo> rooms;
     List<RoomInfo> availableRooms;
     FindRoomDialogController findRoomDialogController;
-    
+
     public List<RoomInfo> getRooms() {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, "
-                    + "app.ROOMTYPE.ROOMTYPEID, BASERATE, CAPACITY "
+            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, NOOFBEDS, "
+                    + "app.ROOMTYPE.ROOMTYPEID, DESCRIPTION, BASERATE, CAPACITY "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID");
@@ -44,26 +44,28 @@ public class RoomQueries extends DatabaseQuery {
             while (rs.next()) {
                 rooms.add(
                         new RoomInfo(rs.getInt("roomID"), rs.getString("roomtypeID"),
-                        rs.getDouble("baseRate"), rs.getInt("capacity")));
+                                rs.getString("description"), rs.getDouble("baseRate"), 
+                                rs.getInt("capacity"), rs.getInt("noOfBeds")));
             }
             rs.close();
             getAllRooms.close();
         } catch (SQLException ex) {
             System.out.println("getRoom() error!");
+            ex.printStackTrace();
         }
         closeConnection();
         return rooms;
     }
-    
+
     public List<RoomInfo> getAvailableRooms() {
         availableRooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
             Date searchCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
             Date searchCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
-            
+
             System.out.println(findRoomDialogController.getSearchRoomType());
-            
+
             getAllAvailableRooms = conn.prepareStatement(
                     "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
                     + "from app.ROOM "
@@ -75,11 +77,11 @@ public class RoomQueries extends DatabaseQuery {
                     + "and (CHECKOUT <= ? or CHECKOUT > ?) "
                     + "and (CHECKIN < ? or CHECKOUT >= ?) "
                     + "and (app.ROOMTYPE.ROOMTYPEID in (?)))"
-                    //+ "and (EARLYCHECKIN != ?) "
-                    //+ "and (LATECHECKOUT != ?))"
-                    
+            //+ "and (EARLYCHECKIN != ?) "
+            //+ "and (LATECHECKOUT != ?))"
+
             );
-            
+
             getAllAvailableRooms.setDate(1, searchCheckIn);
             getAllAvailableRooms.setDate(2, searchCheckOut);
             getAllAvailableRooms.setDate(3, searchCheckIn);
@@ -90,12 +92,12 @@ public class RoomQueries extends DatabaseQuery {
             getAllAvailableRooms.setString(7, findRoomDialogController.getSearchRoomType());
             //getAllAvailableRooms.setBoolean(7, findRoomDialogController.getSearchEarlyCheckIn());
             //getAllAvailableRooms.setBoolean(8, findRoomDialogController.getSearchLateCheckOut());
-            
+
             rs = getAllAvailableRooms.executeQuery();
             while (rs.next()) {
-                
+
                 availableRooms.add(
-                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"), 
+                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
                                 rs.getDouble("baseRate"), rs.getInt("capacity")));
             }
             rs.close();
@@ -108,18 +110,18 @@ public class RoomQueries extends DatabaseQuery {
         return availableRooms;
     }
 
-    
     public void insertRoom(Room toInsert) {
         openConnection();
-        
-        try {                
+
+        try {
             insertRoom = conn.prepareStatement("insert into app.room "
-                    + "(roomid, roomtypeid) "
-                    + "values (?, ?)");
-            insertRoom.setInt(1, toInsert.getRoomID());  
-            insertRoom.setString(2, toInsert.getRoomTypeID());            
+                    + "(roomid, roomtypeid, noofbeds) "
+                    + "values (?, ?, ?)");
+            insertRoom.setInt(1, toInsert.getRoomID());
+            insertRoom.setString(2, toInsert.getRoomTypeID());
+            insertRoom.setInt(3, toInsert.getNoOfBeds());
             insertRoom.executeUpdate();
-            
+
             insertRoom.close();
         } catch (SQLException ex) {
             System.out.println("insertRoom() ERROR!");
@@ -127,8 +129,8 @@ public class RoomQueries extends DatabaseQuery {
         }
         closeConnection();
     }
-    
-        public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
-            this.findRoomDialogController = findRoomDialogController;
-        }
+
+    public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
+        this.findRoomDialogController = findRoomDialogController;
+    }
 }

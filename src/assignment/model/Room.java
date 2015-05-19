@@ -22,7 +22,14 @@ public class Room /*extends RoomType*/ {
 
     private IntegerProperty roomID;
     private StringProperty roomTypeID;
+    private IntegerProperty noOfBeds;
 
+    public Room(int roomID, String roomTypeID, int noOfBeds) {
+        this.roomID = new SimpleIntegerProperty(roomID);
+        this.roomTypeID = new SimpleStringProperty(roomTypeID);
+        this.noOfBeds = new SimpleIntegerProperty(noOfBeds);
+    } 
+    
     public Room(int roomID, String roomTypeID) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
@@ -54,6 +61,18 @@ public class Room /*extends RoomType*/ {
     
     public StringProperty roomTypeIDProperty() {
         return roomTypeID;
+    }
+    
+    public int getNoOfBeds() {
+        return noOfBeds.get();
+    }
+
+    public void setNoOfBeds(int noOfBeds) {
+        this.noOfBeds.set(noOfBeds);
+    }
+    
+    public IntegerProperty noOfBedsProperty() {
+        return noOfBeds;
     }
 
 }

@@ -24,6 +24,12 @@ public class Employee {
     private StringProperty empLastName;
     private BooleanProperty isAdministrator;
 
+    public Employee(int userID, String password) { //, boolean isAdministrator
+        this.userID = new SimpleIntegerProperty(userID);
+        this.password = new SimpleStringProperty(password);
+        //this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
+    }
+    
     public Employee(int userID, String password, 
             String empFirstName, String empLastName, boolean isAdministrator) {
         this.userID = new SimpleIntegerProperty(userID);

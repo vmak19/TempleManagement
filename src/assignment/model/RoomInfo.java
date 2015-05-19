@@ -22,6 +22,7 @@ public class RoomInfo {
     private StringProperty description;
     private DoubleProperty baseRate;
     private IntegerProperty capacity;
+    private IntegerProperty noOfBeds;
     
     public RoomInfo(int roomID, String roomTypeID, double baseRate, int capacity) {
         this.roomID = new SimpleIntegerProperty(roomID);
@@ -30,11 +31,13 @@ public class RoomInfo {
         this.capacity = new SimpleIntegerProperty(capacity);
     }   
 
-    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate) {
+    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate, int capacity, int noOfBeds) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
+        this.capacity = new SimpleIntegerProperty(capacity);
+        this.noOfBeds = new SimpleIntegerProperty(noOfBeds);
     }   
     
     public RoomInfo(int roomID, double baseRate, int capacity) {
@@ -89,6 +92,18 @@ public class RoomInfo {
     
     public IntegerProperty capacityProperty() {
         return capacity;
+    }
+    
+    public int getNoOfBeds() {
+        return noOfBeds.get();
+    }
+
+    public void setNoOfBeds(int noOfBeds) {
+        this.noOfBeds.set(noOfBeds);
+    }
+        
+    public IntegerProperty noOfBedsProperty() {
+        return noOfBeds;
     }
     
     @Override
