@@ -68,12 +68,14 @@ public class RoomQueries extends DatabaseQuery {
             System.out.println(findRoomDialogController.getSearchRoomType());
 
             getAllAvailableRooms = conn.prepareStatement(
-                    "select app.BOOKING.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
+                    "select app.ASSIGNMENT.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
                     + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+                    + "inner join app.ASSIGNMENT "
+                    + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
                     + "inner join app.BOOKING "
-                    + "on app.BOOKING.ROOMID = app.ROOM.ROOMID "
+                    + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
                     + "where ((CHECKIN < ? or CHECKIN >= ?) "
                     + "and (CHECKOUT <= ? or CHECKOUT > ?) "
                     + "and (CHECKIN < ? or CHECKOUT >= ?) "

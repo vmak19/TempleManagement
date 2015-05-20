@@ -1,15 +1,9 @@
 package assignment.database;
 
 import assignment.model.Assignment;
-import assignment.model.Room;
-import assignment.model.RoomInfo;
-import assignment.view.FindRoomDialogController;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +17,6 @@ import java.util.List;
  */
 public class AssignmentQueries extends DatabaseQuery{
     PreparedStatement insertAssignment = null;
-    PreparedStatement getAllAssignments = null;
     ResultSet rs = null;
     
     public void insertAssignment(Assignment toInsert) {
