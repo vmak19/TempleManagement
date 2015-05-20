@@ -83,6 +83,10 @@ public class FindRoomDialogController implements Initializable {
     
     public FindRoomDialogController() {}
     
+    public ObservableList<RoomInfo> getSelectedRoomData() {
+        return selectedRoomData;
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         

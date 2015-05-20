@@ -8,10 +8,13 @@ package assignment.view;
 import assignment.database.BookingQueries;
 import assignment.model.Booking;
 import assignment.model.Room;
+import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -51,6 +54,7 @@ public class EditBookingDialogController implements Initializable {
     private boolean confirmClicked = false;
     private FindRoomDialogController foundRoom;
     private Stage bookingDialogStage;
+    private ObservableList<RoomInfo> selectedRoomData = FXCollections.observableArrayList();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -137,6 +141,8 @@ public class EditBookingDialogController implements Initializable {
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
         // TO-DO dsiplay selectedRoomTable.
+        selectedRoomData = foundRoom.getSelectedRoomData();
+        selectedRoomTable.setItems(selectedRoomData);
     }
     
     /**

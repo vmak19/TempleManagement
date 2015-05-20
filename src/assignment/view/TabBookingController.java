@@ -189,6 +189,9 @@ public class TabBookingController implements Initializable {
            
            // TO-DO Display record onto the table
            //bookingData.add(tempBooking);
+           bookingData.clear();
+           bookingData.addAll(bookingQueries.getBookings());
+           //bookingTable.setItems(bookingData);
         }
         
     }
