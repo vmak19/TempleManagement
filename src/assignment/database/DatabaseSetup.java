@@ -1,5 +1,7 @@
 package assignment.database;
 
+import assignment.model.Assignment;
+import assignment.model.Billing;
 import assignment.model.Booking;
 import assignment.model.Employee;
 import assignment.model.Room;
@@ -102,6 +104,8 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"ROOMID\" INT not null primary key, "
                         + "\"ROOMTYPEID\" VARCHAR(50),"
                         + "\"NOOFBEDS\" INT,"
+                        + "\"EXTRACHARGE\" DOUBLE,"
+                        + "\"TOTALCHARGE\" DOUBLE,"
                         + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
                 createRoomTable.execute();
 
@@ -126,17 +130,15 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
                         + "\"CUSTFIRSTNAME\" VARCHAR(100), "
                         + "\"CUSTLASTNAME\" VARCHAR(100), "
-                        + "\"NUMPEOPLE\" INT, "
-                        + "\"ROOMID\" INT, "
                         + "\"CREATEDDATE\" DATE, "
                         + "\"NUMBREAKFAST\" INT, "
                         + "\"CHECKIN\" DATE, "
                         + "\"CHECKOUT\" DATE, "
-                        + "\"AMOUNTPAID\" DOUBLE, "
-                        + "\"AMOUNTDUE\" DOUBLE, "
                         + "\"EARLYCHECKIN\" BOOLEAN, "
                         + "\"LATECHECKOUT\" BOOLEAN, "
-                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
+                        + "\"AMOUNTPAID\" DOUBLE, "
+                        + "\"AMOUNTDUE\" DOUBLE)");
+                //+ "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
                 createBookingTable.execute();
                 getBookingsFromFile();
             }
@@ -146,23 +148,25 @@ public class DatabaseSetup extends DatabaseQuery {
 
         try {
 
-            // Determine if the BILLING table already exists or not
+            // Determine if the ASSIGNMENT table already exists or not
             DatabaseMetaData dbmd = conn.getMetaData();
-            rs = dbmd.getTables(null, "APP", "BILLING", null);
+            rs = dbmd.getTables(null, "APP", "ASSIGNMENT", null);
 
             if (!rs.next()) {
-                // If the BILLING table does not already exist we create it
-                createBillingTable = conn.prepareStatement(
-                        "CREATE TABLE APP.BILLING ("
-                        + "\"BILLINGID\" INT not null primary key "
-                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                        + "\"AMOUNTPAID\" DOUBLE, "
-                        + "\"AMOUNTDUE\" DOUBLE, "
-                        + "\"DATE\" DATE)");
-                createBillingTable.execute();
+                // If the LOG table does not already exist we create it
+                createLogTable = conn.prepareStatement(
+                        "CREATE TABLE APP.ASSIGNMENT ("
+                        + "\"REFCODE\" INT, "
+                        + "\"ROOMID\" INT, "
+                        + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
+                        + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
+                createLogTable.execute();
+                getAssignmentsFromFile();
             }
+
         } catch (SQLException ex) {
-            System.out.println("databaseSetup() for Table BILLING error!");
+            System.out.println("databaseSetup() for Table LOG error!");
+            ex.printStackTrace();
         }
 
         try {
@@ -233,13 +237,17 @@ public class DatabaseSetup extends DatabaseQuery {
                 String[] roomID = s.split(",");
                 String[] roomTypeID = s.split(",");
                 String[] noOfBeds = s.split(",");
+                String[] extraCharge = s.split(",");
+                String[] totalCharge = s.split(",");
 
                 RoomQueries roomQueries = new RoomQueries();
 
                 roomQueries.insertRoom(new Room(
                         Integer.parseInt(roomID[0]),
                         roomTypeID[1],
-                        Integer.parseInt(noOfBeds[2])));
+                        Integer.parseInt(noOfBeds[2]),
+                        Double.parseDouble(extraCharge[3]),
+                        Double.parseDouble(totalCharge[4])));
             }
 
             // Close the file
@@ -247,56 +255,6 @@ public class DatabaseSetup extends DatabaseQuery {
 
         } catch (FileNotFoundException ex) {
             System.out.println("getRoomsFromFile() Error!");
-            ex.printStackTrace();
-        }
-    }
-
-    public void getBookingsFromFile() {
-        //List<Booking> bookings = new ArrayList<Booking>();
-        try {
-            // Open the file
-            Scanner scanner = new Scanner(new File("resources/bookings.csv"));
-
-            //for all lines in file
-            while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                String[] refCode = s.split(",");
-                String[] fname = s.split(",");
-                String[] lname = s.split(",");
-                String[] numPeople = s.split(",");
-                String[] roomID = s.split(",");
-                String[] createdDate = s.split(",");
-                String[] numBreakfast = s.split(",");
-                String[] checkIn = s.split(",");
-                String[] checkOut = s.split(",");
-                String[] amountPaid = s.split(",");
-                String[] amountDue = s.split(",");
-                String[] earlyCheckIn = s.split(",");
-                String[] lateCheckOut = s.split(",");
-
-                BookingQueries bookingQueries = new BookingQueries();
-
-                bookingQueries.insertBooking(new Booking(
-                        Integer.parseInt(refCode[0]),
-                        fname[1],
-                        lname[2],
-                        Integer.parseInt(numPeople[3]),
-                        Integer.parseInt(roomID[4]),
-                        DateUtil.parse(createdDate[5]),
-                        Integer.parseInt(numBreakfast[6]),
-                        DateUtil.parse(checkIn[7]),
-                        DateUtil.parse(checkOut[8]),
-                        Boolean.parseBoolean(earlyCheckIn[9]),
-                        Boolean.parseBoolean(lateCheckOut[10]),
-                        Double.parseDouble(amountPaid[11]),
-                        Double.parseDouble(amountDue[12])));
-            }
-
-            // Close the file
-            scanner.close();
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("getBookingsFromFile() Error!");
             ex.printStackTrace();
         }
     }
@@ -330,6 +288,79 @@ public class DatabaseSetup extends DatabaseQuery {
 
         } catch (FileNotFoundException ex) {
             System.out.println("getEmployeesFromFile() Error!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void getBookingsFromFile() {
+        //List<Booking> bookings = new ArrayList<Booking>();
+        try {
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/bookings.csv"));
+
+            //for all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] refCode = s.split(",");
+                String[] fname = s.split(",");
+                String[] lname = s.split(",");
+                String[] createdDate = s.split(",");
+                String[] numBreakfast = s.split(",");
+                String[] checkIn = s.split(",");
+                String[] checkOut = s.split(",");
+                String[] earlyCheckIn = s.split(",");
+                String[] lateCheckOut = s.split(",");
+                String[] amountPaid = s.split(",");
+                String[] amountDue = s.split(",");
+
+                BookingQueries bookingQueries = new BookingQueries();
+
+                bookingQueries.insertBooking(new Booking(
+                        Integer.parseInt(refCode[0]),
+                        fname[1],
+                        lname[2],
+                        DateUtil.parse(createdDate[3]),
+                        Integer.parseInt(numBreakfast[4]),
+                        DateUtil.parse(checkIn[5]),
+                        DateUtil.parse(checkOut[6]),
+                        Boolean.parseBoolean(earlyCheckIn[7]),
+                        Boolean.parseBoolean(lateCheckOut[8]),
+                        Double.parseDouble(amountPaid[9]),
+                        Double.parseDouble(amountDue[10])));
+            }
+
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getBookingsFromFile() Error!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void getAssignmentsFromFile() {
+        try {
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/assignment.csv"));
+
+            // For all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] refCode = s.split(",");
+                String[] roomID = s.split(",");
+
+                AssignmentQueries assignmentQueries = new AssignmentQueries();
+
+                assignmentQueries.insertAssignment(new Assignment(
+                        Integer.parseInt(refCode[0]),
+                        Integer.parseInt(roomID[1])));
+            }
+
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getAssignmentFromFile() Error!");
             ex.printStackTrace();
         }
     }
