@@ -106,9 +106,9 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn fx:id="RoomTypeColumn" prefWidth="75.0" text="Room Type" />
-                        <TableColumn fx:id="TotalCostColumn" prefWidth="75.0" text="Total Cost" />
-                        <TableColumn fx:id="NumPeopleColumn" prefWidth="75.0" text="No. of People" />
+                        <TableColumn fx:id="selectedRoomTypeColumn" prefWidth="75.0" text="Room Type" />
+                        <TableColumn fx:id="selectedCostColumn" prefWidth="75.0" text="Total Cost" />
+                        <TableColumn fx:id="selectedNumPeopleColumn" prefWidth="75.0" text="No. of People" />
                      </columns>
                   </TableView>
                   <HBox alignment="CENTER_RIGHT" spacing="20.0">

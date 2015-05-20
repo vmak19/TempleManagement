@@ -32,9 +32,9 @@ import javafx.stage.Stage;
 public class EditBookingDialogController implements Initializable {
     
     @FXML private TableView selectedRoomTable;
-    @FXML private TableColumn<Room, String> RoomTypeColumn;
-    @FXML private TableColumn<Booking, Double> TotalCostColumn;
-    @FXML private TableColumn<Booking, Integer> NumPeopleColumn;
+    @FXML private TableColumn<RoomInfo, String> selectedRoomTypeColumn;
+    @FXML private TableColumn<RoomInfo, Double> selectedCostColumn;
+    @FXML private TableColumn<Booking, Integer> selectedNumPeopleColumn;
     
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
@@ -58,7 +58,11 @@ public class EditBookingDialogController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        // Set values for selected room table.
+        selectedRoomTypeColumn.setCellValueFactory(
+                cellData -> cellData.getValue().roomTypeIDProperty());
+        selectedCostColumn.setCellValueFactory(
+                cellData -> cellData.getValue().baseRateProperty().asObject());
     }
     
     /**
@@ -141,7 +145,9 @@ public class EditBookingDialogController implements Initializable {
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
         // TO-DO dsiplay selectedRoomTable.
+        System.out.println("Selected Room Data: " + foundRoom.getSelectedRoomData());
         selectedRoomData = foundRoom.getSelectedRoomData();
+        System.out.println("Selected Room Data After passes: " + selectedRoomData);
         selectedRoomTable.setItems(selectedRoomData);
     }
     
