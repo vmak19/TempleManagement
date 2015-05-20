@@ -38,6 +38,19 @@ public class BookingInfo {
     private DoubleProperty amountDue;
     
     /**
+     * Constructor is called by getBookingsByRoom(). 
+     */
+    public BookingInfo(int refCode, String custFirstName, String custLastName, 
+            int roomID, LocalDate checkIn, LocalDate checkOut) {
+        this.refCode = new SimpleIntegerProperty(refCode);
+        this.custFirstName = new SimpleStringProperty(custFirstName);
+        this.custLastName = new SimpleStringProperty(custLastName);
+        this.roomID = new SimpleIntegerProperty(roomID);
+        this.checkIn = new SimpleObjectProperty(checkIn);
+        this.checkOut = new SimpleObjectProperty(checkOut);
+    }
+    
+    /**
      * Constructor is called by getBookings(). 
      */
     public BookingInfo(int refCode, String custFirstName, String custLastName, 
@@ -111,7 +124,11 @@ public class BookingInfo {
     public LocalDate getCheckIn() {
         return checkIn.get();
     }
-
+    
+    public ObjectProperty<LocalDate> checkInProperty() {
+        return checkIn;
+    }
+    
     // Covert LocalDate to Date
     public Date getCheckInToDate() {
         LocalDate localDate = getCheckIn();
@@ -124,6 +141,10 @@ public class BookingInfo {
         return checkOut.get();
     }
 
+    public ObjectProperty<LocalDate> checkOutProperty() {
+        return checkIn;
+    }
+    
     // Covert LocalDate to Date
     public Date getCheckOutToDate() {
         LocalDate localDate = getCheckOut();

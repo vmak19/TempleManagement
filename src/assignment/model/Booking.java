@@ -39,10 +39,9 @@ public class Booking {
     private DoubleProperty amountPaid;
     private DoubleProperty amountDue;
     
-    /*// For later use when room is stored as an array
-    private ObjectProperty<ArrayList<Integer>> room;*/
-    
-    public Booking() {};
+    public Booking() {
+        this(null, null, null, 0, null, null, false, false, 0, 0);
+    }
     
     /**
      * Constructor called by getBookingsFromFile().
@@ -150,14 +149,9 @@ public class Booking {
     
     // Covert LocalDate to Date
     public Date getCreatedDateToDate() {
-        LocalDate localDate = getCreatedDate();
-        if (localDate == null) {
-            System.out.println("null");
-        } else {
-            System.out.println(localDate);
-        }
-        Date date = Date.valueOf(localDate);
-        return date;
+        //LocalDate localDate = getCreatedDate();
+        //Date date = Date.valueOf(localDate);
+        return Date.valueOf(createdDate.get());
     }
     
     // Number of Breakfast Dates

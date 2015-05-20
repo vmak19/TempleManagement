@@ -26,10 +26,12 @@ public class ProvidesQueries extends DatabaseQuery{
         openConnection();
 
         try {
-            insertProvides = conn.prepareStatement("insert into app.service "
-                    + "(refCode, serviceID) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            insertProvides = conn.prepareStatement("insert into app.provides "
+                    + "(refCode, roomID, serviceID, createdDate) values (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertProvides.setInt(1, toInsert.getRefCode());
-            insertProvides.setInt(2, toInsert.getServiceID());
+            insertProvides.setInt(2, toInsert.getRoomID());
+            insertProvides.setInt(3, toInsert.getServiceID());
+            insertProvides.setDate(4, toInsert.getCreatedDateToDate());
             insertProvides.executeUpdate();
 
             rs = insertProvides.getGeneratedKeys();

@@ -120,9 +120,7 @@ public class LoginScreenController implements Initializable {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader();
-            loader
-                    .setLocation(MainApp.class
-                            .getResource("view/HotelOverview.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
             hotelOverview = (AnchorPane) loader.load();
 
             HotelOverviewController controller = loader.getController();

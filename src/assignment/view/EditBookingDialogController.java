@@ -66,10 +66,20 @@ public class EditBookingDialogController implements Initializable {
     }
     
     /**
+     * Returns true if the user clicked confirm, false otherwise.
+     * 
+     * @return
+     */
+    public boolean isConfirmClicked() {
+        System.out.println("Get confirm from editBooking");
+        return confirmClicked;
+    }
+    
+    /**
      * Called when the user clicks confirm.
      */
     @FXML
-    private void handleOk() {
+    private void handleConfirm() {
         if (isInputValid()) {
             
             booking.setCustFirstName(firstNameField.getText());
@@ -82,9 +92,18 @@ public class EditBookingDialogController implements Initializable {
             booking.setAmountPaid(Double.parseDouble(amountPaidField.getText()));
             booking.setAmountDue(Double.parseDouble(amountDueField.getText()));
             
-            confirmClicked = true;
+            foundRoom.setConfirmClicked(true);
+            
             bookingDialogStage.close();
         }
+    }
+    
+    /**
+     * Called when the user clicks cancel.
+     */
+    @FXML
+    public void handleCancel() {
+        bookingDialogStage.close();
     }
     
     /**
@@ -144,11 +163,14 @@ public class EditBookingDialogController implements Initializable {
         earlyCheckInBox.setSelected(foundRoom.getSearchEarlyCheckIn());
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
-        // TO-DO dsiplay selectedRoomTable.
-        System.out.println("Selected Room Data: " + foundRoom.getSelectedRoomData());
         selectedRoomData = foundRoom.getSelectedRoomData();
-        System.out.println("Selected Room Data After passes: " + selectedRoomData);
         selectedRoomTable.setItems(selectedRoomData);
+        
+        double amountDue = 0;
+        for(RoomInfo room : selectedRoomData) {
+            amountDue += room.getBaseRate();
+        }
+        amountDueField.setText(Double.toString(amountDue));
     }
     
     /**
@@ -168,5 +190,12 @@ public class EditBookingDialogController implements Initializable {
      */
     public void setBookingDialogStage(Stage bookingDialogStage) {
         this.bookingDialogStage = bookingDialogStage;
+    }
+    
+    /**
+     * Is called by find room dialog controller.
+     */
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 }

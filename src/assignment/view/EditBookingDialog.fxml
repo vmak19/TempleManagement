@@ -114,8 +114,8 @@
                   <HBox alignment="CENTER_RIGHT" spacing="20.0">
                      <children>
                         <Button disable="true" mnemonicParsing="false" prefWidth="103.0" text="Select Room" />
-                        <Button fx:id="confirmButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefWidth="100.0" text="Confirm" />
-                        <Button fx:id="cancelButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
+                        <Button fx:id="confirmButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleConfirm" prefWidth="100.0" text="Confirm" />
+                        <Button fx:id="cancelButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="Cancel" />
                      </children>
                   </HBox>
                </children>

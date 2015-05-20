@@ -221,7 +221,9 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"PROVIDEID\" INT not null primary key "
                         + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
                         + "\"REFCODE\" INT, "
+                        + "\"ROOMID\" INT, "
                         + "\"SERVICEID\" INT, "
+                        + "\"CREATEDDATE\" DATE, "
                         + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
                         + "FOREIGN KEY (SERVICEID) REFERENCES SERVICE(SERVICEID))");
                 createProvidesTable.execute();

@@ -27,6 +27,11 @@ public class Service {
         this.serviceDesc = new SimpleStringProperty(serviceDesc);
         this.cost = new SimpleDoubleProperty(cost);
     }
+    
+    public Service(int serviceID, String serviceDesc) {
+        this.serviceID = new SimpleIntegerProperty(serviceID);
+        this.serviceDesc = new SimpleStringProperty(serviceDesc);
+    }
 
     public int getServiceID() {
         return serviceID.get();

@@ -25,9 +25,11 @@ public class BookingQueries extends DatabaseQuery{
 
     PreparedStatement insertBooking = null;
     PreparedStatement getAllBookings = null;
+    PreparedStatement getAllBookingsByRoom = null;
     PreparedStatement deleteBooking = null;
     ResultSet rs = null;
     List<BookingInfo> bookings;
+    List<BookingInfo> bookingsByRoom;
     
     public List<BookingInfo> getBookings() {
         bookings = new ArrayList<BookingInfo>();
@@ -59,6 +61,36 @@ public class BookingQueries extends DatabaseQuery{
         }
         closeConnection();
         return bookings;
+    }
+    
+    public List<BookingInfo> getBookingsByRoom(int roomID) {
+        bookingsByRoom = new ArrayList<BookingInfo>();
+        openConnection();
+        try {
+            getAllBookingsByRoom = conn.prepareStatement("select app.BOOKING.REFCODE, "
+                    + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, CHECKIN, CHECKOUT "
+                    + "from app.BOOKING"
+                    + "inner join app.ASSISNGMENT"
+                    + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE"
+                    + "where ROOMID = ?");
+            
+            getAllBookingsByRoom.setInt(1, roomID);
+            rs = getAllBookingsByRoom.executeQuery();
+            while (rs.next()) {
+                bookingsByRoom.add(
+                    new BookingInfo(rs.getInt("refCode"), rs.getString("custFirstName"), 
+                            rs.getString("custLastName"), rs.getInt("roomID"), 
+                            rs.getDate("checkIn").toLocalDate(), 
+                            rs.getDate("checkOut").toLocalDate()));
+            }
+            rs.close();
+            getAllBookingsByRoom.close();
+        } catch (SQLException ex) {
+            System.out.println("getBookingsByRoom() error!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+        return bookingsByRoom;
     }
     
     public int insertBooking(Booking toInsert) {

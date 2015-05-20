@@ -29,7 +29,6 @@ public class RoomQueries extends DatabaseQuery {
     ResultSet rs = null;
     List<RoomInfo> rooms;
     List<RoomInfo> availableRooms;
-    FindRoomDialogController findRoomDialogController;
 
     public List<RoomInfo> getRooms() {
         rooms = new ArrayList<RoomInfo>();
@@ -58,56 +57,61 @@ public class RoomQueries extends DatabaseQuery {
         return rooms;
     }
 
-    public List<RoomInfo> getAvailableRooms() {
-        availableRooms = new ArrayList<RoomInfo>();
+    public List<RoomInfo> getAvailableRoomsByType(LocalDate checkIn, 
+            LocalDate checkOut, List<String> types, boolean earlyCheckIn, 
+            boolean lateCheckOut) {
+        List<RoomInfo> availableRooms = new ArrayList<RoomInfo>();
         openConnection();
-        try {
-            Date searchCheckIn = Date.valueOf(findRoomDialogController.checkInField.getValue());
-            Date searchCheckOut = Date.valueOf(findRoomDialogController.checkOutField.getValue());
+        for (String type : types) {
+            try {
+                Date searchCheckIn = Date.valueOf(checkIn);
+                Date searchCheckOut = Date.valueOf(checkOut);
 
-            System.out.println(findRoomDialogController.getSearchRoomType());
+                //System.out.println(findRoomDialogController.getSearchRoomType());
+                getAllAvailableRooms = conn.prepareStatement(
+                        "select app.ASSIGNMENT.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
+                        + "from app.ROOM "
+                        + "inner join app.ROOMTYPE "
+                        + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+                        + "inner join app.ASSIGNMENT "
+                        + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
+                        + "inner join app.BOOKING "
+                        + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
+                        + "where ((CHECKIN < ? or CHECKIN >= ?) "
+                        + "and (CHECKOUT <= ? or CHECKOUT > ?) "
+                        + "and (CHECKIN < ? or CHECKOUT >= ?) "
+                        + "and (app.ROOMTYPE.ROOMTYPEID in (?))"
+                        + "and not exists ("
+                                + "select * from app.BOOKING "
+                                + "where (CHECKIN = ? and EARLYCHECKIN = true and ? = true) "
+                                + "or (CHECKOUT = ? and LATECHECKOUT = true and ? = true)))"
+                );
 
-            getAllAvailableRooms = conn.prepareStatement(
-                    "select app.ASSIGNMENT.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
-                    + "from app.ROOM "
-                    + "inner join app.ROOMTYPE "
-                    + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
-                    + "inner join app.ASSIGNMENT "
-                    + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
-                    + "inner join app.BOOKING "
-                    + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
-                    + "where ((CHECKIN < ? or CHECKIN >= ?) "
-                    + "and (CHECKOUT <= ? or CHECKOUT > ?) "
-                    + "and (CHECKIN < ? or CHECKOUT >= ?) "
-                    + "and (app.ROOMTYPE.ROOMTYPEID in (?)))"
-            //+ "and (EARLYCHECKIN != ?) "
-            //+ "and (LATECHECKOUT != ?))"
+                getAllAvailableRooms.setDate(1, searchCheckIn);
+                getAllAvailableRooms.setDate(2, searchCheckOut);
+                getAllAvailableRooms.setDate(3, searchCheckIn);
+                getAllAvailableRooms.setDate(4, searchCheckOut);
+                getAllAvailableRooms.setDate(5, searchCheckIn);
+                getAllAvailableRooms.setDate(6, searchCheckIn);
+                getAllAvailableRooms.setString(7, type);
+                getAllAvailableRooms.setDate(8, searchCheckOut);
+                getAllAvailableRooms.setBoolean(9, lateCheckOut);
+                getAllAvailableRooms.setDate(10, searchCheckIn);
+                getAllAvailableRooms.setBoolean(11, earlyCheckIn);
 
-            );
+                rs = getAllAvailableRooms.executeQuery();
+                while (rs.next()) {
 
-            getAllAvailableRooms.setDate(1, searchCheckIn);
-            getAllAvailableRooms.setDate(2, searchCheckOut);
-            getAllAvailableRooms.setDate(3, searchCheckIn);
-            getAllAvailableRooms.setDate(4, searchCheckOut);
-            getAllAvailableRooms.setDate(5, searchCheckIn);
-            getAllAvailableRooms.setDate(6, searchCheckIn);
-            //getAllAvailableRooms.setArray(7, conn.createArrayOf("VARCHAR", findRoomDialogController.getSearchRoomTypeArray()));
-            getAllAvailableRooms.setString(7, findRoomDialogController.getSearchRoomType());
-            //getAllAvailableRooms.setBoolean(7, findRoomDialogController.getSearchEarlyCheckIn());
-            //getAllAvailableRooms.setBoolean(8, findRoomDialogController.getSearchLateCheckOut());
-
-            rs = getAllAvailableRooms.executeQuery();
-            while (rs.next()) {
-
-                availableRooms.add(
-                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
-                                rs.getDouble("baseRate"), rs.getInt("capacity")));
+                    availableRooms.add(
+                            new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
+                                    rs.getDouble("baseRate"), rs.getInt("capacity")));
+                }
+                rs.close();
+                getAllAvailableRooms.close();
+            } catch (SQLException ex) {
+                System.out.println("getAvailableRoomsByType() error!");
+                ex.printStackTrace();
             }
-            rs.close();
-            getAllAvailableRooms.close();
-        } catch (SQLException ex) {
-            System.out.println("getRoom() error!");
-            ex.printStackTrace();
         }
         closeConnection();
         return availableRooms;
@@ -133,9 +137,5 @@ public class RoomQueries extends DatabaseQuery {
             ex.printStackTrace();
         }
         closeConnection();
-    }
-
-    public void setFindRoomDialogController(FindRoomDialogController findRoomDialogController) {
-        this.findRoomDialogController = findRoomDialogController;
     }
 }

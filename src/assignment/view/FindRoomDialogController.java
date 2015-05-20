@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,6 +34,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -120,14 +123,18 @@ public class FindRoomDialogController implements Initializable {
      * Returns true if the user clicked OK, false otherwise.
      */
     public boolean isConfirmClicked() {
+        System.out.println("Get confirm from findRoom");
         return confirmClicked;
     }
     
     @FXML
     public void handleSearch() {
         if (isInputValidToSearch()) {
-            availableRoomQueries.setFindRoomDialogController(this);
-            if (availableRoomQueries.getAvailableRooms().isEmpty()) {
+            availableRoomData.clear();
+            if (availableRoomQueries.getAvailableRoomsByType(
+                    checkInField.getValue(), checkOutField.getValue(), 
+                    getSearchRoomType(), getSearchEarlyCheckIn(), 
+                    getSearchLateCheckOut()).isEmpty()) {
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.initOwner(bookingDialogStage);
@@ -137,18 +144,17 @@ public class FindRoomDialogController implements Initializable {
                 alert.showAndWait();
             } else {
                 try {
-                    availableRoomData.clear();
-                    availableRoomData.addAll(availableRoomQueries.getAvailableRooms()); // TO-DO: Create this method in the query
+                    availableRoomData.addAll(availableRoomQueries.getAvailableRoomsByType(
+                            checkInField.getValue(), checkOutField.getValue(), 
+                            getSearchRoomType(), getSearchEarlyCheckIn(), 
+                            getSearchLateCheckOut()));
                     availableRoomTable.setItems(availableRoomData);
-                    
                     
                     // Set values for available room table.
                     availableRoomTypeColumn.setCellValueFactory(
                             cellData -> cellData.getValue().roomTypeIDProperty());
                     availableCostColumn.setCellValueFactory(
                             cellData -> cellData.getValue().baseRateProperty().asObject());
-
-
 
                 } catch (Exception e) {
                     System.out.println("Error! handleSearch()!");
@@ -173,6 +179,16 @@ public class FindRoomDialogController implements Initializable {
                     cellData -> cellData.getValue().roomTypeIDProperty());
             selectedCostColumn.setCellValueFactory(
                     cellData -> cellData.getValue().baseRateProperty().asObject());
+            
+            
+            /*
+            selectedRoomTypeColumn.setCellFactory(TextFieldTableCell.<RoomInfo>forTableColumn());
+            selectedRoomTypeColumn.setOnEditCommit(
+                    (CellEditEvent<RoomInfo, String> t) -> {
+                        ((RoomInfo) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setRoomTypeID(t.getNewValue());
+                    });
+            */
         }
     }
     
@@ -204,6 +220,7 @@ public class FindRoomDialogController implements Initializable {
                 EditBookingDialogController controller = loader.getController();
                 controller.setFoundRoom(this);
                 controller.setBookingDialogStage(bookingDialogStage);
+                controller.setBooking(booking);
                 Scene scene = new Scene(editBookingDialog);
                 bookingDialogStage.setScene(scene);
                 bookingDialogStage.show();
@@ -342,49 +359,30 @@ public class FindRoomDialogController implements Initializable {
     /**
      * Is called by the room queries.
      * 
-     * @return String of selected room types
+     * @return List of selected room types
      */
-    public String getSearchRoomType() {
-        String searchRoomType = "";
-        String separator =  ", ";
+    public List<String> getSearchRoomType() {
+        List<String> searchRoomType = new ArrayList<>();
         if (singleBox.isSelected()) {
-            searchRoomType += "Single";
+            searchRoomType.add("Single");
         }
         if (doubleBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "Double";
+           searchRoomType.add("Double");
         }
         if (queenBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "Queen";
+            searchRoomType.add("Queen");
         }
         if (kingBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "King";
+            searchRoomType.add("King");
         }
         if (twinBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "Twin";
+            searchRoomType.add("Twin");
         }
         if (doubleDoubleBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "Double-double";
+            searchRoomType.add("Double-double");
         }
         if (suiteBox.isSelected()) {
-            if (searchRoomType.length() != 0) {
-                searchRoomType += separator;
-            }
-            searchRoomType += "Suite";
+            searchRoomType.add("Suite");
         }
         return searchRoomType;
     }
@@ -498,5 +496,9 @@ public class FindRoomDialogController implements Initializable {
      */
     public void setBooking(Booking booking) {
         this.booking = booking;
+    }
+    
+    public void setConfirmClicked(Boolean confirmClicked) {
+        this.confirmClicked = confirmClicked;
     }
 }

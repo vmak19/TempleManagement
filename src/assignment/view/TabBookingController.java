@@ -107,8 +107,8 @@ public class TabBookingController implements Initializable {
     }
 
     /**
-     * Fills all text fields to show details about the person. If the specified
-     * person is null, all text fields are cleared.
+     * Fills all text fields to show details about the booking. If the specified
+     * booking is null, all text fields are cleared.
      */
     private void showBookingDetails(BookingInfo booking) {
         if (booking != null) {
@@ -134,7 +134,7 @@ public class TabBookingController implements Initializable {
             amountPaidLabel.setText(Double.toString(booking.getAmountPaid()));
             amountDueLabel.setText(Double.toString(booking.getAmountDue()));
         } else {
-            // Person is null, remove all the text.
+            // Booking is null, remove all the text.
             refCodeLabel.setText("");
             custFirstNameLabel.setText("");
             custLastNameLabel.setText("");
@@ -183,8 +183,10 @@ public class TabBookingController implements Initializable {
     @FXML
     private void handleNewBooking() {
         Booking tempBooking = new Booking();
-        boolean okClicked = showFindRoomDialog(tempBooking);
-        if (okClicked) {
+        boolean confirmClicked = showFindRoomDialog(tempBooking);
+        System.out.println("Testing");
+        if (confirmClicked) {
+           System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
            bookingQueries.insertBooking(tempBooking);
            
            // TO-DO Display record onto the table
@@ -226,7 +228,7 @@ public class TabBookingController implements Initializable {
             
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
-
+            System.out.println("Check confirm: " + controller.isConfirmClicked());
             return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();

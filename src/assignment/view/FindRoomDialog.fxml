@@ -95,7 +95,7 @@
                         <Button fx:id="removeButton" alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleRemove" prefWidth="80.0" text="Remove" />
                      </children>
                   </VBox>
-                  <TableView fx:id="selectedRoomTable" HBox.hgrow="ALWAYS">
+                  <TableView fx:id="selectedRoomTable" editable="true" HBox.hgrow="ALWAYS">
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
