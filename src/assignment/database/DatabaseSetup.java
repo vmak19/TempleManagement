@@ -1,29 +1,18 @@
 package assignment.database;
 
 import assignment.model.Assignment;
-import assignment.model.Billing;
 import assignment.model.Booking;
 import assignment.model.Employee;
 import assignment.model.Room;
-import assignment.model.RoomInfo;
 import assignment.model.RoomType;
 import assignment.util.DateUtil;
-import assignment.view.TabRoomController;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class DatabaseSetup extends DatabaseQuery {
 
@@ -34,6 +23,9 @@ public class DatabaseSetup extends DatabaseQuery {
     PreparedStatement createBillingTable = null;
     PreparedStatement createEmployeeTable = null;
     PreparedStatement createLogTable = null;
+    PreparedStatement createServiceTable = null;
+    PreparedStatement createProvidesTable = null;
+    PreparedStatement createAssignmentTable = null;
     ResultSet rs = null;
 
     public static void setupDatabase() {
@@ -44,7 +36,21 @@ public class DatabaseSetup extends DatabaseQuery {
     private void databaseSetup() {
 
         openConnection();
+        
+        createEmployeeTable();
+        createRoomTypeTable();
+        createRoomTable();
+        createBookingTable();
+        createAssignmentTable();
+        createServiceTable();
+        createProvidesTable();
+        createLogTable();
+        
+        closeConnection();
 
+    }
+
+    private void createEmployeeTable() {
         try {
 
             // Determine if the EMPLOYEE table already exists or not
@@ -67,7 +73,9 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table EMPLOYEE error!");
         }
+    }
 
+    private void createRoomTypeTable() {
         try {
 
             // Determine if the ROOMTYPE table already exists or not
@@ -90,7 +98,9 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOMTYPE error!");
         }
+    }
 
+    private void createRoomTable() {
         try {
 
             // Determine if the ROOM table already exists or not
@@ -115,7 +125,9 @@ public class DatabaseSetup extends DatabaseQuery {
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOM error!");
         }
+    }
 
+    private void createBookingTable() {
         try {
 
             // Determine if the booking table already exists or not
@@ -138,14 +150,15 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"LATECHECKOUT\" BOOLEAN, "
                         + "\"AMOUNTPAID\" DOUBLE, "
                         + "\"AMOUNTDUE\" DOUBLE)");
-                //+ "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
                 createBookingTable.execute();
                 getBookingsFromFile();
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table BOOKING error!");
         }
+    }
 
+    private void createAssignmentTable() {
         try {
 
             // Determine if the ASSIGNMENT table already exists or not
@@ -153,22 +166,74 @@ public class DatabaseSetup extends DatabaseQuery {
             rs = dbmd.getTables(null, "APP", "ASSIGNMENT", null);
 
             if (!rs.next()) {
-                // If the LOG table does not already exist we create it
-                createLogTable = conn.prepareStatement(
+                // If the ASSIGNMENT table does not already exist we create it
+                createAssignmentTable = conn.prepareStatement(
                         "CREATE TABLE APP.ASSIGNMENT ("
                         + "\"REFCODE\" INT, "
                         + "\"ROOMID\" INT, "
                         + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
                         + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
-                createLogTable.execute();
+                createAssignmentTable.execute();
                 getAssignmentsFromFile();
             }
 
         } catch (SQLException ex) {
-            System.out.println("databaseSetup() for Table LOG error!");
+            System.out.println("databaseSetup() for Table ASSIGNMENT error!");
             ex.printStackTrace();
         }
+    }
 
+    private void createServiceTable() {
+        try {
+
+            // Determine if the SERVICE table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "SERVICE", null);
+
+            if (!rs.next()) {
+                // If the SERVICE table does not already exist we create it
+                createServiceTable = conn.prepareStatement(
+                        "CREATE TABLE APP.SERVICE ("
+                        + "\"SERVICEID\" INT not null primary key "
+                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"SERVICEDESC\" VARCHAR(200), "
+                        + "\"COST\" DOUBLE)");
+                createServiceTable.execute();
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table SERVICE error!");
+            ex.printStackTrace();
+        }
+    }
+
+    private void createProvidesTable() {
+        try {
+
+            // Determine if the PROVIDES table already exists or not
+            DatabaseMetaData dbmd = conn.getMetaData();
+            rs = dbmd.getTables(null, "APP", "PROVIDES", null);
+
+            if (!rs.next()) {
+                // If the PROVIDES table does not already exist we create it
+                createProvidesTable = conn.prepareStatement(
+                        "CREATE TABLE APP.PROVIDES ("
+                        + "\"PROVIDEID\" INT not null primary key "
+                        + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"REFCODE\" INT, "
+                        + "\"SERVICEID\" INT, "
+                        + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
+                        + "FOREIGN KEY (SERVICEID) REFERENCES SERVICE(SERVICEID))");
+                createProvidesTable.execute();
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("databaseSetup() for Table PROVIDES error!");
+            ex.printStackTrace();
+        }
+    }
+
+    private void createLogTable() {
         try {
 
             // Determine if the LOG table already exists or not
@@ -191,8 +256,6 @@ public class DatabaseSetup extends DatabaseQuery {
             System.out.println("databaseSetup() for Table LOG error!");
             ex.printStackTrace();
         }
-
-        closeConnection();
     }
 
     public void getRoomTypesFromFile() {
