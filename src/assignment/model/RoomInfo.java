@@ -17,39 +17,45 @@ import javafx.beans.property.StringProperty;
  * @author SONY
  */
 public class RoomInfo {
+
     private IntegerProperty roomID;
     private StringProperty roomTypeID;
     private StringProperty description;
     private DoubleProperty baseRate;
     private IntegerProperty capacity;
     private IntegerProperty noOfBeds;
-    
+    private DoubleProperty extraCharge;
+    private DoubleProperty totalCharge;
+
     public RoomInfo(int roomID, String roomTypeID, double baseRate, int capacity) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
-    }   
+    }
 
-    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate, int capacity, int noOfBeds) {
+    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate, int capacity, int noOfBeds,
+            double extraCharge, double totalCharge) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
         this.noOfBeds = new SimpleIntegerProperty(noOfBeds);
-    }   
-    
+        this.extraCharge = new SimpleDoubleProperty(extraCharge);
+        this.totalCharge = new SimpleDoubleProperty(totalCharge);
+    }
+
     public RoomInfo(int roomID, double baseRate, int capacity) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
-    }  
-    
+    }
+
     public int getRoomID() {
         return roomID.get();
     }
-    
+
     public IntegerProperty roomIDProperty() {
         return roomID;
     }
@@ -57,23 +63,23 @@ public class RoomInfo {
     public String getRoomTypeID() {
         return roomTypeID.get();
     }
-    
+
     public void setRoomTypeID(String roomTypeID) {
         this.roomTypeID.set(roomTypeID);
     }
-    
+
     public StringProperty roomTypeIDProperty() {
-        return roomTypeID;        
+        return roomTypeID;
     }
-        
+
     public String getDescription() {
         return description.get();
     }
-    
+
     public StringProperty descriptionProperty() {
-        return description;        
+        return description;
     }
-    
+
     public double getBaseRate() {
         return baseRate.get();
     }
@@ -81,19 +87,19 @@ public class RoomInfo {
     public void setBaseRate(double baseRate) {
         this.baseRate.set(baseRate);
     }
-        
+
     public DoubleProperty baseRateProperty() {
         return baseRate;
     }
-    
+
     public int getCapacity() {
         return capacity.get();
     }
-    
+
     public IntegerProperty capacityProperty() {
         return capacity;
     }
-    
+
     public int getNoOfBeds() {
         return noOfBeds.get();
     }
@@ -101,10 +107,35 @@ public class RoomInfo {
     public void setNoOfBeds(int noOfBeds) {
         this.noOfBeds.set(noOfBeds);
     }
-        
+
     public IntegerProperty noOfBedsProperty() {
         return noOfBeds;
     }
+
+    public double getExtraCharge() {
+        return extraCharge.get();
+    }
+
+    public void setExtraCharge(double extraCharge) {
+        this.extraCharge.set(extraCharge);
+    }
+
+    public DoubleProperty extraChargeProperty() {
+        return extraCharge;
+    }
+    
+    public double getTotalCharge() {
+        return totalCharge.get();
+    }
+
+    public void setTotalCharge(double totalCharge) {
+        this.totalCharge.set(totalCharge);
+    }
+
+    public DoubleProperty totalChargeProperty() {
+        return totalCharge;
+    }
+    
     
     @Override
     public String toString() {

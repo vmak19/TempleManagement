@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import assignment.model.Booking;
+import assignment.model.BookingInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
@@ -25,13 +26,13 @@ import javafx.stage.Stage;
 public class TabBookingController implements Initializable {
 
     @FXML
-    TableView<Booking> bookingTable;
+    TableView<BookingInfo> bookingTable;
     @FXML
-    private TableColumn<Booking, Integer> refCodeColumn;
+    private TableColumn<BookingInfo, Integer> refCodeColumn;
     @FXML
-    private TableColumn<Booking, String> custFirstNameColumn;
+    private TableColumn<BookingInfo, String> custFirstNameColumn;
     @FXML
-    private TableColumn<Booking, String> custLastNameColumn;
+    private TableColumn<BookingInfo, String> custLastNameColumn;
 
     @FXML
     private Label refCodeLabel;
@@ -67,11 +68,11 @@ public class TabBookingController implements Initializable {
 
     MainApp mainApp;
 
-    private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
+    private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
 
     private BookingQueries bookingQueries = new BookingQueries();
 
-    public ObservableList<Booking> getBookingData() {
+    public ObservableList<BookingInfo> getBookingData() {
         return bookingData;
     }
 
@@ -84,6 +85,8 @@ public class TabBookingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            System.out.println("getBookings: " + bookingQueries.getBookings());
+            
             bookingData.addAll(bookingQueries.getBookings());
             bookingTable.setItems(bookingData);
 
@@ -107,13 +110,12 @@ public class TabBookingController implements Initializable {
      * Fills all text fields to show details about the person. If the specified
      * person is null, all text fields are cleared.
      */
-    private void showBookingDetails(Booking booking) {
+    private void showBookingDetails(BookingInfo booking) {
         if (booking != null) {
             // Fill the labels with info from the booking object.
             refCodeLabel.setText(Integer.toString(booking.getRefCode()));
             custFirstNameLabel.setText(booking.getCustFirstName());
             custLastNameLabel.setText(booking.getCustLastName());
-            numPeopleLabel.setText(Integer.toString(booking.getNumPeople()));
             roomIDLabel.setText(Integer.toString(booking.getRoomID()));
             createdDateLabel.setText(DateUtil.format(booking.getCreatedDate()));
             numBreakfastLabel.setText(Integer.toString(booking.getNumBreakfast()));
@@ -136,7 +138,6 @@ public class TabBookingController implements Initializable {
             refCodeLabel.setText("");
             custFirstNameLabel.setText("");
             custLastNameLabel.setText("");
-            numPeopleLabel.setText("");
             roomIDLabel.setText("");
             createdDateLabel.setText("");
             numBreakfastLabel.setText("");
@@ -185,8 +186,11 @@ public class TabBookingController implements Initializable {
         boolean okClicked = showFindRoomDialog(tempBooking);
         if (okClicked) {
            bookingQueries.insertBooking(tempBooking);
-           bookingData.add(tempBooking);
+           
+           // TO-DO Display record onto the table
+           //bookingData.add(tempBooking);
         }
+        
     }
     
     /**

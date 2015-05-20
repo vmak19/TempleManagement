@@ -5,10 +5,8 @@
  */
 package assignment.model;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.sql.Date;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -24,7 +22,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author SONY
  */
-public class Booking {
+public class BookingInfo {
     
     private IntegerProperty refCode;
     private StringProperty custFirstName;
@@ -39,40 +37,17 @@ public class Booking {
     private DoubleProperty amountPaid;
     private DoubleProperty amountDue;
     
-    /*// For later use when room is stored as an array
-    private ObjectProperty<ArrayList<Integer>> room;*/
-    
-    public Booking() {};
-    
     /**
-     * Constructor called by getBookingsFromFile().
+     * Constructor is called by getBookings(). 
      */
-    public Booking(int refCode, String custFirstName, String custLastName, 
-            LocalDate createdDate, int numBreakfast, 
+    public BookingInfo(int refCode, String custFirstName, String custLastName, 
+            int roomID, LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
             boolean lateCheckOut, double amountPaid, double amountDue) {
         this.refCode = new SimpleIntegerProperty(refCode);
         this.custFirstName = new SimpleStringProperty(custFirstName);
         this.custLastName = new SimpleStringProperty(custLastName);
-        this.createdDate = new SimpleObjectProperty(createdDate);
-        this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
-        this.checkIn = new SimpleObjectProperty(checkIn);
-        this.checkOut = new SimpleObjectProperty(checkOut);
-        this.earlyCheckIn = new SimpleBooleanProperty(earlyCheckIn);
-        this.lateCheckOut = new SimpleBooleanProperty(lateCheckOut);
-        this.amountPaid = new SimpleDoubleProperty(amountPaid);
-        this.amountDue = new SimpleDoubleProperty(amountDue);
-    }
-    
-    /**
-     * Constructor is called by insertBooking().
-     */
-    public Booking(String custFirstName, String custLastName, 
-            LocalDate createdDate, int numBreakfast, 
-            LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
-            boolean lateCheckOut, double amountPaid, double amountDue) {
-        this.custFirstName = new SimpleStringProperty(custFirstName);
-        this.custLastName = new SimpleStringProperty(custLastName);
+        this.roomID = new SimpleIntegerProperty(roomID);
         this.createdDate = new SimpleObjectProperty(createdDate);
         this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
         this.checkIn = new SimpleObjectProperty(checkIn);
@@ -88,10 +63,6 @@ public class Booking {
         return refCode.get();
     }
 
-    public void setRefCode(int refCode) {
-        this.refCode.set(refCode);
-    }
-
     public IntegerProperty refCodeProperty() {
         return refCode;
     }
@@ -99,10 +70,6 @@ public class Booking {
     // First name
     public String getCustFirstName() {
         return custFirstName.get();
-    }
-
-    public void setCustFirstName(String custFirstName) {
-        this.custFirstName.set(custFirstName);
     }
 
     public StringProperty custFirstNameProperty() {
@@ -114,10 +81,6 @@ public class Booking {
         return custLastName.get();
     }
 
-    public void setCustLastName(String custLastName) {
-        this.custLastName.set(custLastName);
-    }
-
     public StringProperty custLastNameProperty() {
         return custLastName;
     }
@@ -127,35 +90,14 @@ public class Booking {
         return roomID.get();
     }
 
-    public void setRoomID(int roomID) {
-        this.roomID.set(roomID);
-    }
-
-    public IntegerProperty roomIDProperty() {
-        return roomID;
-    }
-    
     // Created Date
     public LocalDate getCreatedDate() {
         return createdDate.get();
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
-        this.createdDate.set(createdDate);
-    }
-
-    public ObjectProperty<LocalDate> createdDateProperty() {
-        return createdDate;
-    }
-    
     // Covert LocalDate to Date
     public Date getCreatedDateToDate() {
         LocalDate localDate = getCreatedDate();
-        if (localDate == null) {
-            System.out.println("null");
-        } else {
-            System.out.println(localDate);
-        }
         Date date = Date.valueOf(localDate);
         return date;
     }
@@ -165,27 +107,11 @@ public class Booking {
         return numBreakfast.get();
     }
 
-    public void setNumBreakfast(int numBreakfast) {
-        this.numBreakfast.set(numBreakfast);
-    }
-
-    public IntegerProperty numBreakfastProperty() {
-        return numBreakfast;
-    }
-    
     // Check In
     public LocalDate getCheckIn() {
         return checkIn.get();
     }
 
-    public void setCheckIn(LocalDate checkIn) {
-        this.checkIn.set(checkIn);
-    }
-
-    public ObjectProperty<LocalDate> checkInProperty() {
-        return checkIn;
-    }
-    
     // Covert LocalDate to Date
     public Date getCheckInToDate() {
         LocalDate localDate = getCheckIn();
@@ -198,14 +124,6 @@ public class Booking {
         return checkOut.get();
     }
 
-    public void setCheckOut(LocalDate checkOut) {
-        this.checkOut.set(checkOut);
-    }
-
-    public ObjectProperty<LocalDate> checkOutProperty() {
-        return checkOut;
-    }
-    
     // Covert LocalDate to Date
     public Date getCheckOutToDate() {
         LocalDate localDate = getCheckOut();
@@ -219,38 +137,14 @@ public class Booking {
         return amountPaid.get();
     }
 
-    public void setAmountPaid(double amountPaid) {
-        this.amountPaid.set(amountPaid);
-    }
-
-    public DoubleProperty amountPaidProperty() {
-        return amountPaid;
-    }
-    
     // Amount Due
     public double getAmountDue() {
         return amountDue.get();
     }
 
-    public void setAmountDue(double amountDue) {
-        this.amountDue.set(amountDue);
-    }
-
-    public DoubleProperty amountDueProperty() {
-        return amountDue;
-    }
-    
     // Early check in
     public boolean getEarlyCheckIn() {
         return earlyCheckIn.get();
-    }
-    
-    public void setEarlyCheckIn(boolean earlyCheckIn) {
-        this.earlyCheckIn.set(earlyCheckIn);
-    }
-    
-    public BooleanProperty earlyCheckInProperty() {
-        return earlyCheckIn;
     }
     
     // Late check out
@@ -258,17 +152,4 @@ public class Booking {
         return lateCheckOut.get();
     }
     
-    public void setLateCheckOut(boolean lateCheckOut) {
-        this.lateCheckOut.set(lateCheckOut);
-    }
-    
-    public BooleanProperty lateCheckOutProperty() {
-        return lateCheckOut;
-    }
-    
-    @Override
-    public String toString() {
-        return "Booking { Ref. Code=" + refCode + "Cust First Name=" + custFirstName + "Cust Last Name=" + custLastName +" }";
-    }
 }
-  

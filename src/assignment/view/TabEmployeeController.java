@@ -24,6 +24,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -132,8 +133,8 @@ public class TabEmployeeController implements Initializable {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.initOwner(mainApp.getPrimaryStage());
                 alert.setTitle("No Selection");
-                alert.setHeaderText("No Person Selected");
-                alert.setContentText("Please select a person in the table.");
+                alert.setHeaderText("No Employee Selected");
+                alert.setContentText("Please select an employee in the table.");
 
                 alert.showAndWait();
             }
@@ -141,18 +142,39 @@ public class TabEmployeeController implements Initializable {
             System.out.println("Error! handleDeleteEmployee()!");
         }
     }
-/*
+
     @FXML
     private void handleNewEmployee() {
         Employee tempEmployee = new Employee();
-        boolean okClicked = showFindRoomDialog(tempEmployee);
+        boolean okClicked = showEditEmployeeDialog(tempEmployee);
         if (okClicked) {
             employeeQueries.insertEmployee(tempEmployee);
             employeeData.add(tempEmployee);
         }
-    }*/
+    }
 
-    /*public boolean showHotelEditEmployeeDialog(Employee employee) {
+    @FXML
+    private void handleEditEmployee() {
+        Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
+        if (selectedEmployee != null) {
+            boolean okClicked = showEditEmployeeDialog(selectedEmployee);
+            if (okClicked) {
+                showEmployeeDetails(selectedEmployee);
+            }
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Employee Selected");
+            alert.setContentText("Please select an employee in the table.");
+
+            alert.showAndWait();
+        }
+    }
+
+    public boolean showEditEmployeeDialog(Employee employee) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -162,7 +184,7 @@ public class TabEmployeeController implements Initializable {
             // Create the dialog Stage.
             Stage employeeDialogStage = new Stage();
             employeeDialogStage.setTitle("Edit Employee");
-            employeeDialogStage.initModality(Modality.WINDOW_MODAL);            
+            employeeDialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(page);
             employeeDialogStage.setScene(scene);
 
@@ -179,7 +201,7 @@ public class TabEmployeeController implements Initializable {
             e.printStackTrace();
             return false;
         }
-    }*/
+    }
 
     private void showEmployeeDetails(Employee employee) {
         if (employee != null) {
@@ -222,7 +244,7 @@ public class TabEmployeeController implements Initializable {
             empFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().empFirstNameProperty());
             empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
 
-            // Clear booking details.
+            // Clear employee details.
             showEmployeeDetails(null);
 
             employeeTable.getSelectionModel().selectedItemProperty().addListener(

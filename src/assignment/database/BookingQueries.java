@@ -6,6 +6,7 @@
 package assignment.database;
 
 import assignment.model.Booking;
+import assignment.model.BookingInfo;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,19 +27,25 @@ public class BookingQueries extends DatabaseQuery{
     PreparedStatement getAllBookings = null;
     PreparedStatement deleteBooking = null;
     ResultSet rs = null;
-    List<Booking> bookings;
+    List<BookingInfo> bookings;
     
-    public List<Booking> getBookings() {
-        bookings = new ArrayList<Booking>();
+    public List<BookingInfo> getBookings() {
+        bookings = new ArrayList<BookingInfo>();
         openConnection();
         try {
-            getAllBookings = conn.prepareStatement("select * from app.BOOKING");
+            getAllBookings = conn.prepareStatement("select app.BOOKING.REFCODE, "
+                    + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, "
+                    + "CREATEDDATE, NUMBREAKFAST, CHECKIN, CHECKOUT, "
+                    + "EARLYCHECKIN, LATECHECKOUT, AMOUNTPAID, AMOUNTDUE "
+                    + "from app.BOOKING "
+                    + "inner join app.ASSIGNMENT "
+                    + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE");
             rs = getAllBookings.executeQuery();
             while (rs.next()) {
                 bookings.add(
-                    new Booking(rs.getInt("refCode"), rs.getString("custFirstName"), 
-                            rs.getString("custLastName"), rs.getInt("numPeople"), 
-                            rs.getInt("roomID"), rs.getDate("createdDate").toLocalDate(), 
+                    new BookingInfo(rs.getInt("refCode"), rs.getString("custFirstName"), 
+                            rs.getString("custLastName"), rs.getInt("roomID"), 
+                            rs.getDate("createdDate").toLocalDate(), 
                             rs.getInt("numBreakfast"), rs.getDate("checkIn").toLocalDate(),
                             rs.getDate("checkOut").toLocalDate(), rs.getBoolean("earlyCheckIn"), 
                             rs.getBoolean("lateCheckOut"), rs.getDouble("amountPaid"), 
@@ -48,6 +55,7 @@ public class BookingQueries extends DatabaseQuery{
             getAllBookings.close();
         } catch (SQLException ex) {
             System.out.println("getBookings() error!");
+            ex.printStackTrace();
         }
         closeConnection();
         return bookings;
@@ -59,24 +67,22 @@ public class BookingQueries extends DatabaseQuery{
         try {
             
             insertBooking = conn.prepareStatement("insert into app.booking "
-                    + "(custFirstName, custLastName, numPeople, roomID, "
-                    + "createdDate, numBreakfast, checkIn, checkOut, earlyCheckIn, "
-                    + "lateCheckOut, amountPaid, amountDue) "
-                    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    + "(custFirstName, custLastName, createdDate, numBreakfast, "
+                    + "checkIn, checkOut, earlyCheckIn, lateCheckOut, amountPaid, "
+                    + "amountDue) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertBooking.setString(1, toInsert.getCustFirstName());
             insertBooking.setString(2, toInsert.getCustLastName());
-            insertBooking.setInt(3, toInsert.getNumPeople());
-            insertBooking.setInt(4, toInsert.getRoomID());
-            insertBooking.setDate(5, toInsert.getCreatedDateToDate());
-            insertBooking.setInt(6, toInsert.getNumBreakfast());
-            insertBooking.setDate(7, toInsert.getCheckInToDate());
-            insertBooking.setDate(8, toInsert.getCheckOutToDate());
-            insertBooking.setBoolean(9, toInsert.getEarlyCheckIn());
-            insertBooking.setBoolean(10, toInsert.getLateCheckOut());
-            insertBooking.setDouble(11, toInsert.getAmountPaid());
-            insertBooking.setDouble(12, toInsert.getAmountDue());
+            insertBooking.setDate(3, toInsert.getCreatedDateToDate());
+            insertBooking.setInt(4, toInsert.getNumBreakfast());
+            insertBooking.setDate(5, toInsert.getCheckInToDate());
+            insertBooking.setDate(6, toInsert.getCheckOutToDate());
+            insertBooking.setBoolean(7, toInsert.getEarlyCheckIn());
+            insertBooking.setBoolean(8, toInsert.getLateCheckOut());
+            insertBooking.setDouble(9, toInsert.getAmountPaid());
+            insertBooking.setDouble(10, toInsert.getAmountDue());
             insertBooking.executeUpdate();
 
+            System.out.println("record inserted");
             rs = insertBooking.getGeneratedKeys();
             rs.next();
             returnValue = rs.getInt(1);
@@ -91,10 +97,13 @@ public class BookingQueries extends DatabaseQuery{
         return returnValue;
     }
     
-    public void deleteBooking(Booking toDelete) {
+    public void deleteBooking(BookingInfo toDelete) {
         openConnection();
         try {
-            deleteBooking = conn.prepareStatement("delete from app.booking where refcode = ?");
+            deleteBooking = conn.prepareStatement("delete from app.booking "
+                    + "left join app.assignment "
+                    + "on app.booking.refCode = app.assignment.refCode "
+                    + "where refcode = ?");
             deleteBooking.setInt(1, toDelete.getRefCode());
             deleteBooking.execute();
             System.out.println("deleted");

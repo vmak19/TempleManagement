@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -47,42 +48,46 @@ public class LoginScreenController implements Initializable {
     public TextField userIDField;
     @FXML
     public PasswordField passwordField;
-    @FXML
-    private Label incorrectUsernameLabel;
-    @FXML
-    private Label incorrectPasswordLabel;
 
     private AnchorPane hotelOverview;
     private Stage primaryStage;
 
     private MainApp mainApp;
-    private ObservableList<Employee> loginData = FXCollections.observableArrayList();
+    
     private LoginQueries loginQueries;
 
-    public ObservableList<Employee> getLoginData() {
-        return loginData;
+
+    public String getUserID() {
+        String myUser = userIDField.getText();
+        return myUser;
+    }
+
+    public String getPassword() {
+        String myPassword = passwordField.getText();
+        return myPassword;
     }
 
     @FXML
     private void checkPassword(ActionEvent event) throws IOException {
-        
 
-        String myUser = userIDField.getText();
-        String myPassword = passwordField.getText();
-
-        if (loginData.contains(myUser)) {
-            if (loginData.contains(myPassword)) {
-                primaryStage = (Stage) loginBtn.getScene().getWindow();
-                //load up OTHER FXML document
-                showHotelOverview();
-            } else {
-                incorrectPasswordLabel.setVisible(true);
-            }
+        loginQueries = new LoginQueries();
+        loginQueries.setLoginScreenController(this);
+        if (!loginQueries.getLoginDetails().isEmpty()) {
+            primaryStage = (Stage) loginBtn.getScene().getWindow();
+            //load up OTHER FXML document
+            showHotelOverview();
         } else {
-            incorrectUsernameLabel.setVisible(true);
+            // Nothing selected.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("Incorrect Input");
+            alert.setHeaderText("UserID or Password is incorrect");
+            alert.setContentText("Please check your UserID or Password.");
+
+            alert.showAndWait();
         }
     }
-    
+
     //TO DELETE AFTER
     @FXML
     private void switchToMainPage(ActionEvent event) throws IOException {
@@ -92,7 +97,7 @@ public class LoginScreenController implements Initializable {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
             //load up OTHER FXML document
             showHotelOverview();
-        } 
+        }
     }
     /*if (event.getSource() == loginBtn) {
      //TODO change FXML fxid reference from switchTOMainPage to checkPassword
@@ -108,6 +113,7 @@ public class LoginScreenController implements Initializable {
      }
      //else 
      }*/
+
     public void showHotelOverview() {
         try {
             //get reference to the button's stage  
@@ -135,20 +141,8 @@ public class LoginScreenController implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {        
-        incorrectUsernameLabel.setVisible(false);
-        incorrectPasswordLabel.setVisible(false);
-        loginQueries = new LoginQueries();
-        
-        
-        try {
-            loginData.addAll(loginQueries.getLoginDetails());
-            //bookingTable.setItems(bookingData);
-            System.out.println("Login data in database: " + loginQueries.getLoginDetails());
-        
-        } catch (Exception e) {
-            System.out.println("LoginDetails Initilize error!");
-        }
+    public void initialize(URL url, ResourceBundle rb) {
+
     }
 
     public void setMainApp(MainApp mainApp) {

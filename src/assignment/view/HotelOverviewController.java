@@ -19,6 +19,8 @@ public class HotelOverviewController implements Initializable {
     @FXML
     TabRoomController tabRoomController;
     @FXML
+    TabRoomController tabBillingController;
+    @FXML
     private Button logoutBtn;
 
     MainApp mainApp;

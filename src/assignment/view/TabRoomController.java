@@ -50,6 +50,10 @@ public class TabRoomController implements Initializable {
     private Label capacityLabel;
     @FXML
     private Label noOfBedsLabel;
+    @FXML
+    private Label extraChargeLabel;
+    @FXML
+    private Label totalChargeLabel;
     
     
 
@@ -88,10 +92,12 @@ public class TabRoomController implements Initializable {
             // Fill the labels with info from the room object.
             roomNoLabel.setText(Integer.toString(roomInfo.getRoomID()));
             roomTypeLabel.setText(roomInfo.getRoomTypeID());
-            roomTypeDescriptionLabel.setText(roomInfo.getRoomTypeID());
+            roomTypeDescriptionLabel.setText(roomInfo.getDescription());
             costPerNightLabel.setText(Double.toString(roomInfo.getBaseRate()));
             capacityLabel.setText(Integer.toString(roomInfo.getCapacity()));
             noOfBedsLabel.setText(Integer.toString(roomInfo.getNoOfBeds()));
+            extraChargeLabel.setText(Double.toString(roomInfo.getExtraCharge()));
+            totalChargeLabel.setText(Double.toString(roomInfo.getTotalCharge()));
         } else {
             // Room is null, remove all the information.
             roomNoLabel.setText("");
@@ -100,6 +106,9 @@ public class TabRoomController implements Initializable {
             costPerNightLabel.setText("");
             capacityLabel.setText("");
             noOfBedsLabel.setText("");
+            extraChargeLabel.setText("");
+            totalChargeLabel.setText("");
+            
         }
     }
 }

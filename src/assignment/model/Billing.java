@@ -21,30 +21,31 @@ import javafx.beans.property.StringProperty;
  */
 public class Billing {
 
-    private IntegerProperty billingID;
+    private IntegerProperty refCode;
     private DoubleProperty amountPaid;
     private DoubleProperty amountDue;
-    private ObjectProperty<LocalDate> date;
 
-    public Billing(int billingID, double amountPaid, double amountDue, LocalDate date) {
-        this.billingID = new SimpleIntegerProperty(billingID);
+    public Billing() {
+    }
+
+    public Billing(int refCode, double amountPaid, double amountDue) {
+        this.refCode = new SimpleIntegerProperty(refCode);
         this.amountPaid = new SimpleDoubleProperty(amountPaid);
         this.amountDue = new SimpleDoubleProperty(amountDue);
-        this.date = new SimpleObjectProperty(date);
     }
 
-    public int getBillingID() {
-        return billingID.get();
+    public int getRefCode() {
+        return refCode.get();
     }
 
-    public void setBillingID(int billingID) {
-        this.billingID.set(billingID);
+    public void setRefCode(int refCode) {
+        this.refCode.set(refCode);
     }
 
-    public IntegerProperty billingIDProperty() {
-        return billingID;        
+    public IntegerProperty refCodeProperty() {
+        return refCode;
     }
-    
+
     public double getAmountPaid() {
         return amountPaid.get();
     }
@@ -67,24 +68,5 @@ public class Billing {
 
     public DoubleProperty amountDueProperty() {
         return amountDue;
-    }
-
-    public LocalDate getDate() {
-        return date.get();
-    }
-
-    public void setDate(LocalDate date) {
-        this.date.set(date);
-    }
-
-    public ObjectProperty<LocalDate> dateProperty() {
-        return date;
-    }
-    
-    // Covert LocalDate to Date
-    public Date getDateToDate() {
-        LocalDate localDate = getDate();
-        Date date = Date.valueOf(localDate);
-        return date;
     }
 }

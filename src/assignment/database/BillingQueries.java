@@ -31,14 +31,12 @@ public class BillingQueries extends DatabaseQuery{
         billings = new ArrayList<Billing>();
         openConnection();
         try {
-            getAllBillings = conn.prepareStatement("select * from app.BILLING");
+            getAllBillings = conn.prepareStatement("select * from app.BOOKING");
             rs = getAllBillings.executeQuery();
             while (rs.next()) {
                 billings.add(
-                    new Billing(rs.getInt("billingID"), 
-                            rs.getDouble("amountPaid"), 
-                            rs.getDouble("amountDue"),
-                            rs.getDate("date").toLocalDate()));
+                    new Billing(rs.getInt("refCode"), rs.getDouble("amountPaid"), 
+                            rs.getDouble("amountDue")));
             }
             rs.close();
             getAllBillings.close();
@@ -48,31 +46,5 @@ public class BillingQueries extends DatabaseQuery{
         closeConnection();
         return billings;
     }
-    
-    public int insertBilling(Billing toInsert) {
-        int returnValue = -1;
-        openConnection();
-        try {
-            
-            insertBilling = conn.prepareStatement("insert into app.BILLING "
-                    + "(billingID, amountPaid, amountDue, date)"
-                    + "values (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            insertBilling.setInt(1, toInsert.getBillingID());
-            insertBilling.setDouble(2, toInsert.getAmountPaid());
-            insertBilling.setDouble(3, toInsert.getAmountDue());
-            insertBilling.setDate(4, toInsert.getDateToDate());
-            insertBilling.executeUpdate();
-
-            rs = insertBilling.getGeneratedKeys();
-            rs.next();
-            returnValue = rs.getInt(1);
-            rs.close();
-            insertBilling.close();
-        } catch (SQLException ex) {
-            System.out.println("insertBilling() ERROR!");
-        }
-
-        closeConnection();
-        return returnValue;
-    }
+   
 }
