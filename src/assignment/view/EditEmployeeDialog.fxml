@@ -15,17 +15,17 @@
             <Label text="First Name" GridPane.rowIndex="2" />
             <Label text="Last Name" GridPane.rowIndex="3" />
             <Label text="Administror" GridPane.rowIndex="4" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="fNameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="lNameField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <children>
-                  <Button contentDisplay="CENTER" mnemonicParsing="false" prefWidth="100.0" text="OK" />
-                  <Button mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
+                  <Button fx:id="okBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleOk" prefWidth="100.0" text="OK" />
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="Cancel" />
                </children>
             </HBox>
-            <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-            <Label text="Label" GridPane.columnIndex="1" />
+            <CheckBox fx:id="administratorBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+            <Label fx:id="userIDLabel" text="Label" GridPane.columnIndex="1" />
          </children>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="160.0" />

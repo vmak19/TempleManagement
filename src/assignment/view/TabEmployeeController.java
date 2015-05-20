@@ -83,41 +83,6 @@ public class TabEmployeeController implements Initializable {
     public TabEmployeeController() {
     }
 
-    public List<Employee> getEmployeesFromFile() {
-        List<Employee> employees = new ArrayList<Employee>();
-        try {
-
-            // Open the file
-            Scanner scanner = new Scanner(new File("resources/employees.csv"));
-
-            //for all lines in file
-            while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                String[] userID = s.split(",");
-                String[] password = s.split(",");
-                String[] fname = s.split(",");
-                String[] lname = s.split(",");
-                String[] admin = s.split(",");
-
-                Employee newEmployee = new Employee(
-                        Integer.parseInt(userID[0]),
-                        password[1],
-                        fname[2],
-                        lname[3],
-                        Boolean.parseBoolean(admin[4])
-                );
-
-                employees.add(newEmployee);
-            }
-            scanner.close();
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("getEmployeesFromFile() Error!");
-            ex.printStackTrace();
-        }
-        return employees;
-    }
-
     @FXML
     private void handleDeleteEmployee() {
         try {
@@ -233,13 +198,10 @@ public class TabEmployeeController implements Initializable {
         try {
             employeeQueries = new EmployeeQueries();
 
-            //employeeData.addAll(getEmployeesFromFile());
             employeeData.addAll(employeeQueries.getEmployees());
             employeeTable.setItems(employeeData);
 
-            System.out.println("Emp data in database: " + employeeQueries.getEmployees());
-
-            // Initialize the person table with the two columns.
+            // Initialize the employee table with the two columns.
             userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
             empFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().empFirstNameProperty());
             empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
@@ -249,9 +211,6 @@ public class TabEmployeeController implements Initializable {
 
             employeeTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showEmployeeDetails(newValue));
-            // Add observable list data to the table
-            //employeeTable.setItems(mainApp.getBookingData());
-            System.out.println("TabEmployee initialized!");
         } catch (Exception e) {
             System.out.println("TabEmployee initilize error!");
         }

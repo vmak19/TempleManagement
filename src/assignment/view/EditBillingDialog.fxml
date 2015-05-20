@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="220.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" prefHeight="220.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.EditBillingDialogController">
    <children>
       <GridPane vgap="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
@@ -15,15 +15,15 @@
             <Label text="Amount Due" GridPane.rowIndex="2" />
             <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="100.0" text="OK" />
-                  <Button mnemonicParsing="false" prefWidth="100.0" text="Cancel" />
+                  <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleOk" prefWidth="100.0" text="OK" />
+                  <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="Cancel" />
                </children>
             </HBox>
             <Label text="Pay" GridPane.rowIndex="3" />
-            <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Label" GridPane.columnIndex="1" />
+            <Label fx:id="amountPaidLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="amountDueLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="payField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="refCodeLabel" text="Label" GridPane.columnIndex="1" />
          </children>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="160.0" />
