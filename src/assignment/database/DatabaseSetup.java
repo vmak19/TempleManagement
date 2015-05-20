@@ -4,6 +4,7 @@ import assignment.model.Assignment;
 import assignment.model.Billing;
 import assignment.model.Booking;
 import assignment.model.Employee;
+import assignment.model.Log;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
 import assignment.model.RoomType;
@@ -33,6 +34,7 @@ public class DatabaseSetup extends DatabaseQuery {
     PreparedStatement createRoomInfoTable = null;
     PreparedStatement createBillingTable = null;
     PreparedStatement createEmployeeTable = null;
+    PreparedStatement createAssignmentTable = null;
     PreparedStatement createLogTable = null;
     ResultSet rs = null;
 
@@ -154,18 +156,18 @@ public class DatabaseSetup extends DatabaseQuery {
 
             if (!rs.next()) {
                 // If the LOG table does not already exist we create it
-                createLogTable = conn.prepareStatement(
+                createAssignmentTable = conn.prepareStatement(
                         "CREATE TABLE APP.ASSIGNMENT ("
                         + "\"REFCODE\" INT, "
                         + "\"ROOMID\" INT, "
                         + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
                         + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
-                createLogTable.execute();
+                createAssignmentTable.execute();
                 getAssignmentsFromFile();
             }
 
         } catch (SQLException ex) {
-            System.out.println("databaseSetup() for Table LOG error!");
+            System.out.println("databaseSetup() for Table ASSIGNMENT error!");
             ex.printStackTrace();
         }
 
@@ -181,11 +183,15 @@ public class DatabaseSetup extends DatabaseQuery {
                         "CREATE TABLE APP.LOG ("
                         + "\"LOGID\" INT not null primary key "
                         + "GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                        + "\"USERID\" INT, "
                         + "\"EMPFIRSTNAME\" VARCHAR(100), "
                         + "\"EMPLASTNAME\" VARCHAR(100), "
                         + "\"DATEMOD\" DATE, "
                         + "\"ITEMMODIFIED\" VARCHAR(200))");
+                        //+ "\"ITEMMODIFIED\" VARCHAR(200), "
+                        //+ "FOREIGN KEY (USERID) REFERENCES EMPLOYEE(USERID))");
                 createLogTable.execute();
+                getLogsFromFile();
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table LOG error!");
@@ -361,6 +367,41 @@ public class DatabaseSetup extends DatabaseQuery {
 
         } catch (FileNotFoundException ex) {
             System.out.println("getAssignmentFromFile() Error!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void getLogsFromFile() {
+        try {
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/logs.csv"));
+
+            //for all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] logID = s.split(",");
+                String[] userID = s.split(",");
+                String[] fname = s.split(",");
+                String[] lname = s.split(",");
+                String[] date = s.split(",");
+                String[] item = s.split(",");
+
+                LogQueries logQueries = new LogQueries();
+
+                logQueries.insertLog(new Log(
+                        Integer.parseInt(logID[0]),
+                        Integer.parseInt(userID[1]),
+                        fname[2],
+                        lname[3],
+                        DateUtil.parse(date[4]),
+                        item[5]));
+            }
+
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getLogsFromFile() Error!");
             ex.printStackTrace();
         }
     }

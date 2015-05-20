@@ -85,8 +85,6 @@ public class TabBookingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            System.out.println("getBookings: " + bookingQueries.getBookings());
-            
             bookingData.addAll(bookingQueries.getBookings());
             bookingTable.setItems(bookingData);
 

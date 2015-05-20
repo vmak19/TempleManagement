@@ -21,13 +21,15 @@ import javafx.beans.property.StringProperty;
 public class Log {
 
     private IntegerProperty logID;
+    private IntegerProperty userID;
     private StringProperty empFirstName;
     private StringProperty empLastName;
     private ObjectProperty<LocalDate> dateMod;
     private StringProperty itemModified;    //REF vase toString
 
-    public Log(int logID, String empFirstName, String empLastName, LocalDate dateMod, String itemModified) {
+    public Log(int logID, int userID, String empFirstName, String empLastName, LocalDate dateMod, String itemModified) {
         this.logID = new SimpleIntegerProperty(logID);
+        this.userID = new SimpleIntegerProperty(userID);
         this.empFirstName = new SimpleStringProperty(empFirstName);
         this.empLastName = new SimpleStringProperty(empLastName);
         this.dateMod = new SimpleObjectProperty(dateMod);
@@ -41,11 +43,23 @@ public class Log {
     public void setLogID(int logID) {
         this.logID.set(logID);
     }
+
+    public IntegerProperty logIDProperty() {
+        return logID;
+    }
     
-     public IntegerProperty logIDProperty() {
-        return logID;        
-    } 
-        
+    public int getUserID() {
+        return userID.get();
+    }
+
+    public void setUserID(int userID) {
+        this.userID.set(userID);
+    }
+
+    public IntegerProperty userIDProperty() {
+        return userID;
+    }
+
     public String getEmpFirstName() {
         return empFirstName.get();
     }
@@ -81,10 +95,15 @@ public class Log {
     public ObjectProperty<LocalDate> dateModProperty() {
         return dateMod;
     }
-    
+
     // Covert LocalDate to Date
     public Date getDateModToDate() {
         LocalDate localDate = getDateMod();
+        if (localDate == null) {
+            System.out.println("null");
+        } else {
+            System.out.println(localDate);
+        }
         Date date = Date.valueOf(localDate);
         return date;
     }

@@ -24,6 +24,7 @@ public class BillingQueries extends DatabaseQuery{
     
     PreparedStatement insertBilling = null;
     PreparedStatement getAllBillings = null;
+    PreparedStatement deleteBilling = null;
     ResultSet rs = null;
     List<Billing> billings;
     
@@ -45,6 +46,20 @@ public class BillingQueries extends DatabaseQuery{
         }
         closeConnection();
         return billings;
+    }
+    
+    public void deleteBilling(Billing toDelete) {
+        openConnection();
+        try {
+            deleteBilling = conn.prepareStatement("delete from app.BILLING where REFCODE = ?");
+            deleteBilling.setInt(1, toDelete.getRefCode());
+            deleteBilling.execute();
+            System.out.println("deleted");
+        } catch (SQLException ex) {
+            System.out.println("ERROR! deleteEmployee()!");
+            ex.printStackTrace();
+        }
+        closeConnection();
     }
    
 }

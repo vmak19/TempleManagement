@@ -61,6 +61,7 @@ public class TabBillingController implements Initializable {
     private Button deleteBtn;
 
     MainApp mainApp;
+    private Billing billing;
     private ObservableList<Billing> billingData = FXCollections.observableArrayList();
     private BillingQueries billingQueries = new BillingQueries();
 
@@ -75,7 +76,7 @@ public class TabBillingController implements Initializable {
     public TabBillingController() {
     }
 
-    /*
+    
     @FXML
     private void handleDeleteBilling() {
         try {
@@ -99,18 +100,8 @@ public class TabBillingController implements Initializable {
         } catch (Exception e) {
             System.out.println("Error! handleDeleteBilling()!");
         }
-    }*/
-
-    /*@FXML
-    private void handleNewBilling() {
-        Billing tempBilling = new Billing();
-        boolean okClicked = showEditBillingDialog(tempBilling);
-        if (okClicked) {
-            billingQueries.insertBilling(tempBilling);
-            billingData.add(tempBilling);
-        }
     }
-
+    
     @FXML
     private void handleEditBilling() {
         Billing selectedBilling = billingTable.getSelectionModel().getSelectedItem();
@@ -159,7 +150,7 @@ public class TabBillingController implements Initializable {
             e.printStackTrace();
             return false;
         }
-    }*/
+    }
 
     private void showBillingDetails(Billing billing) {
         if (billing != null) {
@@ -182,14 +173,10 @@ public class TabBillingController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             billingQueries = new BillingQueries();
-            System.out.println("Billing data in database: " + billingQueries.getBillings());
-            //billingData.addAll(getbillingsFromFile());
             billingData.addAll(billingQueries.getBillings());
             
             billingTable.setItems(billingData);
             
-            
-
             // Initialize the person table with the two columns.
             refCodeColumn.setCellValueFactory(cellData -> cellData.getValue().refCodeProperty().asObject());
             amountPaidColumn.setCellValueFactory(cellData -> cellData.getValue().amountPaidProperty().asString());
@@ -200,14 +187,14 @@ public class TabBillingController implements Initializable {
 
             billingTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showBillingDetails(newValue));
-            // Add observable list data to the table
-            //billingTable.setItems(mainApp.getBookingData());
-            System.out.println("TabBilling initialized!");
+            
         } catch (Exception e) {
             System.out.println("TabBilling initilize error!");
             e.printStackTrace();
         }
     }
+    
+    
 
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;

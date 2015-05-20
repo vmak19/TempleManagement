@@ -9,7 +9,9 @@ import assignment.model.Employee;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -20,6 +22,8 @@ import javafx.stage.Stage;
 public class EditEmployeeDialogController {
 
     @FXML
+    private Label userIDLabel;
+    @FXML
     private TextField passwordField;
     @FXML
     private TextField fNameField;
@@ -27,8 +31,11 @@ public class EditEmployeeDialogController {
     private TextField lNameField;
     @FXML
     private CheckBox administratorBox;
+    @FXML
+    private Button okBtn;
+    @FXML
+    private Button cancelBtn;
 
-    private Stage dialogStage;
     private Employee employee;
     private boolean okClicked = false;
     private boolean confirmClicked = false;
@@ -37,8 +44,7 @@ public class EditEmployeeDialogController {
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
-     */
-    @FXML
+     */    
     private void initialize() {
     }
 
@@ -47,8 +53,8 @@ public class EditEmployeeDialogController {
      *
      * @param dialogStage
      */
-    public void setDialogStage(Stage dialogStage) {
-        this.dialogStage = dialogStage;
+    public void setEmployeeDialogStage(Stage employeeDialogStage) {
+        this.employeeDialogStage = employeeDialogStage;
     }
 
     /**
@@ -57,16 +63,22 @@ public class EditEmployeeDialogController {
      * @param employee
      */
     public void setEmployee(Employee employee) {
-        this.employee = employee;
+        try {
+            this.employee = employee;
 
-        passwordField.setText(employee.getPassword());
-        fNameField.setText(employee.getEmpFirstName());
-        lNameField.setText(employee.getEmpLastName());
-        if (employee.getIsAdministrator()) {
-            administratorBox.setSelected(true);
-        } else {
-            administratorBox.setSelected(false);
+            userIDLabel.setText(Integer.toString(employee.getUserID()));
+            passwordField.setText(employee.getPassword());
+            fNameField.setText(employee.getEmpFirstName());
+            lNameField.setText(employee.getEmpLastName());
+            if (employee.getIsAdministrator()) {
+                administratorBox.setSelected(true);
+            } else {
+                administratorBox.setSelected(false);
+            }
+        } catch (Exception e) {
+            System.out.println("BUG 2: Set edit employee labels error!");
         }
+
     }
 
     /**
@@ -87,14 +99,20 @@ public class EditEmployeeDialogController {
             employee.setPassword(passwordField.getText());
             employee.setEmpFirstName(fNameField.getText());
             employee.setEmpLastName(lNameField.getText());
+            if (administratorBox.isSelected()) {
+                employee.setIsAdministrator(true);
+            } else {
+                employee.setIsAdministrator(false);
+            }
+            /*
             if (employee.getIsAdministrator()) {
                 administratorBox.setSelected(true);
             } else {
                 administratorBox.setSelected(false);
-            }
+            }*/
 
             okClicked = true;
-            dialogStage.close();
+            employeeDialogStage.close();
         }
     }
 
@@ -103,7 +121,7 @@ public class EditEmployeeDialogController {
      */
     @FXML
     private void handleCancel() {
-        dialogStage.close();
+        employeeDialogStage.close();
     }
 
     /**
@@ -130,7 +148,7 @@ public class EditEmployeeDialogController {
         } else {
             // Show the error message.
             Alert alert = new Alert(AlertType.ERROR);
-            alert.initOwner(dialogStage);
+            alert.initOwner(employeeDialogStage);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
@@ -139,10 +157,6 @@ public class EditEmployeeDialogController {
 
             return false;
         }
-    }
-    
-    public void setEmployeeDialogStage(Stage employeeDialogStage) {
-        this.employeeDialogStage = employeeDialogStage;
     }
     
     public boolean isConfirmClicked() {

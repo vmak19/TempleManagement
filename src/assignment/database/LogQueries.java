@@ -32,6 +32,7 @@ public class LogQueries extends DatabaseQuery{
             while (rs.next()) {
                 logs.add(
                     new Log(rs.getInt("logID"), 
+                            rs.getInt("userID"),
                             rs.getString("empFirstName"), 
                             rs.getString("empLastName"), 
                             rs.getDate("dateMod").toLocalDate(), 
@@ -52,12 +53,13 @@ public class LogQueries extends DatabaseQuery{
         try {
             
             insertLog = conn.prepareStatement("insert into app.LOG "
-                    + "(empFirstName, empLastName, dateMod, itemModified)"
-                    + "values (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            insertLog.setString(1, toInsert.getEmpFirstName());
-            insertLog.setString(2, toInsert.getEmpLastName());
-            insertLog.setDate(3, toInsert.getDateModToDate());
-            insertLog.setString(4, toInsert.getItemModified());
+                    + "(userID, empFirstName, empLastName, dateMod, itemModified)"
+                    + "values (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            insertLog.setInt(1, toInsert.getUserID());
+            insertLog.setString(2, toInsert.getEmpFirstName());
+            insertLog.setString(3, toInsert.getEmpLastName());
+            insertLog.setDate(4, toInsert.getDateModToDate());
+            insertLog.setString(5, toInsert.getItemModified());
             insertLog.executeUpdate();
 
             rs = insertLog.getGeneratedKeys();

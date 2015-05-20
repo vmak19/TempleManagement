@@ -81,7 +81,6 @@ public class TabRoomController implements Initializable {
 
             roomTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showRoomDetails(newValue));
-            System.out.println("TabRoom initialized!");
         } catch (Exception e) {
             System.out.println("Initilize error!");
         }
