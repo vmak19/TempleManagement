@@ -7,6 +7,7 @@ package assignment.view;
 
 import assignment.MainApp;
 import assignment.database.BookingQueries;
+import assignment.database.ProvidesQueries;
 import assignment.database.ServiceQueries;
 import assignment.model.Booking;
 import assignment.model.BookingInfo;
@@ -57,7 +58,8 @@ public class TabServiceController implements Initializable {
     private ObservableList<ServiceInfo> serviceData = FXCollections.observableArrayList();
 
     private ServiceQueries serviceQueries = new ServiceQueries();
-
+    private ProvidesQueries providesQueries = new ProvidesQueries();
+    
     /**
      * Initializes the controller class.
      */
@@ -70,14 +72,14 @@ public class TabServiceController implements Initializable {
             // Initialize the booking table with the three columns.
             refCodeColumn.setCellValueFactory(cellData -> cellData.getValue().refCodeProperty().asObject());
             serviceIDColumn.setCellValueFactory(cellData -> cellData.getValue().serviceDescProperty());
-            //createdDateColumn.setCellValueFactory(cellData -> cellData.getValue().createdDateProperty().asString());
+            createdDateColumn.setCellValueFactory(cellData -> cellData.getValue().createdDateProperty().asString());*/
 
             // Clear booking details.
             showSeviceDetails(null);
 
             // Listen for selection changes and show the booking details when changed.
             serviceTable.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldValue, newValue) -> showSeviceDetails(newValue));*/
+                    (observable, oldValue, newValue) -> showSeviceDetails(newValue));
         } catch (Exception e) {
             System.out.println("Service Initilize error!");
             e.printStackTrace();
@@ -113,7 +115,7 @@ public class TabServiceController implements Initializable {
             int selectedIndex = serviceTable.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
                 // Delete record in the database
-                serviceQueries.deleteService(serviceTable.getSelectionModel().getSelectedItem());
+                providesQueries.deleteProvides(serviceTable.getSelectionModel().getSelectedItem());
 
                 // Delete record on the table
                 serviceTable.getItems().remove(selectedIndex);
@@ -135,21 +137,20 @@ public class TabServiceController implements Initializable {
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
      * details for a new person.
-     *
+     */
     @FXML
     private void handleNewBooking() {
-        Provides tempService = new Provides();
-        boolean okClicked = showEditServiceDialog(tempService);
+        Provides tempProvide = new Provides();
+        boolean okClicked = showEditProvideDialog(tempProvide);
         if (okClicked) {
-           serviceQueries.insertService(tempService);
+           providesQueries.insertProvides(tempProvide);
            
-           // TO-DO Display record onto the table
            serviceData.clear();
            serviceData.addAll(serviceQueries.getServices());
            //bookingTable.setItems(bookingData);
         }
         
-    }*/
+    }
     
     /**
      * Opens a dialog to edit details for the specified booking. If the user
@@ -158,7 +159,7 @@ public class TabServiceController implements Initializable {
      *
      * @param booking the booking object to be edited
      * @return true if the user clicked OK, false otherwise.
-     *
+     */
     public boolean showEditProvideDialog(Provides provide) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
@@ -175,19 +176,19 @@ public class TabServiceController implements Initializable {
             editProvideDialogStage.setScene(scene);
 
             // Set the person into the controller.
-            FindRoomDialogController controller = loader.getController();
+            EditServiceDialogController controller = loader.getController();
             controller.setEditProvideDialogStage(editProvideDialogStage);
             controller.setProvide(provide);
             
             // Show the dialog and wait until the user closes it
             editProvideDialogStage.showAndWait();
 
-            return controller.isOKClicked();
+            return controller.isOkClicked();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-    }*/
+    }
     
     /**
      * Is called by hotel overview controller to give a reference back to the

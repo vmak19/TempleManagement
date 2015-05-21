@@ -19,6 +19,8 @@ public class HotelOverviewController implements Initializable {
     @FXML
     TabRoomController tabRoomController;
     @FXML
+    TabServiceController tabServiceController;
+    @FXML
     TabRoomController tabBillingController;
     @FXML
     private Button logoutBtn;
@@ -50,13 +52,9 @@ public class HotelOverviewController implements Initializable {
         try {
             this.mainApp = mainApp;
 
-            //Add observable list data to the table
-            //System.out.println("Booking Data is: ");
-            // System.out.println(mainApp.getBookingData());
-            //tabBookingController.bookingTable.setItems(mainApp.getBookingData());
-            //tabEmployeeController.employeeTable.setItems(mainApp.getEmployeeData());
-            //tabRoomController.roomTable.setItems(mainApp.getRoomData());
             tabBookingController.setMainApp(mainApp);
+            tabRoomController.setMainApp(mainApp);
+            tabServiceController.setMainApp(mainApp);
             tabEmployeeController.setMainApp(mainApp);
         } catch (Exception e) {
             System.out.println("ERROR! setMainApp!");

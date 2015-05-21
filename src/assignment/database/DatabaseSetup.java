@@ -27,7 +27,6 @@ public class DatabaseSetup extends DatabaseQuery {
     PreparedStatement createLogTable = null;
     PreparedStatement createServiceTable = null;
     PreparedStatement createProvidesTable = null;
-    PreparedStatement createAssignmentTable = null;
     ResultSet rs = null;
 
     public static void setupDatabase() {

@@ -26,6 +26,10 @@ public class Provides {
     private IntegerProperty serviceID;
     private ObjectProperty<LocalDate> createdDate;
     
+    public Provides() {
+        this(0, 0, 0, null);
+    }
+    
     public Provides(int provideID, int refCode, int roomID, int serviceID, LocalDate createdDate) {
         this.provideID = new SimpleIntegerProperty(provideID);
         this.refCode = new SimpleIntegerProperty(refCode);

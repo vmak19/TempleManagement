@@ -32,7 +32,7 @@ import javafx.stage.Stage;
  *
  * @author SONY
  */
-public class EditServiceDialog implements Initializable {
+public class EditServiceDialogController implements Initializable {
     @FXML private TableView availableGuestTable;
     @FXML private TableColumn<BookingInfo, String> custFirstNameColumn;
     @FXML private TableColumn<BookingInfo, String> custLastNameColumn;
@@ -186,7 +186,7 @@ public class EditServiceDialog implements Initializable {
      * 
      * @param service
      */
-    public void setService(Provides service) {
+    public void setProvide(Provides provide) {
         this.service = service;
     }
 }

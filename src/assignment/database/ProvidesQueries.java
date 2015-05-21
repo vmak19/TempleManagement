@@ -8,6 +8,7 @@ package assignment.database;
 import assignment.model.Assignment;
 import assignment.model.Provides;
 import assignment.model.Service;
+import assignment.model.ServiceInfo;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import java.sql.Statement;
  */
 public class ProvidesQueries extends DatabaseQuery{
     PreparedStatement insertProvides = null;
+    PreparedStatement deleteProvides = null;
     ResultSet rs = null;
     
     public void insertProvides(Provides toInsert) {
@@ -46,4 +48,18 @@ public class ProvidesQueries extends DatabaseQuery{
         closeConnection();
     }
 
+    public void deleteProvides(ServiceInfo toDelete) {
+        openConnection();
+        try {
+            deleteProvides = conn.prepareStatement("delete from app.provides "
+                    + "where provideID = ?");
+            deleteProvides.setInt(1, toDelete.getProvideID());
+            deleteProvides.execute();
+        } catch (SQLException ex) {
+            System.out.println("ERROR! deleteProvides()!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+    }
+    
 }

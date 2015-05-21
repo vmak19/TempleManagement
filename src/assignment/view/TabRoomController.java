@@ -5,6 +5,7 @@
  */
 package assignment.view;
 
+import assignment.MainApp;
 import assignment.database.RoomQueries;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
@@ -56,7 +57,7 @@ public class TabRoomController implements Initializable {
     private Label totalChargeLabel;
     
     
-
+    MainApp mainApp;
     private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
     private RoomQueries roomQueries = new RoomQueries();
 
@@ -109,5 +110,13 @@ public class TabRoomController implements Initializable {
             totalChargeLabel.setText("");
             
         }
+    }
+    
+    /**
+     * Is called by hotel overview controller to give a reference back to the
+     * main application.
+     */
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
     }
 }

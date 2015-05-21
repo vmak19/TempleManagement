@@ -24,7 +24,7 @@
           </Tab>
             <Tab text="Service">
                <content>
-                  <fx:include source="TabService.fxml" />
+                  <fx:include fx:id="tabService" source="TabService.fxml" />
                </content>
             </Tab>
             <Tab text="Billing">

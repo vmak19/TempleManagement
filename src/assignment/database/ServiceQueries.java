@@ -23,7 +23,6 @@ public class ServiceQueries extends DatabaseQuery{
     PreparedStatement insertService = null;
     PreparedStatement getServiceList = null;
     PreparedStatement getAllServices = null;
-    PreparedStatement deleteService = null;
     List<Service> serviceList;
     List<ServiceInfo> services;
     ResultSet rs = null;
@@ -99,18 +98,6 @@ public class ServiceQueries extends DatabaseQuery{
     }
     
     
-    public void deleteService(ServiceInfo toDelete) {
-        openConnection();
-        try {
-            deleteService = conn.prepareStatement("delete from app.provides "
-                    + "where provideID = ?");
-            deleteService.setInt(1, toDelete.getProvideID());
-            deleteService.execute();
-        } catch (SQLException ex) {
-            System.out.println("ERROR! deleteService()!");
-            ex.printStackTrace();
-        }
-        closeConnection();
-    }
+    
     
 }
