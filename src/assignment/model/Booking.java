@@ -29,7 +29,6 @@ public class Booking {
     private IntegerProperty refCode;
     private StringProperty custFirstName;
     private StringProperty custLastName;
-    private IntegerProperty roomID;
     private ObjectProperty<LocalDate> createdDate;
     private IntegerProperty numBreakfast;
     private ObjectProperty<LocalDate> checkIn;
@@ -119,19 +118,6 @@ public class Booking {
 
     public StringProperty custLastNameProperty() {
         return custLastName;
-    }
-    
-    // Room Number
-    public int getRoomID() {
-        return roomID.get();
-    }
-
-    public void setRoomID(int roomID) {
-        this.roomID.set(roomID);
-    }
-
-    public IntegerProperty roomIDProperty() {
-        return roomID;
     }
     
     // Created Date

@@ -6,6 +6,7 @@ import assignment.model.Employee;
 import assignment.model.Log;
 import assignment.model.Room;
 import assignment.model.RoomType;
+import assignment.model.Service;
 import assignment.util.DateUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -200,6 +201,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"SERVICEDESC\" VARCHAR(200), "
                         + "\"COST\" DOUBLE)");
                 createServiceTable.execute();
+                getServicesFromFile();
             }
 
         } catch (SQLException ex) {
@@ -434,7 +436,35 @@ public class DatabaseSetup extends DatabaseQuery {
             ex.printStackTrace();
         }
     }
+    public void getServicesFromFile() {
+        try {
+            // Open the file
+            Scanner scanner = new Scanner(new File("resources/services.csv"));
 
+            // For all lines in file
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] serviceID = s.split(",");
+                String[] serviceDesc = s.split(",");
+                String[] cost = s.split(",");
+
+                ServiceQueries serviceQueries = new ServiceQueries();
+
+                serviceQueries.insertService(new Service(
+                        Integer.parseInt(serviceID[0]),
+                        serviceDesc[1],
+                        Double.parseDouble(cost[2])));
+            }
+
+            // Close the file
+            scanner.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("getServicesFromFile() Error!");
+            ex.printStackTrace();
+        }
+    }
+    
     public void getLogsFromFile() {
         try {
             // Open the file

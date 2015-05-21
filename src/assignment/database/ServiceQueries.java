@@ -22,9 +22,7 @@ import java.util.List;
 public class ServiceQueries extends DatabaseQuery{
     PreparedStatement insertService = null;
     PreparedStatement getServiceList = null;
-    PreparedStatement getAllServices = null;
     List<Service> serviceList;
-    List<ServiceInfo> services;
     ResultSet rs = null;
     
     public List<Service> getServiceList() {
@@ -35,7 +33,8 @@ public class ServiceQueries extends DatabaseQuery{
             rs = getServiceList.executeQuery();
             while (rs.next()) {
                 serviceList.add(
-                        new Service(rs.getInt("serviceID"), rs.getString("serviceDesc")));
+                        new Service(rs.getInt("serviceID"), 
+                                rs.getString("serviceDesc"), rs.getDouble("cost")));
             }
             rs.close();
             getServiceList.close();
@@ -45,33 +44,6 @@ public class ServiceQueries extends DatabaseQuery{
         }
         closeConnection();
         return serviceList;
-    }
-    
-    public List<ServiceInfo> getServices() {
-        services = new ArrayList<ServiceInfo>();
-        openConnection();
-        try {
-            getAllServices = conn.prepareStatement("select app.SERVICE.SERVICEID, "
-                    + "PROVIDEID, app.PROVIDES.REFCODE, ROOMID, SERVICEDESC, COST "
-                    + "from app.SERVICE "
-                    + "inner join app.PROVIDES "
-                    + "on app.SERVICE.SERVICEID = app.PROVIDES.SERVICEID");
-            rs = getAllServices.executeQuery();
-            while (rs.next()) {
-                services.add(
-                        new ServiceInfo(rs.getInt("provideID"), rs.getInt("refCode"), 
-                                rs.getInt("roomID"), rs.getInt("serviceID"), 
-                                rs.getString("serviceDesc"), rs.getDouble("cost"), 
-                                rs.getDate("createdDate").toLocalDate()));
-            }
-            rs.close();
-            getAllServices.close();
-        } catch (SQLException ex) {
-            System.out.println("getServices() error!");
-            ex.printStackTrace();
-        }
-        closeConnection();
-        return services;
     }
     
     public void insertService(Service toInsert) {

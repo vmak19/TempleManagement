@@ -15,7 +15,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -57,17 +60,16 @@ public class RoomQueries extends DatabaseQuery {
         return rooms;
     }
 
-    public List<RoomInfo> getAvailableRoomsByType(LocalDate checkIn, 
+    public Set<RoomInfo> getAvailableRoomsByType(LocalDate checkIn, 
             LocalDate checkOut, List<String> types, boolean earlyCheckIn, 
-            boolean lateCheckOut) {
-        List<RoomInfo> availableRooms = new ArrayList<RoomInfo>();
+            boolean lateCheckOut, ObservableList<RoomInfo> selectedRoomData) {
+        Set<RoomInfo> availableRooms = new HashSet<RoomInfo>();
         openConnection();
         for (String type : types) {
             try {
                 Date searchCheckIn = Date.valueOf(checkIn);
                 Date searchCheckOut = Date.valueOf(checkOut);
 
-                //System.out.println(findRoomDialogController.getSearchRoomType());
                 getAllAvailableRooms = conn.prepareStatement(
                         "select app.ASSIGNMENT.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
                         + "from app.ROOM "
@@ -77,10 +79,15 @@ public class RoomQueries extends DatabaseQuery {
                         + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
                         + "inner join app.BOOKING "
                         + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
-                        + "where ((CHECKIN < ? or CHECKIN >= ?) "
-                        + "and (CHECKOUT <= ? or CHECKOUT > ?) "
-                        + "and (CHECKIN < ? or CHECKOUT >= ?) "
-                        + "and (app.ROOMTYPE.ROOMTYPEID in (?))"
+                        + "where (app.ASSIGNMENT.ROOMID not in ("
+                                + "select distinct app.ASSIGNMENT.ROOMID "
+                                + "from app.ASSIGNMENT "
+                                + "inner join app.BOOKING "
+                                + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
+                                + "where ((CHECKIN >= ? and  CHECKIN < ?) "
+                                + "or (CHECKOUT > ? and CHECKOUT <= ?) "
+                                + "or (? >= CHECKIN and CHECKOUT > ?))) "
+                        + "and (app.ROOMTYPE.ROOMTYPEID in (?)) "
                         + "and not exists ("
                                 + "select * from app.BOOKING "
                                 + "where (CHECKIN = ? and EARLYCHECKIN = true and ? = true) "
@@ -101,11 +108,21 @@ public class RoomQueries extends DatabaseQuery {
 
                 rs = getAllAvailableRooms.executeQuery();
                 while (rs.next()) {
-
-                    availableRooms.add(
-                            new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
-                                    rs.getDouble("baseRate"), rs.getInt("capacity")));
-                }
+                    if (selectedRoomData.isEmpty()) {
+                        availableRooms.add(
+                                new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
+                                        rs.getDouble("baseRate"), rs.getInt("capacity")));
+                    } else {
+                        boolean isRoomClashed = false;
+                        for (RoomInfo room : selectedRoomData) {
+                            if (room.getRoomID() == rs.getInt("roomID")) {
+                                isRoomClashed = true;
+                            }
+                        }
+                        if (!isRoomClashed) {
+                                availableRooms.add(
+                                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
+                                                rs.getDouble("baseRate"), rs.getInt("capacity")));}}}
                 rs.close();
                 getAllAvailableRooms.close();
             } catch (SQLException ex) {

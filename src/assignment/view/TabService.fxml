@@ -54,7 +54,7 @@
                   </GridPane>
                   <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <children>
-                        <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewBooking" prefWidth="100.0" text="New..." />
+                        <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewService" prefWidth="100.0" text="New..." />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteService" prefWidth="100.0" text="Delete" />
                      </children>
                   </HBox>

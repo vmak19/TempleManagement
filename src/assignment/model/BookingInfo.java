@@ -37,6 +37,10 @@ public class BookingInfo {
     private DoubleProperty amountPaid;
     private DoubleProperty amountDue;
     
+    public BookingInfo() {
+        this(0, null, null, 0, null, null);
+    }
+    
     /**
      * Constructor is called by getBookingsByRoom(). 
      */

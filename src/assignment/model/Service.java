@@ -68,4 +68,9 @@ public class Service {
     public DoubleProperty costProperty() {
         return cost;        
     } 
+    
+    @Override
+    public String toString() {
+        return getServiceDesc();
+    }
 }

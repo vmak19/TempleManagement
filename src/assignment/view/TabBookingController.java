@@ -187,11 +187,7 @@ public class TabBookingController implements Initializable {
            System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
            bookingQueries.insertBooking(tempBooking);
            
-           // TO-DO Display record onto the table
-           //bookingData.add(tempBooking);
-           bookingData.clear();
-           bookingData.addAll(bookingQueries.getBookings());
-           //bookingTable.setItems(bookingData);
+           refreshTable();
         }
         
     }
@@ -240,5 +236,13 @@ public class TabBookingController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+    }
+    
+    /**
+     * To refresh the table.
+     */
+    public void refreshTable() {
+        bookingData.clear();
+        bookingData.addAll(bookingQueries.getBookings());
     }
 }

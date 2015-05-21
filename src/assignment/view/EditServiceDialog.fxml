@@ -15,9 +15,9 @@
                <children>
                   <Label text="Room Number" />
                   <Label text="Service" GridPane.rowIndex="1" />
-                  <Label text="Created Date" GridPane.columnIndex="2" GridPane.halignment="LEFT">
+                  <Label text="Created Date" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
                      <GridPane.margin>
-                        <Insets left="25.0" />
+                        <Insets right="25.0" />
                      </GridPane.margin>
                   </Label>
                   <TextField fx:id="roomIDField" GridPane.columnIndex="1" />
@@ -27,9 +27,9 @@
                      </children>
                   </HBox>
                   <Label fx:id="createdDateLabel" text="Label" GridPane.columnIndex="3" />
-                  <RadioButton fx:id="currentGuestButton" mnemonicParsing="false" selected="true" text="Current guest" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                  <RadioButton fx:id="currentGuestButton" mnemonicParsing="false" selected="true" text="Current guest" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                      <GridPane.margin>
-                        <Insets left="25.0" />
+                        <Insets right="25.0" />
                      </GridPane.margin>
                      <toggleGroup>
                         <ToggleGroup fx:id="guest" />

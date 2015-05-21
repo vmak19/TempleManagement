@@ -56,10 +56,16 @@ public class HotelOverviewController implements Initializable {
             tabRoomController.setMainApp(mainApp);
             tabServiceController.setMainApp(mainApp);
             tabEmployeeController.setMainApp(mainApp);
+            
+            tabServiceController.setHotelOverviewController(this);
         } catch (Exception e) {
             System.out.println("ERROR! setMainApp!");
             e.printStackTrace();
         }
+    }
+    
+    public void refreshBookingTable() {
+        tabBookingController.refreshTable();
     }
 
     public void initialize(URL url, ResourceBundle rb) {

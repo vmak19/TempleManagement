@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -131,10 +132,11 @@ public class FindRoomDialogController implements Initializable {
     public void handleSearch() {
         if (isInputValidToSearch()) {
             availableRoomData.clear();
-            if (availableRoomQueries.getAvailableRoomsByType(
+            Set<RoomInfo> roomData = availableRoomQueries.getAvailableRoomsByType(
                     checkInField.getValue(), checkOutField.getValue(), 
                     getSearchRoomType(), getSearchEarlyCheckIn(), 
-                    getSearchLateCheckOut()).isEmpty()) {
+                    getSearchLateCheckOut(), selectedRoomData);
+            if (roomData.isEmpty()) {
                 // Show a message if no room is available
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.initOwner(bookingDialogStage);
@@ -144,10 +146,7 @@ public class FindRoomDialogController implements Initializable {
                 alert.showAndWait();
             } else {
                 try {
-                    availableRoomData.addAll(availableRoomQueries.getAvailableRoomsByType(
-                            checkInField.getValue(), checkOutField.getValue(), 
-                            getSearchRoomType(), getSearchEarlyCheckIn(), 
-                            getSearchLateCheckOut()));
+                    availableRoomData.addAll(roomData);
                     availableRoomTable.setItems(availableRoomData);
                     
                     // Set values for available room table.

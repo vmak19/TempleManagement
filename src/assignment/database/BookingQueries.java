@@ -12,7 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ public class BookingQueries extends DatabaseQuery{
     PreparedStatement insertBooking = null;
     PreparedStatement getAllBookings = null;
     PreparedStatement getAllBookingsByRoom = null;
+    PreparedStatement updateBooking = null;
     PreparedStatement deleteBooking = null;
     ResultSet rs = null;
     List<BookingInfo> bookings;
@@ -63,18 +65,34 @@ public class BookingQueries extends DatabaseQuery{
         return bookings;
     }
     
-    public List<BookingInfo> getBookingsByRoom(int roomID) {
+    public List<BookingInfo> getBookingsByRoom(int roomID, boolean currentGuest) {
         bookingsByRoom = new ArrayList<BookingInfo>();
         openConnection();
         try {
-            getAllBookingsByRoom = conn.prepareStatement("select app.BOOKING.REFCODE, "
-                    + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, CHECKIN, CHECKOUT "
-                    + "from app.BOOKING"
-                    + "inner join app.ASSISNGMENT"
-                    + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE"
-                    + "where ROOMID = ?");
+            if (currentGuest) {
+                getAllBookingsByRoom = conn.prepareStatement("select app.BOOKING.REFCODE, "
+                        + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, CHECKIN, CHECKOUT "
+                        + "from app.BOOKING "
+                        + "inner join app.ASSIGNMENT "
+                        + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE "
+                        + "where ROOMID = ? and CHECKOUT <= ? and CHECKIN >= ?");
+                
+                getAllBookingsByRoom.setInt(1, roomID);
+                getAllBookingsByRoom.setDate(2, Date.valueOf(LocalDate.now()));
+                getAllBookingsByRoom.setDate(3, Date.valueOf(LocalDate.now()));
+                
+            } else {
+                getAllBookingsByRoom = conn.prepareStatement("select app.BOOKING.REFCODE, "
+                        + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, CHECKIN, CHECKOUT "
+                        + "from app.BOOKING "
+                        + "inner join app.ASSIGNMENT "
+                        + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE "
+                        + "where ROOMID = ? and CHECKIN > ?");
             
-            getAllBookingsByRoom.setInt(1, roomID);
+                getAllBookingsByRoom.setInt(1, roomID);
+                getAllBookingsByRoom.setDate(2, Date.valueOf(LocalDate.now()));
+            }
+            
             rs = getAllBookingsByRoom.executeQuery();
             while (rs.next()) {
                 bookingsByRoom.add(
@@ -127,6 +145,47 @@ public class BookingQueries extends DatabaseQuery{
 
         closeConnection();
         return returnValue;
+    }
+    
+    public void updateBooking(Booking toUpdate) {
+        openConnection();
+        try {
+            updateBooking = conn.prepareStatement("update app.booking set "
+                    + "custFirstName=?, custLastName=?, createdDate=?, "
+                    + "numBreakfast=?, checkIn=?, checkOut=?, earlyCheckIn=?, "
+                    + "lateCheckOut=?, amountPaid=?, amountDue=? where refCode=?");
+            updateBooking.setString(1, toUpdate.getCustFirstName());
+            updateBooking.setString(2, toUpdate.getCustLastName());
+            updateBooking.setDate(3, toUpdate.getCreatedDateToDate());
+            updateBooking.setInt(4, toUpdate.getNumBreakfast());
+            updateBooking.setDate(5, toUpdate.getCheckInToDate());
+            updateBooking.setDate(6, toUpdate.getCheckOutToDate());
+            updateBooking.setBoolean(7, toUpdate.getEarlyCheckIn());
+            updateBooking.setBoolean(8, toUpdate.getLateCheckOut());
+            updateBooking.setDouble(9, toUpdate.getAmountPaid());
+            updateBooking.setDouble(10, toUpdate.getAmountDue());
+            updateBooking.setInt(11, toUpdate.getRefCode());
+            updateBooking.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("ERROR! updateBooking()!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+    }
+    
+    public void updateAmountDue(int refCode, double newCost) {
+        openConnection();
+        try {
+            updateBooking = conn.prepareStatement("update app.booking set "
+                    + "amountPaid=amountPaid+? where refCode=?");
+            updateBooking.setDouble(1, newCost);
+            updateBooking.setInt(2, refCode);
+            updateBooking.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("ERROR! updateBooking()!");
+            ex.printStackTrace();
+        }
+        closeConnection();
     }
     
     public void deleteBooking(BookingInfo toDelete) {

@@ -5,6 +5,7 @@
  */
 package assignment.model;
 
+import java.util.Objects;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -134,6 +135,28 @@ public class RoomInfo {
 
     public DoubleProperty totalChargeProperty() {
         return totalCharge;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.roomID.getValue());
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RoomInfo other = (RoomInfo) obj;
+        if (!Objects.equals(this.roomID.getValue(), other.roomID.getValue())) {
+            return false;
+        }
+        return true;
     }
     
     

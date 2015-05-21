@@ -48,7 +48,7 @@ public class EditServiceDialogController implements Initializable {
     @FXML private Button okButton;
     @FXML private Button cancelButton;
     
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
     private boolean okClicked = false;
     private Stage editProvideDialogStage;
     private Provides service;
@@ -62,14 +62,12 @@ public class EditServiceDialogController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        date = LocalDate.now();
         createdDateLabel.setText(date.toString());
         
         serviceBox.getItems().addAll(serviceQueries.getServiceList());
     }
     
     
-
     /**
      * Returns true if the user clicked OK, false otherwise.
      * 
@@ -83,7 +81,8 @@ public class EditServiceDialogController implements Initializable {
     public void handleSearch() {
         if (isInputValidToSearch()) {
             if (bookingQueries.getBookingsByRoom(
-                    Integer.parseInt(roomIDField.getText())).isEmpty()) {
+                    Integer.parseInt(roomIDField.getText()), 
+                    currentGuestButton.isSelected()).isEmpty()) {
                 // Show a message if no booking is found
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initOwner(editProvideDialogStage);
@@ -95,7 +94,8 @@ public class EditServiceDialogController implements Initializable {
                 try {
                     availableGuestData.clear();
                     availableGuestData.addAll(bookingQueries.getBookingsByRoom(
-                            Integer.parseInt(roomIDField.getText())));
+                            Integer.parseInt(roomIDField.getText()), 
+                            currentGuestButton.isSelected()));
                     availableGuestTable.setItems(availableGuestData);
                     
                     // Set values for available guest booking table.
@@ -121,17 +121,22 @@ public class EditServiceDialogController implements Initializable {
     @FXML
     private void handleOk() {
         if (isInputValidToSearch()) {
+            // Get selected booking in table
             BookingInfo selectedBooking = (BookingInfo) 
                     availableGuestTable.getSelectionModel().getSelectedItem();
+            
+            // Get selected service in comboBox 
             Service selectedService = (Service) 
                     serviceBox.getSelectionModel().getSelectedItem();
-            
             
             service.setRefCode(selectedBooking.getRefCode());
             service.setRoomID(selectedBooking.getRoomID());
             service.setServiceID(selectedService.getServiceID());
             service.setCreatedDate(date);
-
+            
+            bookingQueries.updateAmountDue(selectedBooking.getRefCode(), 
+                    selectedService.getCost());
+            
             okClicked = true;
             editProvideDialogStage.close();
         }
@@ -184,9 +189,9 @@ public class EditServiceDialogController implements Initializable {
     /**
      * Sets the service to be edited in the dialog.
      * 
-     * @param service
+     * @param provide
      */
     public void setProvide(Provides provide) {
-        this.service = service;
+        this.service = provide;
     }
 }

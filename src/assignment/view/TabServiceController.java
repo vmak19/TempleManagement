@@ -6,11 +6,7 @@
 package assignment.view;
 
 import assignment.MainApp;
-import assignment.database.BookingQueries;
 import assignment.database.ProvidesQueries;
-import assignment.database.ServiceQueries;
-import assignment.model.Booking;
-import assignment.model.BookingInfo;
 import assignment.model.Provides;
 import assignment.model.ServiceInfo;
 import assignment.util.DateUtil;
@@ -53,11 +49,11 @@ public class TabServiceController implements Initializable {
     @FXML private Button newButton;
     @FXML private Button deleteButton;
     
+    HotelOverviewController hotelOverview;
     MainApp mainApp;
 
     private ObservableList<ServiceInfo> serviceData = FXCollections.observableArrayList();
-
-    private ServiceQueries serviceQueries = new ServiceQueries();
+    
     private ProvidesQueries providesQueries = new ProvidesQueries();
     
     /**
@@ -66,13 +62,13 @@ public class TabServiceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            /*serviceData.addAll(serviceQueries.getServices());
+            serviceData.addAll(providesQueries.getServices());
             serviceTable.setItems(serviceData);
 
             // Initialize the booking table with the three columns.
             refCodeColumn.setCellValueFactory(cellData -> cellData.getValue().refCodeProperty().asObject());
             serviceIDColumn.setCellValueFactory(cellData -> cellData.getValue().serviceDescProperty());
-            createdDateColumn.setCellValueFactory(cellData -> cellData.getValue().createdDateProperty().asString());*/
+            createdDateColumn.setCellValueFactory(cellData -> cellData.getValue().createdDateProperty().asString());
 
             // Clear booking details.
             showSeviceDetails(null);
@@ -136,18 +132,22 @@ public class TabServiceController implements Initializable {
     
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
-     * details for a new person.
+     * details for a new service.
      */
     @FXML
-    private void handleNewBooking() {
+    private void handleNewService() {
         Provides tempProvide = new Provides();
         boolean okClicked = showEditProvideDialog(tempProvide);
         if (okClicked) {
            providesQueries.insertProvides(tempProvide);
            
+           // Refesh service table
            serviceData.clear();
-           serviceData.addAll(serviceQueries.getServices());
-           //bookingTable.setItems(bookingData);
+           serviceData.addAll(providesQueries.getServices());
+           
+           // Refresh booking table
+           //TabBookingController tabBooking = new TabBookingController();
+           hotelOverview.refreshBookingTable();
         }
         
     }
@@ -196,5 +196,12 @@ public class TabServiceController implements Initializable {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+    }
+    
+    /**
+     * Is called by hotel overview controller to give a reference back to itself.
+     */
+    public void setHotelOverviewController(HotelOverviewController hotelOverview) {
+        this.hotelOverview = hotelOverview;
     }
 }
