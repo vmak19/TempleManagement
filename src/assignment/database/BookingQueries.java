@@ -202,7 +202,7 @@ public class BookingQueries extends DatabaseQuery{
         openConnection();
         try {
             updateBooking = conn.prepareStatement("update app.booking set "
-                    + "amountPaid=amountPaid+? where refCode=?");
+                    + "amountDue=amountDue+? where refCode=?");
             updateBooking.setDouble(1, newCost);
             updateBooking.setInt(2, refCode);
             updateBooking.executeUpdate();

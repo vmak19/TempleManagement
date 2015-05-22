@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -74,6 +77,8 @@ public class TabBookingController implements Initializable {
     private Button deleteButton;
     @FXML
     private Button payBillButton;
+    
+    @FXML private TextField bookingFilterField;
 
     MainApp mainApp;
 
@@ -98,9 +103,46 @@ public class TabBookingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            // Wrap the ObservableList in a FilteredList (initially display all data).
+            FilteredList<BookingInfo> filteredData = new FilteredList<>(bookingData, p -> true);
+
+            // Set the filter Predicate whenever the filter changes.
+            bookingFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(booking -> {
+                    // If filter text is empty, display all persons.
+                    if (newValue == null || newValue.isEmpty()) {
+                        bookingTable.setItems(bookingData);
+                        return true;
+                    }
+
+                    // Compare ref. code, first name and last name of every person with filter text.
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    
+                    if (Integer.toString(booking.getRefCode()).contains(lowerCaseFilter)) {
+                        return true; // Filter matches ref. code.
+                    } else if (booking.getCustFirstName().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches first name.
+                    } else if (booking.getCustLastName().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches last name.
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            bookingFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // Wrap the FilteredList in a SortedList. 
+                SortedList<BookingInfo> sortedData = new SortedList<>(filteredData);
+
+                // Bind the SortedList comparator to the TableView comparator.
+                sortedData.comparatorProperty().bind(bookingTable.comparatorProperty());
+
+                // Add sorted (and filtered) data to the table.
+                bookingTable.setItems(sortedData);
+            });
+
             bookingData.addAll(bookingQueries.getBookings());
             bookingTable.setItems(bookingData);
-
+            
             // Initialize the booking table with the three columns.
             refCodeColumn.setCellValueFactory(cellData -> cellData.getValue().refCodeProperty().asObject());
             custFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().custFirstNameProperty());

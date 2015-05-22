@@ -8,6 +8,7 @@ package assignment.view;
 import assignment.MainApp;
 import assignment.database.BillingQueries;
 import assignment.database.ProvidesQueries;
+import assignment.model.BookingInfo;
 import assignment.model.Provides;
 import assignment.model.ServiceInfo;
 import assignment.util.DateUtil;
@@ -16,6 +17,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,6 +28,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -50,7 +54,7 @@ public class TabServiceController implements Initializable {
     @FXML
     private Label roomIDLabel;
     @FXML
-    private Label serviceIDLabel;
+    private Label serviceDescLabel;
     @FXML
     private Label costLabel;
     @FXML
@@ -60,6 +64,8 @@ public class TabServiceController implements Initializable {
     private Button newButton;
     @FXML
     private Button deleteButton;
+    @FXML
+    private TextField serviceFilterField;
 
     HotelOverviewController hotelOverview;
     MainApp mainApp;
@@ -75,6 +81,43 @@ public class TabServiceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            // Wrap the ObservableList in a FilteredList (initially display all data).
+            FilteredList<ServiceInfo> filteredData = new FilteredList<>(serviceData, p -> true);
+
+            // Set the filter Predicate whenever the filter changes.
+            serviceFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(service -> {
+                    // If filter text is empty, display all persons.
+                    if (newValue == null || newValue.isEmpty()) {
+                        serviceTable.setItems(serviceData);
+                        return true;
+                    }
+
+                    // Compare ref. code, first name and last name of every person with filter text.
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    
+                    if (Integer.toString(service.getRefCode()).contains(lowerCaseFilter)) {
+                        return true; // Filter matches ref. code.
+                    } else if (service.getServiceDesc().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches first name.
+                    } else if (service.getCreatedDate().toString().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches last name.
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            serviceFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // Wrap the FilteredList in a SortedList. 
+                SortedList<ServiceInfo> sortedData = new SortedList<>(filteredData);
+
+                // Bind the SortedList comparator to the TableView comparator.
+                sortedData.comparatorProperty().bind(serviceTable.comparatorProperty());
+
+                // Add sorted (and filtered) data to the table.
+                serviceTable.setItems(sortedData);
+            });
+            
             serviceData.addAll(providesQueries.getServices());
             serviceTable.setItems(serviceData);
 
@@ -104,14 +147,14 @@ public class TabServiceController implements Initializable {
             // Fill the labels with info from the service object.
             refCodeLabel.setText(Integer.toString(service.getRefCode()));
             roomIDLabel.setText(Integer.toString(service.getRoomID()));
-            serviceIDLabel.setText(Integer.toString(service.getServiceID()));
+            serviceDescLabel.setText(service.getServiceDesc());
             costLabel.setText(Double.toString(service.getCost()));
             dateLabel.setText(DateUtil.format(service.getCreatedDate()));
         } else {
             // Person is null, remove all the text.
             refCodeLabel.setText("");
             roomIDLabel.setText("");
-            serviceIDLabel.setText("");
+            serviceDescLabel.setText("");
             costLabel.setText("");
             dateLabel.setText("");
         }

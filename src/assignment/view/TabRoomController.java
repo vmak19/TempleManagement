@@ -99,7 +99,7 @@ public class TabRoomController implements Initializable {
      *
      * @param booking the booking object to be edited
      * @return true if the user clicked OK, false otherwise.
-     */
+     *
     public boolean showFindRoomDialog(Booking booking) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
@@ -128,7 +128,7 @@ public class TabRoomController implements Initializable {
             e.printStackTrace();
             return false;
         }
-    }
+    }*/
 
     /**
      * Initializes the controller class.
