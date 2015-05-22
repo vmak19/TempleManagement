@@ -29,6 +29,7 @@ public class RoomQueries extends DatabaseQuery {
     PreparedStatement insertRoom = null;
     PreparedStatement getAllRooms = null;
     PreparedStatement getAllAvailableRooms = null;
+    PreparedStatement getAllSameTypeRooms = null;
     ResultSet rs = null;
     List<RoomInfo> rooms;
     List<RoomInfo> availableRooms;
@@ -70,60 +71,89 @@ public class RoomQueries extends DatabaseQuery {
                 Date searchCheckIn = Date.valueOf(checkIn);
                 Date searchCheckOut = Date.valueOf(checkOut);
 
-                getAllAvailableRooms = conn.prepareStatement(
-                        "select app.ASSIGNMENT.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
+                getAllAvailableRooms = conn.prepareStatement(""
+                        + "select app.ROOM.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
                         + "from app.ROOM "
                         + "inner join app.ROOMTYPE "
                         + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
-                        + "inner join app.ASSIGNMENT "
+                        + "left join app.ASSIGNMENT "
+                        + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
+                        + "where app.ROOM.ROOMID not in ("
+                                + "select app.ASSIGNMENT.ROOMID "
+                                + "from app.ASSIGNMENT) "
+                        + "and (app.ROOMTYPE.ROOMTYPEID in (?))"
+                        
+                        + "union all "
+                        
+                        + "select app.ROOM.ROOMID, app.ROOM.ROOMTYPEID, BASERATE, CAPACITY "
+                        + "from app.ROOM "
+                        + "inner join app.ROOMTYPE "
+                        + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+                        + "right join app.ASSIGNMENT "
                         + "on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
                         + "inner join app.BOOKING "
                         + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
-                        + "where (app.ASSIGNMENT.ROOMID not in ("
-                                + "select distinct app.ASSIGNMENT.ROOMID "
+                        + "where (app.ROOM.ROOMID not in ("
+                                + "select app.ASSIGNMENT.ROOMID "
                                 + "from app.ASSIGNMENT "
                                 + "inner join app.BOOKING "
                                 + "on app.ASSIGNMENT.REFCODE = app.BOOKING.REFCODE "
                                 + "where ((CHECKIN >= ? and  CHECKIN < ?) "
                                 + "or (CHECKOUT > ? and CHECKOUT <= ?) "
-                                + "or (? >= CHECKIN and CHECKOUT > ?))) "
-                        + "and (app.ROOMTYPE.ROOMTYPEID in (?)) "
-                        + "and not exists ("
-                                + "select * from app.BOOKING "
-                                + "where (CHECKIN = ? and EARLYCHECKIN = true and ? = true) "
-                                + "or (CHECKOUT = ? and LATECHECKOUT = true and ? = true)))"
+                                + "or (? >= CHECKIN and CHECKOUT > ?) "
+                                + "or (CHECKIN = ? and EARLYCHECKIN = true and ? = true) "
+                                + "or (CHECKOUT = ? and LATECHECKOUT = true and ? = true))) "
+                        + "and (app.ROOMTYPE.ROOMTYPEID in (?)))"
                 );
-
-                getAllAvailableRooms.setDate(1, searchCheckIn);
-                getAllAvailableRooms.setDate(2, searchCheckOut);
-                getAllAvailableRooms.setDate(3, searchCheckIn);
-                getAllAvailableRooms.setDate(4, searchCheckOut);
-                getAllAvailableRooms.setDate(5, searchCheckIn);
+                
+                getAllAvailableRooms.setString(1, type);
+                getAllAvailableRooms.setDate(2, searchCheckIn);
+                getAllAvailableRooms.setDate(3, searchCheckOut);
+                getAllAvailableRooms.setDate(4, searchCheckIn);
+                getAllAvailableRooms.setDate(5, searchCheckOut);
                 getAllAvailableRooms.setDate(6, searchCheckIn);
-                getAllAvailableRooms.setString(7, type);
+                getAllAvailableRooms.setDate(7, searchCheckIn);
                 getAllAvailableRooms.setDate(8, searchCheckOut);
                 getAllAvailableRooms.setBoolean(9, lateCheckOut);
                 getAllAvailableRooms.setDate(10, searchCheckIn);
                 getAllAvailableRooms.setBoolean(11, earlyCheckIn);
+                getAllAvailableRooms.setString(12, type);
 
-                rs = getAllAvailableRooms.executeQuery();
-                while (rs.next()) {
-                    if (selectedRoomData.isEmpty()) {
-                        availableRooms.add(
-                                new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
-                                        rs.getDouble("baseRate"), rs.getInt("capacity")));
-                    } else {
-                        boolean isRoomClashed = false;
-                        for (RoomInfo room : selectedRoomData) {
-                            if (room.getRoomID() == rs.getInt("roomID")) {
-                                isRoomClashed = true;
+                getAllSameTypeRooms = conn.prepareStatement("select * from app.ROOMTYPE");
+                
+                ResultSet rsRoomTypes = getAllSameTypeRooms.executeQuery();
+                
+                while (rsRoomTypes.next()) {
+                    rs = getAllAvailableRooms.executeQuery();
+                    List<Integer> roomIDList = new ArrayList<Integer>();
+                    
+                    // Group roomID with the same room type into one
+                    while (rs.next()) {
+                        if (rs.getString("roomTypeID").equals(rsRoomTypes.getString("roomTypeID"))) {
+                            
+                            // Check if current room existed in selected room table
+                            boolean isRoomClashed = false;
+                            for (RoomInfo room : selectedRoomData) {
+                                if (room.getRoomID() == rs.getInt("roomID")) {
+                                    isRoomClashed = true;
+                                }
+                            }
+                            
+                            if (!isRoomClashed) {
+                            roomIDList.add(rs.getInt("roomID"));
                             }
                         }
-                        if (!isRoomClashed) {
-                                availableRooms.add(
-                                        new RoomInfo(rs.getInt("roomID"), rs.getString("roomTypeID"),
-                                                rs.getDouble("baseRate"), rs.getInt("capacity")));}}}
-                rs.close();
+                    }
+                    
+                    if (!roomIDList.isEmpty()) {
+                        availableRooms.add(
+                                new RoomInfo(roomIDList, rsRoomTypes.getString("roomTypeID"),
+                                        rsRoomTypes.getDouble("baseRate"), rsRoomTypes.getInt("capacity")));
+                    }
+                    
+                    rs.close();
+                }
+                rsRoomTypes.close();
                 getAllAvailableRooms.close();
             } catch (SQLException ex) {
                 System.out.println("getAvailableRoomsByType() error!");

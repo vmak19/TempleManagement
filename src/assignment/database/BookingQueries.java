@@ -26,18 +26,20 @@ public class BookingQueries extends DatabaseQuery{
 
     PreparedStatement insertBooking = null;
     PreparedStatement getAllBookings = null;
+    PreparedStatement getAllSameRefCodeRoom = null;
     PreparedStatement getAllBookingsByRoom = null;
     PreparedStatement updateBooking = null;
     PreparedStatement deleteBooking = null;
     ResultSet rs = null;
     List<BookingInfo> bookings;
     List<BookingInfo> bookingsByRoom;
+    int latestRefCode;
     
     public List<BookingInfo> getBookings() {
         bookings = new ArrayList<BookingInfo>();
         openConnection();
         try {
-            getAllBookings = conn.prepareStatement("select app.BOOKING.REFCODE, "
+            getAllBookings = conn.prepareStatement("select distinct app.BOOKING.REFCODE, "
                     + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, "
                     + "CREATEDDATE, NUMBREAKFAST, CHECKIN, CHECKOUT, "
                     + "EARLYCHECKIN, LATECHECKOUT, AMOUNTPAID, AMOUNTDUE "
@@ -45,16 +47,35 @@ public class BookingQueries extends DatabaseQuery{
                     + "inner join app.ASSIGNMENT "
                     + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE");
             rs = getAllBookings.executeQuery();
+            
+            getAllSameRefCodeRoom = conn.prepareStatement("select * from app.ASSIGNMENT");
+            
+            
             while (rs.next()) {
-                bookings.add(
-                    new BookingInfo(rs.getInt("refCode"), rs.getString("custFirstName"), 
-                            rs.getString("custLastName"), rs.getInt("roomID"), 
-                            rs.getDate("createdDate").toLocalDate(), 
-                            rs.getInt("numBreakfast"), rs.getDate("checkIn").toLocalDate(),
-                            rs.getDate("checkOut").toLocalDate(), rs.getBoolean("earlyCheckIn"), 
-                            rs.getBoolean("lateCheckOut"), rs.getDouble("amountPaid"), 
-                            rs.getDouble("amountDue")));
+                ResultSet rsRooms = getAllSameRefCodeRoom.executeQuery();
+                List<Integer> roomIDList = new ArrayList<Integer>();
+                
+                // Group roomID with the same ref. code into one
+                while (rsRooms.next()) {
+                    if (rs.getInt("refCode") == rsRooms.getInt("refCode")/* && rs.getInt("roomID") != currentRoomID*/) {
+                        roomIDList.add(rsRooms.getInt("roomID"));
+                    }
+                }
+                
+                // Add bookings with different ref. code
+                if (bookings.isEmpty() || bookings.get(bookings.size()-1).getRefCode() != rs.getInt("refCode")) {
+                    bookings.add(
+                            new BookingInfo(rs.getInt("refCode"), rs.getString("custFirstName"),
+                                    rs.getString("custLastName"), roomIDList,
+                                    rs.getDate("createdDate").toLocalDate(),
+                                    rs.getInt("numBreakfast"), rs.getDate("checkIn").toLocalDate(),
+                                    rs.getDate("checkOut").toLocalDate(), rs.getBoolean("earlyCheckIn"),
+                                    rs.getBoolean("lateCheckOut"), rs.getDouble("amountPaid"),
+                                    rs.getDouble("amountDue")));
+                }
+                rsRooms.close();
             }
+            
             rs.close();
             getAllBookings.close();
         } catch (SQLException ex) {
@@ -142,9 +163,13 @@ public class BookingQueries extends DatabaseQuery{
             System.out.println("ERROR! insertBooking() ERROR!");
             ex.printStackTrace();
         }
-
+        latestRefCode = returnValue;
         closeConnection();
         return returnValue;
+    }
+    
+    public int getLatestRefCode() {
+        return latestRefCode;
     }
     
     public void updateBooking(Booking toUpdate) {

@@ -5,24 +5,31 @@
  */
 package assignment.view;
 
-import assignment.database.BookingQueries;
+import assignment.MainApp;
+import assignment.database.AssignmentQueries;
+import assignment.model.Assignment;
 import assignment.model.Booking;
-import assignment.model.Room;
 import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
@@ -47,14 +54,21 @@ public class EditBookingDialogController implements Initializable {
     @FXML private CheckBox earlyCheckInBox;
     @FXML private CheckBox lateCheckOutBox;
     
+    @FXML private Button selectRoomButton;
     @FXML private Button confirmButton;
     @FXML private Button cancelButton;
-
+    
+    @FXML private Label createdDateLabel;
+    
     private Booking booking;
+    private Assignment assignment;
     private boolean confirmClicked = false;
     private FindRoomDialogController foundRoom;
     private Stage bookingDialogStage;
-    private ObservableList<RoomInfo> selectedRoomData = FXCollections.observableArrayList();
+    private ObservableList<RoomInfo> selectedRoomData;
+    private AssignmentQueries assignmentQueries = new AssignmentQueries();
+    
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -71,9 +85,33 @@ public class EditBookingDialogController implements Initializable {
      * @return
      */
     public boolean isConfirmClicked() {
-        System.out.println("Get confirm from editBooking");
         return confirmClicked;
     }
+    
+    /**
+     * Called when the user clicks select room.
+     */
+    @FXML
+    public void handleSelectRoom(ActionEvent event) throws IOException {
+        
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource("view/FindRoomDialog.fxml"));
+                AnchorPane findRoomDialog = (AnchorPane) loader.load();
+                
+                FindRoomDialogController controller = loader.getController();
+                controller.setFoundRoomData(foundRoom);
+                controller.setBookingDialogStage(bookingDialogStage);
+                controller.setBooking(booking, selectedRoomData);
+                Scene scene = new Scene(findRoomDialog);
+                bookingDialogStage.setScene(scene);
+                bookingDialogStage.show();
+            } catch (IOException ex) {
+                System.out.println("ERROR! handleSelectRoom()!");
+                ex.printStackTrace();
+            }
+        }
+    
     
     /**
      * Called when the user clicks confirm.
@@ -84,6 +122,7 @@ public class EditBookingDialogController implements Initializable {
             
             booking.setCustFirstName(firstNameField.getText());
             booking.setCustLastName(lastNameField.getText());
+            booking.setCreatedDate(DateUtil.parse(createdDateLabel.getText()));
             booking.setNumBreakfast(Integer.parseInt(numBreakfastField.getText()));
             booking.setCheckIn(DateUtil.parse(checkInField.getText()));
             booking.setCheckOut(DateUtil.parse(checkOutField.getText()));
@@ -126,6 +165,9 @@ public class EditBookingDialogController implements Initializable {
             // Try to parse number of breakfast days into an int.
             try {
                 Integer.parseInt(numBreakfastField.getText());
+                if (Integer.parseInt(numBreakfastField.getText()) < 0) {
+                    errorMessage += "No valid number of breakfast days (must be a positive integer)!\n"; 
+                }
             } catch (NumberFormatException e) {
                 errorMessage += "No valid number of breakfast days (must be an integer)!\n"; 
             }
@@ -136,6 +178,9 @@ public class EditBookingDialogController implements Initializable {
             // Try to parse number of breakfast days into a double.
             try {
                 Double.parseDouble(amountPaidField.getText());
+                if (Double.parseDouble(amountPaidField.getText()) < 0) {
+                    errorMessage += "No valid amount paid (must be a positive number)!\n"; 
+                }
             } catch (NumberFormatException e) {
                 errorMessage += "No valid amount paid (must be a number)!\n"; 
             }
@@ -171,6 +216,11 @@ public class EditBookingDialogController implements Initializable {
             amountDue += room.getBaseRate();
         }
         amountDueField.setText(Double.toString(amountDue));
+        amountPaidField.setText(Double.toString(amountDue * 0.5));
+        
+        if (createdDateLabel.getText().matches("Label")) {
+            createdDateLabel.setText(LocalDate.now().toString());
+        }
     }
     
     /**
@@ -195,7 +245,8 @@ public class EditBookingDialogController implements Initializable {
     /**
      * Is called by find room dialog controller.
      */
-    public void setBooking(Booking booking) {
+    public void setBooking(Booking booking, ObservableList<RoomInfo> rooms) {
         this.booking = booking;
+        this.selectedRoomData = rooms;
     }
 }

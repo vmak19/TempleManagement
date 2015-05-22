@@ -321,7 +321,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         Double.parseDouble(extraCharge[3]),
                         Double.parseDouble(totalCharge[4])));
             }
-
+            
             // Close the file
             scanner.close();
 

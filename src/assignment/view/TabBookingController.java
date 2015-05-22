@@ -1,13 +1,16 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.AssignmentQueries;
 import assignment.database.BookingQueries;
+import assignment.model.Assignment;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import assignment.model.Booking;
 import assignment.model.BookingInfo;
+import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
@@ -71,6 +74,7 @@ public class TabBookingController implements Initializable {
     private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
 
     private BookingQueries bookingQueries = new BookingQueries();
+    private AssignmentQueries assignmentQueries = new AssignmentQueries();
 
     public ObservableList<BookingInfo> getBookingData() {
         return bookingData;
@@ -114,7 +118,11 @@ public class TabBookingController implements Initializable {
             refCodeLabel.setText(Integer.toString(booking.getRefCode()));
             custFirstNameLabel.setText(booking.getCustFirstName());
             custLastNameLabel.setText(booking.getCustLastName());
-            roomIDLabel.setText(Integer.toString(booking.getRoomID()));
+            String roomID = "";
+            for (int i : booking.getRoomIDList()) {
+                roomID += Integer.toString(i) + " ";
+            }
+            roomIDLabel.setText(roomID);
             createdDateLabel.setText(DateUtil.format(booking.getCreatedDate()));
             numBreakfastLabel.setText(Integer.toString(booking.getNumBreakfast()));
             checkInLabel.setText(DateUtil.format(booking.getCheckIn()));
@@ -181,13 +189,16 @@ public class TabBookingController implements Initializable {
     @FXML
     private void handleNewBooking() {
         Booking tempBooking = new Booking();
-        boolean confirmClicked = showFindRoomDialog(tempBooking);
-        System.out.println("Testing");
+        ObservableList<RoomInfo> tempRooms = FXCollections.observableArrayList();
+        boolean confirmClicked = showFindRoomDialog(tempBooking, tempRooms);
+        
         if (confirmClicked) {
-           System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
-           bookingQueries.insertBooking(tempBooking);
+            bookingQueries.insertBooking(tempBooking);
+            for(RoomInfo room : tempRooms) {
+                assignmentQueries.insertAssignment(new Assignment(bookingQueries.getLatestRefCode(), room.getRoomID()));
+            }
            
-           refreshTable();
+            refreshTable();
         }
         
     }
@@ -200,7 +211,7 @@ public class TabBookingController implements Initializable {
      * @param booking the booking object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showFindRoomDialog(Booking booking) {
+    public boolean showFindRoomDialog(Booking booking, ObservableList<RoomInfo> rooms) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -218,11 +229,10 @@ public class TabBookingController implements Initializable {
             // Set the person into the controller.
             FindRoomDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
-            controller.setBooking(booking);
+            controller.setBooking(booking, rooms);
             
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
-            System.out.println("Check confirm: " + controller.isConfirmClicked());
             return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();

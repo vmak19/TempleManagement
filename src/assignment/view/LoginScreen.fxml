@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import java.net.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
@@ -22,4 +24,18 @@
       <Button fx:id="loginBtn" layoutX="500.0" layoutY="364.0" mnemonicParsing="false" onAction="#checkPassword" text="Log in" />
       <Button fx:id="loginBtnOverride" layoutX="500.0" layoutY="416.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Override" />
    </children>
+   <styleClass>
+      <String fx:value="item-title" />
+      <String fx:value="value-pane" />
+      <String fx:value="down-arrow" />
+      <String fx:value="up-arrow" />
+      <String fx:value="list-spinner" />
+      <String fx:value="background" />
+      <String fx:value="header" />
+      <String fx:value="track-background" />
+   </styleClass>
+   <stylesheets>
+      <URL value="@JMetroLightTheme.css" />
+      <URL value="@MainTheme.css" />
+   </stylesheets>
 </AnchorPane>

@@ -73,7 +73,7 @@ public class MainApp extends Application {
 
             LoginScreenController controller = loader.getController();
             controller.setMainApp(this);
-
+            
             Scene scene = new Scene(loginScreen);
             primaryStage.setScene(scene);
             primaryStage.show();

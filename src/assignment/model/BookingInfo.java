@@ -7,6 +7,7 @@ package assignment.model;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -28,6 +29,7 @@ public class BookingInfo {
     private StringProperty custFirstName;
     private StringProperty custLastName;
     private IntegerProperty roomID;
+    private ObjectProperty<List<Integer>> roomIDList; 
     private ObjectProperty<LocalDate> createdDate;
     private IntegerProperty numBreakfast;
     private ObjectProperty<LocalDate> checkIn;
@@ -75,6 +77,27 @@ public class BookingInfo {
         this.amountDue = new SimpleDoubleProperty(amountDue);
     }
     
+    /**
+     * Constructor is called by getBookings(). 
+     */
+    public BookingInfo(int refCode, String custFirstName, String custLastName, 
+            List<Integer> roomIDList, LocalDate createdDate, int numBreakfast, 
+            LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
+            boolean lateCheckOut, double amountPaid, double amountDue) {
+        this.refCode = new SimpleIntegerProperty(refCode);
+        this.custFirstName = new SimpleStringProperty(custFirstName);
+        this.custLastName = new SimpleStringProperty(custLastName);
+        this.roomIDList = new SimpleObjectProperty(roomIDList);
+        this.createdDate = new SimpleObjectProperty(createdDate);
+        this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
+        this.checkIn = new SimpleObjectProperty(checkIn);
+        this.checkOut = new SimpleObjectProperty(checkOut);
+        this.earlyCheckIn = new SimpleBooleanProperty(earlyCheckIn);
+        this.lateCheckOut = new SimpleBooleanProperty(lateCheckOut);
+        this.amountPaid = new SimpleDoubleProperty(amountPaid);
+        this.amountDue = new SimpleDoubleProperty(amountDue);
+    }
+    
     // Ref. Code get() set()
     public int getRefCode() {
         return refCode.get();
@@ -106,7 +129,11 @@ public class BookingInfo {
     public int getRoomID() {
         return roomID.get();
     }
-
+    
+    public List<Integer> getRoomIDList() {
+        return roomIDList.get();
+    }
+    
     // Created Date
     public LocalDate getCreatedDate() {
         return createdDate.get();

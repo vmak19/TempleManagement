@@ -48,6 +48,8 @@
                               <Insets />
                            </GridPane.margin>
                         </TextField>
+                        <Label text="Created Date" GridPane.columnIndex="1" />
+                        <Label fx:id="createdDateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -76,7 +78,7 @@
                   </GridPane>
                   <GridPane hgap="100.0">
                      <children>
-                        <Label text="Amount Paid" />
+                        <Label text="Deposit" />
                         <Label text="Amount Due" GridPane.columnIndex="1" />
                         <TextField fx:id="amountPaidField" GridPane.rowIndex="1" />
                         <TextField fx:id="amountDueField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -113,7 +115,7 @@
                   </TableView>
                   <HBox alignment="CENTER_RIGHT" spacing="20.0">
                      <children>
-                        <Button disable="true" mnemonicParsing="false" prefWidth="103.0" text="Select Room" />
+                        <Button fx:id="selectRoomButton" mnemonicParsing="false" onAction="#handleSelectRoom" prefWidth="103.0" text="Select Room" />
                         <Button fx:id="confirmButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleConfirm" prefWidth="100.0" text="Confirm" />
                         <Button fx:id="cancelButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancel" prefWidth="100.0" text="Cancel" />
                      </children>

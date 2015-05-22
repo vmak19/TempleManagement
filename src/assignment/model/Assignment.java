@@ -25,7 +25,15 @@ public class Assignment {
         return refCode.get();
     }
     
+    public void setRefCode(int refCode) {
+        this.refCode.set(refCode);
+    }
+    
     public int getRoomID() {
         return roomID.get();
+    }
+    
+    public void setRoomID(int roomID) {
+        this.roomID.set(roomID);
     }
 }
