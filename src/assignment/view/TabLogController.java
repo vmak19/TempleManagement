@@ -13,11 +13,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
@@ -31,7 +34,7 @@ public class TabLogController implements Initializable {
     @FXML
     private TableColumn<Log, Integer> logIDColumn;
     @FXML
-    private TableColumn<Log, String> userIDColumn;
+    private TableColumn<Log, Integer> userIDColumn;
     @FXML
     private TableColumn<Log, String> activityColumn;
 
@@ -47,6 +50,8 @@ public class TabLogController implements Initializable {
     private Label dateLabel;
     @FXML
     private Label activityLabel;
+    @FXML
+    private TextField logFilterField;
 
     MainApp mainApp;
     private ObservableList<Log> logData = FXCollections.observableArrayList();
@@ -103,14 +108,49 @@ public class TabLogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            logQueries = new LogQueries();
+            // Wrap the ObservableList in a FilteredList (initially display all data).
+            FilteredList<Log> filteredData = new FilteredList<>(logData, p -> true);
 
+            // Set the filter Predicate whenever the filter changes.
+            logFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(log -> {
+                    // If filter text is empty, display all log.
+                    if (newValue == null || newValue.isEmpty()) {
+                        logTable.setItems(logData);
+                        return true;
+                    }
+
+                    // Compare log ID, user ID and activity of every log with filter text.
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    
+                    if (Integer.toString(log.getLogID()).contains(lowerCaseFilter)) {
+                        return true; // Filter matches log ID.
+                    } else if (Integer.toString(log.getUserID()).toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches user ID.
+                    } else if (log.getItemModified().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches activity.
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            logFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // Wrap the FilteredList in a SortedList. 
+                SortedList<Log> sortedData = new SortedList<>(filteredData);
+
+                // Bind the SortedList comparator to the TableView comparator.
+                sortedData.comparatorProperty().bind(logTable.comparatorProperty());
+
+                // Add sorted (and filtered) data to the table.
+                logTable.setItems(sortedData);
+            });
+            
             logData.addAll(logQueries.getLogs());
             logTable.setItems(logData);
 
             // Initialize the log table with the three columns.
             logIDColumn.setCellValueFactory(cellData -> cellData.getValue().logIDProperty().asObject());
-            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asString());
+            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
             activityColumn.setCellValueFactory(cellData -> cellData.getValue().itemModifiedProperty());
 
             // Clear employee details.

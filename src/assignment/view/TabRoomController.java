@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -60,6 +63,8 @@ public class TabRoomController implements Initializable {
     private Label noOfBedsLabel;
     @FXML
     private Button findAvailableRoomBtn;
+    @FXML
+    private TextField roomFilterField;
     
     
     MainApp mainApp;
@@ -136,7 +141,42 @@ public class TabRoomController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            // Initialize the person table with the two columns.
+            // Wrap the ObservableList in a FilteredList (initially display all data).
+            FilteredList<RoomInfo> filteredData = new FilteredList<>(roomData, p -> true);
+
+            // Set the filter Predicate whenever the filter changes.
+            roomFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(room -> {
+                    // If filter text is empty, display all rooms.
+                    if (newValue == null || newValue.isEmpty()) {
+                        roomTable.setItems(roomData);
+                        return true;
+                    }
+
+                    // Compare room ID and room type of every service with filter text.
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    
+                    if (Integer.toString(room.getRoomID()).contains(lowerCaseFilter)) {
+                        return true; // Filter matches room ID.
+                    } else if (room.getRoomTypeID().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches room type.
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            roomFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // Wrap the FilteredList in a SortedList. 
+                SortedList<RoomInfo> sortedData = new SortedList<>(filteredData);
+
+                // Bind the SortedList comparator to the TableView comparator.
+                sortedData.comparatorProperty().bind(roomTable.comparatorProperty());
+
+                // Add sorted (and filtered) data to the table.
+                roomTable.setItems(sortedData);
+            });
+            
+            // Initialize the room table with the two columns.
             roomData.addAll(roomQueries.getRooms());
             roomTable.setItems(roomData);
 

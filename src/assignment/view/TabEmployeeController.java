@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +35,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -70,6 +73,7 @@ public class TabEmployeeController implements Initializable {
     private Button newBtn;
     @FXML
     private Button deleteBtn;
+    @FXML private TextField employeeFilterField;
 
     MainApp mainApp;
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
@@ -247,7 +251,43 @@ public class TabEmployeeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            employeeQueries = new EmployeeQueries();
+            // Wrap the ObservableList in a FilteredList (initially display all data).
+            FilteredList<Employee> filteredData = new FilteredList<>(employeeData, p -> true);
+
+            // Set the filter Predicate whenever the filter changes.
+            employeeFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(employee -> {
+                    // If filter text is empty, display all employees.
+                    if (newValue == null || newValue.isEmpty()) {
+                        employeeTable.setItems(employeeData);
+                        return true;
+                    }
+
+                    // Compare user ID, first name and last name of every booking with filter text.
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    
+                    if (Integer.toString(employee.getUserID()).contains(lowerCaseFilter)) {
+                        return true; // Filter matches user ID.
+                    } else if (employee.getEmpFirstName().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches first name.
+                    } else if (employee.getEmpLastName().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches last name.
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            employeeFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // Wrap the FilteredList in a SortedList. 
+                SortedList<Employee> sortedData = new SortedList<>(filteredData);
+
+                // Bind the SortedList comparator to the TableView comparator.
+                sortedData.comparatorProperty().bind(employeeTable.comparatorProperty());
+
+                // Add sorted (and filtered) data to the table.
+                employeeTable.setItems(sortedData);
+            });
+            
             employeeData.addAll(employeeQueries.getEmployees());
             employeeTable.setItems(employeeData);
 

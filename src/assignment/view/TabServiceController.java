@@ -87,21 +87,21 @@ public class TabServiceController implements Initializable {
             // Set the filter Predicate whenever the filter changes.
             serviceFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(service -> {
-                    // If filter text is empty, display all persons.
+                    // If filter text is empty, display all services.
                     if (newValue == null || newValue.isEmpty()) {
                         serviceTable.setItems(serviceData);
                         return true;
                     }
 
-                    // Compare ref. code, first name and last name of every person with filter text.
+                    // Compare ref. code, service desc. and date of every service with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
                     
                     if (Integer.toString(service.getRefCode()).contains(lowerCaseFilter)) {
                         return true; // Filter matches ref. code.
                     } else if (service.getServiceDesc().toLowerCase().contains(lowerCaseFilter)) {
-                        return true; // Filter matches first name.
+                        return true; // Filter matches service desc..
                     } else if (service.getCreatedDate().toString().toLowerCase().contains(lowerCaseFilter)) {
-                        return true; // Filter matches last name.
+                        return true; // Filter matches date.
                     }
                     return false; // Does not match.
                 });
@@ -117,7 +117,7 @@ public class TabServiceController implements Initializable {
                 // Add sorted (and filtered) data to the table.
                 serviceTable.setItems(sortedData);
             });
-            
+
             serviceData.addAll(providesQueries.getServices());
             serviceTable.setItems(serviceData);
 

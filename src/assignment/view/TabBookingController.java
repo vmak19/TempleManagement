@@ -109,13 +109,13 @@ public class TabBookingController implements Initializable {
             // Set the filter Predicate whenever the filter changes.
             bookingFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(booking -> {
-                    // If filter text is empty, display all persons.
+                    // If filter text is empty, display all bookings.
                     if (newValue == null || newValue.isEmpty()) {
                         bookingTable.setItems(bookingData);
                         return true;
                     }
 
-                    // Compare ref. code, first name and last name of every person with filter text.
+                    // Compare ref. code, first name and last name of every booking with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
                     
                     if (Integer.toString(booking.getRefCode()).contains(lowerCaseFilter)) {
