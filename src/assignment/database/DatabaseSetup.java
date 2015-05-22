@@ -116,8 +116,6 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"ROOMID\" INT not null primary key, "
                         + "\"ROOMTYPEID\" VARCHAR(50),"
                         + "\"NOOFBEDS\" INT,"
-                        + "\"EXTRACHARGE\" DOUBLE,"
-                        + "\"TOTALCHARGE\" DOUBLE,"
                         + "FOREIGN KEY (ROOMTYPEID) REFERENCES ROOMTYPE(ROOMTYPEID))");
                 createRoomTable.execute();
 
@@ -309,17 +307,13 @@ public class DatabaseSetup extends DatabaseQuery {
                 String[] roomID = s.split(",");
                 String[] roomTypeID = s.split(",");
                 String[] noOfBeds = s.split(",");
-                String[] extraCharge = s.split(",");
-                String[] totalCharge = s.split(",");
 
                 RoomQueries roomQueries = new RoomQueries();
 
                 roomQueries.insertRoom(new Room(
                         Integer.parseInt(roomID[0]),
                         roomTypeID[1],
-                        Integer.parseInt(noOfBeds[2]),
-                        Double.parseDouble(extraCharge[3]),
-                        Double.parseDouble(totalCharge[4])));
+                        Integer.parseInt(noOfBeds[2])));
             }
             
             // Close the file

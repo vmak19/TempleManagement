@@ -6,6 +6,7 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.BillingQueries;
 import assignment.database.ProvidesQueries;
 import assignment.model.Provides;
 import assignment.model.ServiceInfo;
@@ -34,28 +35,40 @@ import javafx.stage.Stage;
  * @author SONY
  */
 public class TabServiceController implements Initializable {
-    
-    @FXML private TableView<ServiceInfo> serviceTable;
-    @FXML private TableColumn<ServiceInfo, Integer> refCodeColumn;
-    @FXML private TableColumn<ServiceInfo, String> serviceIDColumn;
-    @FXML private TableColumn<ServiceInfo, String> createdDateColumn;
-    
-    @FXML private Label refCodeLabel;
-    @FXML private Label roomIDLabel;
-    @FXML private Label serviceIDLabel;
-    @FXML private Label costLabel;
-    @FXML private Label dateLabel;
-    
-    @FXML private Button newButton;
-    @FXML private Button deleteButton;
-    
+
+    @FXML
+    private TableView<ServiceInfo> serviceTable;
+    @FXML
+    private TableColumn<ServiceInfo, Integer> refCodeColumn;
+    @FXML
+    private TableColumn<ServiceInfo, String> serviceIDColumn;
+    @FXML
+    private TableColumn<ServiceInfo, String> createdDateColumn;
+
+    @FXML
+    private Label refCodeLabel;
+    @FXML
+    private Label roomIDLabel;
+    @FXML
+    private Label serviceIDLabel;
+    @FXML
+    private Label costLabel;
+    @FXML
+    private Label dateLabel;
+
+    @FXML
+    private Button newButton;
+    @FXML
+    private Button deleteButton;
+
     HotelOverviewController hotelOverview;
     MainApp mainApp;
 
     private ObservableList<ServiceInfo> serviceData = FXCollections.observableArrayList();
-    
+
     private ProvidesQueries providesQueries = new ProvidesQueries();
-    
+    private BillingQueries billingQueries = new BillingQueries();
+
     /**
      * Initializes the controller class.
      */
@@ -80,8 +93,8 @@ public class TabServiceController implements Initializable {
             System.out.println("Service Initilize error!");
             e.printStackTrace();
         }
-    }    
-    
+    }
+
     /**
      * Fills all text fields to show details about the service. If the specified
      * service is null, all text fields are cleared.
@@ -103,18 +116,28 @@ public class TabServiceController implements Initializable {
             dateLabel.setText("");
         }
     }
-    
+
     // Called when the user clicks on the delete button.
     @FXML
     private void handleDeleteService() {
         try {
             int selectedIndex = serviceTable.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
+                double costToDeduct = (Double.parseDouble(costLabel.getText()));
+                int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
                 // Delete record in the database
                 providesQueries.deleteProvides(serviceTable.getSelectionModel().getSelectedItem());
 
                 // Delete record on the table
                 serviceTable.getItems().remove(selectedIndex);
+
+                //Deduct service cost
+                billingQueries.deductCost(myRefCode, costToDeduct);
+
+                //Refresh billings table
+                TabBillingController tabBillingController = new TabBillingController();
+                tabBillingController.refreshTable();
+
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -129,7 +152,7 @@ public class TabServiceController implements Initializable {
             System.out.println("Error! handleDeleteService()!");
         }
     }
-    
+
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
      * details for a new service.
@@ -139,19 +162,26 @@ public class TabServiceController implements Initializable {
         Provides tempProvide = new Provides();
         boolean okClicked = showEditProvideDialog(tempProvide);
         if (okClicked) {
-           providesQueries.insertProvides(tempProvide);
-           
-           // Refesh service table
-           serviceData.clear();
-           serviceData.addAll(providesQueries.getServices());
-           
+            providesQueries.insertProvides(tempProvide);
+
+            //Add service cost
+            billingQueries.addCost(tempProvide);
+
+            //Refresh billings table
+            TabBillingController tabBillingController = new TabBillingController();
+            tabBillingController.refreshTable();
+
+            // Refesh service table
+            serviceData.clear();
+            serviceData.addAll(providesQueries.getServices());
+
            // Refresh booking table
-           //TabBookingController tabBooking = new TabBookingController();
-           hotelOverview.refreshBookingTable();
+            //TabBookingController tabBooking = new TabBookingController();
+            hotelOverview.refreshBookingTable();
         }
-        
+
     }
-    
+
     /**
      * Opens a dialog to edit details for the specified booking. If the user
      * clicks OK, the changes are saved into the provided booking object and
@@ -179,7 +209,7 @@ public class TabServiceController implements Initializable {
             EditServiceDialogController controller = loader.getController();
             controller.setEditProvideDialogStage(editProvideDialogStage);
             controller.setProvide(provide);
-            
+
             // Show the dialog and wait until the user closes it
             editProvideDialogStage.showAndWait();
 
@@ -189,7 +219,7 @@ public class TabServiceController implements Initializable {
             return false;
         }
     }
-    
+
     /**
      * Is called by hotel overview controller to give a reference back to the
      * main application.
@@ -197,9 +227,10 @@ public class TabServiceController implements Initializable {
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
-    
+
     /**
-     * Is called by hotel overview controller to give a reference back to itself.
+     * Is called by hotel overview controller to give a reference back to
+     * itself.
      */
     public void setHotelOverviewController(HotelOverviewController hotelOverview) {
         this.hotelOverview = hotelOverview;

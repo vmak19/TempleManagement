@@ -25,16 +25,6 @@ public class Room /*extends RoomType*/ {
     private IntegerProperty roomID;
     private StringProperty roomTypeID;
     private IntegerProperty noOfBeds;
-    private DoubleProperty extraCharge;
-    private DoubleProperty totalCharge;
-
-    public Room(int roomID, String roomTypeID, int noOfBeds, double extraCharge, double totalCharge) {
-        this.roomID = new SimpleIntegerProperty(roomID);
-        this.roomTypeID = new SimpleStringProperty(roomTypeID);
-        this.noOfBeds = new SimpleIntegerProperty(noOfBeds);
-        this.extraCharge = new SimpleDoubleProperty(extraCharge);
-        this.totalCharge = new SimpleDoubleProperty(totalCharge);
-    }
 
     public Room(int roomID, String roomTypeID, int noOfBeds) {
         this.roomID = new SimpleIntegerProperty(roomID);
@@ -85,29 +75,5 @@ public class Room /*extends RoomType*/ {
 
     public IntegerProperty noOfBedsProperty() {
         return noOfBeds;
-    }
-
-    public double getExtraCharge() {
-        return extraCharge.get();
-    }
-
-    public void setExtraCharge(double extraCharge) {
-        this.extraCharge.set(extraCharge);
-    }
-
-    public DoubleProperty extraChargeProperty() {
-        return extraCharge;
-    }
-
-    public double getTotalCharge() {
-        return totalCharge.get();
-    }
-
-    public void setTotalCharge(double totalCharge) {        
-        this.totalCharge.set(totalCharge);
-    }
-
-    public DoubleProperty totalChargeProperty() {
-        return totalCharge;
     }
 }

@@ -189,6 +189,5 @@ public class EditEmployeeDialogController {
         employee.setEmpFirstName(fNameField.getText());
         employee.setEmpLastName(lNameField.getText());
         employee.setIsAdministrator(administratorBox.isSelected());
-        System.out.println("Filled in: " + employee);
     }
 }
