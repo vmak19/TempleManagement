@@ -21,7 +21,9 @@ public class HotelOverviewController implements Initializable {
     @FXML
     TabServiceController tabServiceController;
     @FXML
-    TabRoomController tabBillingController;
+    TabBillingController tabBillingController;
+    @FXML
+    TabLogController tabLogController;
     @FXML
     private Button logoutBtn;
 
@@ -53,9 +55,11 @@ public class HotelOverviewController implements Initializable {
             this.mainApp = mainApp;
 
             tabBookingController.setMainApp(mainApp);
+            tabEmployeeController.setMainApp(mainApp);
+            tabBillingController.setMainApp(mainApp);
+            tabLogController.setMainApp(mainApp);
             tabRoomController.setMainApp(mainApp);
             tabServiceController.setMainApp(mainApp);
-            tabEmployeeController.setMainApp(mainApp);
             
             tabServiceController.setHotelOverviewController(this);
         } catch (Exception e) {

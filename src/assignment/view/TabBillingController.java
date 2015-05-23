@@ -105,21 +105,24 @@ public class TabBillingController implements Initializable {
     @FXML
     private void handleEditBilling() {
         Billing selectedBilling = billingTable.getSelectionModel().getSelectedItem();
+        //System.out.println("Selected row is: "+selectedBilling);             //SIM TESTING      
         if (selectedBilling != null) {
             boolean okClicked = showEditBillingDialog(selectedBilling);
             if (okClicked) {
                 showBillingDetails(selectedBilling);
             }
-
         } else {
-            // Nothing selected.
-            Alert alert = new Alert(AlertType.WARNING);
+            
+             // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);            
+            System.out.println("Mainapp is: "+mainApp);             //SIM TESTING            
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
             alert.setHeaderText("No Billing Selected");
-            alert.setContentText("Please select an billing in the table.");
+            alert.setContentText("Please select a billing in the table.");
 
             alert.showAndWait();
+
         }
     }
 
@@ -140,6 +143,7 @@ public class TabBillingController implements Initializable {
             // Set the person into the controller.
             EditBillingDialogController controller = loader.getController();
             controller.setBillingDialogStage(billingDialogStage);
+            System.out.println("setting billing "+billing);
             controller.setBilling(billing);
 
             // Show the dialog and wait until the user closes it

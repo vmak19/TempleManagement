@@ -29,7 +29,7 @@
             </Tab>
             <Tab text="Billing">
                <content>
-                  <fx:include source="TabBilling.fxml" />
+                  <fx:include fx:id="tabBilling" source="TabBilling.fxml" />
                </content>
             </Tab>
             <Tab text="Employee">
@@ -39,7 +39,7 @@
             </Tab>
             <Tab text="Log">
                <content>
-                  <fx:include source="TabLog.fxml" />
+                  <fx:include fx:id="tabLog" source="TabLog.fxml" />
                </content>
             </Tab>
         </tabs>

@@ -60,7 +60,7 @@ public class LoginScreenController implements Initializable {
     public String getUserID() {
         String myUser = userIDField.getText();
         return myUser;
-    }
+    }    
 
     public String getPassword() {
         String myPassword = passwordField.getText();
@@ -120,7 +120,9 @@ public class LoginScreenController implements Initializable {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
+            loader
+                    .setLocation(MainApp.class
+                            .getResource("view/HotelOverview.fxml"));
             hotelOverview = (AnchorPane) loader.load();
 
             HotelOverviewController controller = loader.getController();

@@ -7,7 +7,10 @@ package assignment.view;
 
 import assignment.MainApp;
 import assignment.database.EmployeeQueries;
+import assignment.database.LogQueries;
+import assignment.database.LoginQueries;
 import assignment.model.Employee;
+import assignment.model.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -75,7 +78,7 @@ public class TabEmployeeController implements Initializable {
     public ObservableList<Employee> getEmployeeData() {
         return employeeData;
     }
-
+    
     /**
      * The constructor. The constructor is called before the initialize()
      * method.
@@ -90,7 +93,6 @@ public class TabEmployeeController implements Initializable {
             if (selectedIndex >= 0) {
                 // Delete record in the database
                 employeeQueries.deleteEmployee(employeeTable.getSelectionModel().getSelectedItem());
-
                 // Delete record on the table
                 employeeTable.getItems().remove(selectedIndex);
             } else {
@@ -110,12 +112,14 @@ public class TabEmployeeController implements Initializable {
 
     @FXML
     private void handleNewEmployee() {
-        Employee tempEmployee = new Employee();
-        boolean okClicked = showEditEmployeeDialog(tempEmployee);
+        Employee tempEmployee = new Employee("", "", "", false);
+        boolean okClicked = showNewEmployeeDialog(tempEmployee);
         if (okClicked) {
+            System.out.println("Adding the new employee");
             employeeQueries.insertEmployee(tempEmployee);
-            employeeData.add(tempEmployee);
+            employeeTable.getItems().add(tempEmployee);
         }
+        //ADD LOG GEN CODE:
     }
 
     @FXML
@@ -123,10 +127,12 @@ public class TabEmployeeController implements Initializable {
         Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
         if (selectedEmployee != null) {
             boolean okClicked = showEditEmployeeDialog(selectedEmployee);
-            if (okClicked) {
-                showEmployeeDetails(selectedEmployee);
-            }
-
+            if (okClicked) {               
+                employeeQueries.updateEmployee(selectedEmployee);
+                employeeTable.getItems().add(selectedEmployee);
+            }            
+            //ADD LOG GEN CODE:
+            
         } else {
             // Nothing selected.
             Alert alert = new Alert(AlertType.WARNING);
@@ -161,6 +167,41 @@ public class TabEmployeeController implements Initializable {
             // Show the dialog and wait until the user closes it
             employeeDialogStage.showAndWait();
 
+            if (controller.isConfirmClicked()) {
+                controller.getUpdatedEmployeeDetails();
+            }
+            return controller.isConfirmClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean showNewEmployeeDialog(Employee employee) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("EditEmployeeDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage employeeDialogStage = new Stage();
+            employeeDialogStage.setTitle("Add New Employee");
+            employeeDialogStage.initModality(Modality.WINDOW_MODAL);
+            Scene scene = new Scene(page);
+            employeeDialogStage.setScene(scene);
+
+            // Set the person into the controller.
+            EditEmployeeDialogController controller = loader.getController();
+            controller.setEmployeeDialogStage(employeeDialogStage);
+            controller.setNewEmployee(employee);
+
+            // Show the dialog and wait until the user closes it
+            employeeDialogStage.showAndWait();
+
+            if (controller.isConfirmClicked()) {
+                controller.getUpdatedEmployeeDetails();
+            }
             return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,7 +238,6 @@ public class TabEmployeeController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             employeeQueries = new EmployeeQueries();
-
             employeeData.addAll(employeeQueries.getEmployees());
             employeeTable.setItems(employeeData);
 

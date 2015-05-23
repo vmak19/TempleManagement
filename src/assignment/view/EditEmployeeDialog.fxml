@@ -10,7 +10,7 @@
    <children>
       <GridPane vgap="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
-            <Label text="User ID" />
+            <Label fx:id="newEmpLabel" text="New Employee:" />
             <Label text="Password" GridPane.rowIndex="1" />
             <Label text="First Name" GridPane.rowIndex="2" />
             <Label text="Last Name" GridPane.rowIndex="3" />
@@ -26,6 +26,7 @@
             </HBox>
             <CheckBox fx:id="administratorBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
             <Label fx:id="userIDLabel" text="Label" GridPane.columnIndex="1" />
+            <Label fx:id="labelUserIDLabel" text="User ID" />
          </children>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="160.0" />

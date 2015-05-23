@@ -5,6 +5,7 @@
  */
 package assignment.view;
 
+import assignment.database.EmployeeQueries;
 import assignment.model.Employee;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -24,6 +25,10 @@ public class EditEmployeeDialogController {
     @FXML
     private Label userIDLabel;
     @FXML
+    private Label labelUserIDLabel;
+    @FXML
+    private Label newEmpLabel;
+    @FXML
     private TextField passwordField;
     @FXML
     private TextField fNameField;
@@ -40,11 +45,12 @@ public class EditEmployeeDialogController {
     private boolean okClicked = false;
     private boolean confirmClicked = false;
     private Stage employeeDialogStage;
+    private EmployeeQueries employeeQueries = new EmployeeQueries();
 
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
-     */    
+     */
     private void initialize() {
     }
 
@@ -62,10 +68,29 @@ public class EditEmployeeDialogController {
      *
      * @param employee
      */
-    public void setEmployee(Employee employee) {
+    public void setNewEmployee(Employee employee) {
         try {
             this.employee = employee;
 
+            labelUserIDLabel.setText("");
+            userIDLabel.setText("");
+            passwordField.setText(employee.getPassword());
+            fNameField.setText(employee.getEmpFirstName());
+            lNameField.setText(employee.getEmpLastName());
+            administratorBox.setSelected(false);
+
+        } catch (Exception e) {
+            System.out.println("Set new employee labels error!");
+            e.printStackTrace();
+        }
+
+    }
+
+    public void setEmployee(Employee employee) {
+        try {
+            this.employee = employee;
+            
+            newEmpLabel.setText("");
             userIDLabel.setText(Integer.toString(employee.getUserID()));
             passwordField.setText(employee.getPassword());
             fNameField.setText(employee.getEmpFirstName());
@@ -76,7 +101,8 @@ public class EditEmployeeDialogController {
                 administratorBox.setSelected(false);
             }
         } catch (Exception e) {
-            System.out.println("BUG 2: Set edit employee labels error!");
+            System.out.println("Set edit employee labels error!");
+            e.printStackTrace();
         }
 
     }
@@ -103,15 +129,10 @@ public class EditEmployeeDialogController {
                 employee.setIsAdministrator(true);
             } else {
                 employee.setIsAdministrator(false);
-            }
-            /*
-            if (employee.getIsAdministrator()) {
-                administratorBox.setSelected(true);
-            } else {
-                administratorBox.setSelected(false);
-            }*/
+            }           
 
             okClicked = true;
+            confirmClicked = true;
             employeeDialogStage.close();
         }
     }
@@ -158,8 +179,16 @@ public class EditEmployeeDialogController {
             return false;
         }
     }
-    
+
     public boolean isConfirmClicked() {
         return confirmClicked;
+    }
+
+    void getUpdatedEmployeeDetails() {
+        employee.setPassword(passwordField.getText());
+        employee.setEmpFirstName(fNameField.getText());
+        employee.setEmpLastName(lNameField.getText());
+        employee.setIsAdministrator(administratorBox.isSelected());
+        System.out.println("Filled in: " + employee);
     }
 }

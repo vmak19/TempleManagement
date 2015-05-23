@@ -27,6 +27,13 @@ public class Log {
     private ObjectProperty<LocalDate> dateMod;
     private StringProperty itemModified;    //REF vase toString
 
+    public Log(int userID, String empFirstName, String empLastName) {
+        this.logID = new SimpleIntegerProperty(-1);
+        this.userID = new SimpleIntegerProperty(userID);
+        this.empFirstName = new SimpleStringProperty(empFirstName);
+        this.empLastName = new SimpleStringProperty(empLastName);
+    }
+    
     public Log(int logID, int userID, String empFirstName, String empLastName, LocalDate dateMod, String itemModified) {
         this.logID = new SimpleIntegerProperty(logID);
         this.userID = new SimpleIntegerProperty(userID);

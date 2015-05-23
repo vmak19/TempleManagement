@@ -25,7 +25,8 @@ import javafx.scene.control.TableView;
  * @author SONY
  */
 public class TabLogController implements Initializable {
-@FXML
+
+    @FXML
     TableView<Log> logTable;
     @FXML
     private TableColumn<Log, Integer> logIDColumn;
@@ -46,22 +47,36 @@ public class TabLogController implements Initializable {
     private Label dateLabel;
     @FXML
     private Label activityLabel;
-    
+
     MainApp mainApp;
     private ObservableList<Log> logData = FXCollections.observableArrayList();
+    private ObservableList<Log> sessionData = FXCollections.observableArrayList();
     private LogQueries logQueries = new LogQueries();
 
     public ObservableList<Log> getLogData() {
         return logData;
     }
-    
+
+    public ObservableList<Log> getSessionData() {
+        return sessionData;
+    }
+
     /**
      * The constructor. The constructor is called before the initialize()
      * method.
      */
     public TabLogController() {
     }
-    
+
+    // WORK IN PROGRESS:
+    public void generateLog() {
+        logQueries = new LogQueries();
+        sessionData.addAll(logQueries.getSessionDetails());
+        System.out.println("session details: " + sessionData);
+
+       // logQueries.insertLog(sessionData);
+    }
+
     private void showLogDetails(Log log) {
         if (log != null) {
             // Fill the labels with info from the log object.
@@ -95,7 +110,7 @@ public class TabLogController implements Initializable {
 
             // Initialize the log table with the three columns.
             logIDColumn.setCellValueFactory(cellData -> cellData.getValue().logIDProperty().asObject());
-            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asString()); 
+            userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asString());
             activityColumn.setCellValueFactory(cellData -> cellData.getValue().itemModifiedProperty());
 
             // Clear employee details.
@@ -110,6 +125,6 @@ public class TabLogController implements Initializable {
 
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
-    } 
-    
+    }
+
 }
