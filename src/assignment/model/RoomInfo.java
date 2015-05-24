@@ -25,8 +25,6 @@ public class RoomInfo {
     private DoubleProperty baseRate;
     private IntegerProperty capacity;
     private IntegerProperty noOfBeds;
-    private DoubleProperty extraCharge;
-    private DoubleProperty totalCharge;
 
     public RoomInfo(int roomID, String roomTypeID, double baseRate, int capacity) {
         this.roomID = new SimpleIntegerProperty(roomID);
@@ -35,16 +33,13 @@ public class RoomInfo {
         this.capacity = new SimpleIntegerProperty(capacity);
     }
 
-    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate, int capacity, int noOfBeds,
-            double extraCharge, double totalCharge) {
+    public RoomInfo(int roomID, String roomTypeID, String description, double baseRate, int capacity, int noOfBeds) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
         this.noOfBeds = new SimpleIntegerProperty(noOfBeds);
-        this.extraCharge = new SimpleDoubleProperty(extraCharge);
-        this.totalCharge = new SimpleDoubleProperty(totalCharge);
     }
 
     public RoomInfo(int roomID, double baseRate, int capacity) {
@@ -111,30 +106,6 @@ public class RoomInfo {
 
     public IntegerProperty noOfBedsProperty() {
         return noOfBeds;
-    }
-
-    public double getExtraCharge() {
-        return extraCharge.get();
-    }
-
-    public void setExtraCharge(double extraCharge) {
-        this.extraCharge.set(extraCharge);
-    }
-
-    public DoubleProperty extraChargeProperty() {
-        return extraCharge;
-    }
-    
-    public double getTotalCharge() {
-        return totalCharge.get();
-    }
-
-    public void setTotalCharge(double totalCharge) {
-        this.totalCharge.set(totalCharge);
-    }
-
-    public DoubleProperty totalChargeProperty() {
-        return totalCharge;
     }
 
     @Override

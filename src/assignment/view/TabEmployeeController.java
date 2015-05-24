@@ -115,7 +115,6 @@ public class TabEmployeeController implements Initializable {
         Employee tempEmployee = new Employee("", "", "", false);
         boolean okClicked = showNewEmployeeDialog(tempEmployee);
         if (okClicked) {
-            System.out.println("Adding the new employee");
             employeeQueries.insertEmployee(tempEmployee);
             employeeTable.getItems().add(tempEmployee);
         }
@@ -130,6 +129,7 @@ public class TabEmployeeController implements Initializable {
             if (okClicked) {               
                 employeeQueries.updateEmployee(selectedEmployee);
                 employeeTable.getItems().add(selectedEmployee);
+                refreshTable(selectedEmployee);
             }            
             //ADD LOG GEN CODE:
             
@@ -143,6 +143,14 @@ public class TabEmployeeController implements Initializable {
 
             alert.showAndWait();
         }
+    }
+    
+    /**
+     * To refresh the table.
+     */
+    public void refreshTable(Employee selectedEmployee) {
+        employeeData.clear();
+        employeeData.addAll(employeeQueries.getEmployees());
     }
 
     public boolean showEditEmployeeDialog(Employee employee) {
@@ -170,6 +178,7 @@ public class TabEmployeeController implements Initializable {
             if (controller.isConfirmClicked()) {
                 controller.getUpdatedEmployeeDetails();
             }
+            
             return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();
@@ -230,6 +239,7 @@ public class TabEmployeeController implements Initializable {
             administratorBox.setSelected(false);
         }
     }
+    
 
     /**
      * Initializes the controller class.

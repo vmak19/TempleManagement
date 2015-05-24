@@ -1,7 +1,9 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.BillingQueries;
 import assignment.database.BookingQueries;
+import assignment.model.Billing;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -11,6 +13,8 @@ import assignment.model.BookingInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,17 +64,21 @@ public class TabBookingController implements Initializable {
     private Label amountPaidLabel;
     @FXML
     private Label amountDueLabel;
-    
+
     @FXML
     private Button addButton;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button payBillButton;
 
     MainApp mainApp;
 
     private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
 
     private BookingQueries bookingQueries = new BookingQueries();
+
+    private TabBillingController tabBillingController = new TabBillingController();
 
     public ObservableList<BookingInfo> getBookingData() {
         return bookingData;
@@ -80,7 +88,8 @@ public class TabBookingController implements Initializable {
      * The constructor. The constructor is called before the initialize()
      * method.
      */
-    public TabBookingController() {}
+    public TabBookingController() {
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -173,7 +182,7 @@ public class TabBookingController implements Initializable {
             System.out.println("Error! handleDeleteBooking()!");
         }
     }
-    
+
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
      * details for a new person.
@@ -184,14 +193,14 @@ public class TabBookingController implements Initializable {
         boolean confirmClicked = showFindRoomDialog(tempBooking);
         System.out.println("Testing");
         if (confirmClicked) {
-           System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
-           bookingQueries.insertBooking(tempBooking);
-           
-           refreshTable();
+            System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
+            bookingQueries.insertBooking(tempBooking);
+
+            refreshTable();
         }
-        
+
     }
-    
+
     /**
      * Opens a dialog to edit details for the specified booking. If the user
      * clicks OK, the changes are saved into the provided booking object and
@@ -219,7 +228,7 @@ public class TabBookingController implements Initializable {
             FindRoomDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
             controller.setBooking(booking);
-            
+
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
             System.out.println("Check confirm: " + controller.isConfirmClicked());
@@ -229,7 +238,89 @@ public class TabBookingController implements Initializable {
             return false;
         }
     }
-    
+
+    @FXML
+    private void handlePayBilling() {
+        List<Billing> billings = new ArrayList<Billing>();
+
+        TabBookingController tabBookingController = new TabBookingController();
+        int selectedIndex = -1;
+        selectedIndex = bookingTable.getSelectionModel().getSelectedIndex();
+        int myRefCode = refCodeColumn.getCellData(selectedIndex);
+        double myAmountPaid = Double.parseDouble(amountPaidLabel.getText());
+        double myAmountDue = Double.parseDouble(amountDueLabel.getText());
+
+        BillingQueries billingQueries = new BillingQueries();
+        billings = billingQueries.getSpecificBilling(myRefCode);
+
+        Billing billing = new Billing(myRefCode, myAmountPaid, myAmountDue);
+
+        if (selectedIndex != -1) {
+            boolean okClicked = showPayBillingDialog(billing);
+            if (okClicked) {
+               //Refresh billing table
+                tabBillingController.refreshTable();
+
+                //Refresh booking table
+                refreshTable();
+            }
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            System.out.println("Mainapp is: " + mainApp);             //SIM TESTING            
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Booking Selected");
+            alert.setContentText("Please select a booking in the table.");
+
+            alert.showAndWait();
+
+        }
+    }
+
+    public boolean showPayBillingDialog(Billing selectedBooking) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("EditBillingDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage billingDialogStage = new Stage();
+            billingDialogStage.setTitle("Edit Billing");
+            billingDialogStage.initModality(Modality.WINDOW_MODAL);
+            Scene scene = new Scene(page);
+            billingDialogStage.setScene(scene);
+
+            // Set the person into the controller.
+            EditBillingDialogController controller = loader.getController();
+            controller.setBillingDialogStage(billingDialogStage);
+            controller.setBilling(selectedBooking);
+
+            // Show the dialog and wait until the user closes it
+            billingDialogStage.showAndWait();
+
+            return controller.isConfirmClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void showBillingDetails(BookingInfo selectedBooking) {
+        if (selectedBooking != null) {
+            // Fill the labels with info from the billing object.
+            refCodeLabel.setText(Integer.toString(selectedBooking.getRefCode()));
+            amountPaidLabel.setText(Double.toString(selectedBooking.getAmountPaid()));
+            amountDueLabel.setText(Double.toString(selectedBooking.getAmountDue()));
+        } else {
+            // Billing is null, remove all the information.
+            refCodeLabel.setText("");
+            amountPaidLabel.setText("");
+            amountDueLabel.setText("");
+        }
+    }
+
     /**
      * Is called by hotel overview controller to give a reference back to the
      * main application.
@@ -237,7 +328,7 @@ public class TabBookingController implements Initializable {
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
     }
-    
+
     /**
      * To refresh the table.
      */

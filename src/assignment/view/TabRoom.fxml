@@ -40,11 +40,7 @@
                         <Label text="Room Type Description" GridPane.rowIndex="2" />
                         <Label text="No. Of Beds" GridPane.rowIndex="5" />
                         <Label fx:id="noOfBedsLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Label fx:id="roomTypeDescriptionLabel" prefHeight="30.0" prefWidth="324.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label text="Extra Charge" GridPane.rowIndex="6" />
-                        <Label text="Total Charge" GridPane.rowIndex="7" />
-                        <Label fx:id="extraChargeLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <Label fx:id="totalChargeLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Label fx:id="roomTypeDescriptionLabel" prefHeight="30.0" prefWidth="324.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />                       
                      </children>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -63,7 +59,7 @@
                   </GridPane>
                   <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Find Available Room..." />
+                        <Button fx:id="findAvailableRoomBtn" mnemonicParsing="false" onAction="#showRoomDialog" text="Find Available Room..." />
                      </children>
                   </HBox>
                </children>

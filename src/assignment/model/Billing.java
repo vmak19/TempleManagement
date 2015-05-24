@@ -27,6 +27,12 @@ public class Billing {
 
     public Billing() {
     }
+    
+    public Billing(double amountPaid, double amountDue) {
+        this.refCode = new SimpleIntegerProperty(-1);
+        this.amountPaid = new SimpleDoubleProperty(amountPaid);
+        this.amountDue = new SimpleDoubleProperty(amountDue);
+    }
 
     public Billing(int refCode, double amountPaid, double amountDue) {
         this.refCode = new SimpleIntegerProperty(refCode);

@@ -8,6 +8,7 @@ package assignment.view;
 import assignment.MainApp;
 import assignment.database.BillingQueries;
 import assignment.model.Billing;
+import assignment.model.BookingInfo;
 import assignment.util.DateUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,16 +55,12 @@ public class TabBillingController implements Initializable {
     @FXML
     private Label amountPaidLabel;
     @FXML
-    private Label amountDueLabel; 
-    @FXML
-    private Button editBtn;
-    @FXML
-    private Button deleteBtn;
+    private Label amountDueLabel;
 
     MainApp mainApp;
     private Billing billing;
     private ObservableList<Billing> billingData = FXCollections.observableArrayList();
-    private BillingQueries billingQueries = new BillingQueries();
+    public BillingQueries billingQueries = new BillingQueries();
 
     public ObservableList<Billing> getBillingData() {
         return billingData;
@@ -74,89 +71,9 @@ public class TabBillingController implements Initializable {
      * method.
      */
     public TabBillingController() {
-    }
+    }    
 
-    
-    @FXML
-    private void handleDeleteBilling() {
-        try {
-            int selectedIndex = billingTable.getSelectionModel().getSelectedIndex();
-            if (selectedIndex >= 0) {
-                // Delete record in the database
-                billingQueries.deleteBilling(billingTable.getSelectionModel().getSelectedItem());
-
-                // Delete record on the table
-                billingTable.getItems().remove(selectedIndex);
-            } else {
-                // Nothing selected.
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.initOwner(mainApp.getPrimaryStage());
-                alert.setTitle("No Selection");
-                alert.setHeaderText("No Billing Selected");
-                alert.setContentText("Please select an billing in the table.");
-
-                alert.showAndWait();
-            }
-        } catch (Exception e) {
-            System.out.println("Error! handleDeleteBilling()!");
-        }
-    }
-    
-    @FXML
-    private void handleEditBilling() {
-        Billing selectedBilling = billingTable.getSelectionModel().getSelectedItem();
-        //System.out.println("Selected row is: "+selectedBilling);             //SIM TESTING      
-        if (selectedBilling != null) {
-            boolean okClicked = showEditBillingDialog(selectedBilling);
-            if (okClicked) {
-                showBillingDetails(selectedBilling);
-            }
-        } else {
-            
-             // Nothing selected.
-            Alert alert = new Alert(AlertType.WARNING);            
-            System.out.println("Mainapp is: "+mainApp);             //SIM TESTING            
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No Selection");
-            alert.setHeaderText("No Billing Selected");
-            alert.setContentText("Please select a billing in the table.");
-
-            alert.showAndWait();
-
-        }
-    }
-
-    public boolean showEditBillingDialog(Billing billing) {
-        try {
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("EditBillingDialog.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-
-            // Create the dialog Stage.
-            Stage billingDialogStage = new Stage();
-            billingDialogStage.setTitle("Edit Billing");
-            billingDialogStage.initModality(Modality.WINDOW_MODAL);
-            Scene scene = new Scene(page);
-            billingDialogStage.setScene(scene);
-
-            // Set the person into the controller.
-            EditBillingDialogController controller = loader.getController();
-            controller.setBillingDialogStage(billingDialogStage);
-            System.out.println("setting billing "+billing);
-            controller.setBilling(billing);
-
-            // Show the dialog and wait until the user closes it
-            billingDialogStage.showAndWait();
-
-            return controller.isConfirmClicked();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void showBillingDetails(Billing billing) {
+    public void showBillingDetails(Billing billing) {
         if (billing != null) {
             // Fill the labels with info from the billing object.
             refCodeLabel.setText(Integer.toString(billing.getRefCode()));            
@@ -168,6 +85,14 @@ public class TabBillingController implements Initializable {
             amountPaidLabel.setText("");
             amountDueLabel.setText("");
         }
+    }
+    
+    /**
+     * To refresh the table.
+     */
+    public void refreshTable() {
+        billingData.clear();
+        billingData.addAll(billingQueries.getBillings());  
     }
 
     /**

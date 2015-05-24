@@ -37,7 +37,7 @@ public class RoomQueries extends DatabaseQuery {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
         try {
-            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, NOOFBEDS, EXTRACHARGE, TOTALCHARGE,"
+            getAllRooms = conn.prepareStatement("select app.ROOM.ROOMID, NOOFBEDS,"
                     + "app.ROOMTYPE.ROOMTYPEID, DESCRIPTION, BASERATE, CAPACITY "
                     + "from app.ROOM "
                     + "inner join app.ROOMTYPE "
@@ -47,8 +47,7 @@ public class RoomQueries extends DatabaseQuery {
                 rooms.add(
                         new RoomInfo(rs.getInt("roomID"), rs.getString("roomtypeID"),
                                 rs.getString("description"), rs.getDouble("baseRate"),
-                                rs.getInt("capacity"), rs.getInt("noOfBeds"),
-                                rs.getDouble("extraCharge"), rs.getDouble("totalCharge")));
+                                rs.getInt("capacity"), rs.getInt("noOfBeds")));
             }
             rs.close();
             getAllRooms.close();
@@ -139,13 +138,11 @@ public class RoomQueries extends DatabaseQuery {
 
         try {
             insertRoom = conn.prepareStatement("insert into app.room "
-                    + "(roomid, roomtypeid, noofbeds, extraCharge, totalCharge) "
-                    + "values (?, ?, ?, ?, ?)");
+                    + "(roomid, roomtypeid, noofbeds) "
+                    + "values (?, ?, ?)");
             insertRoom.setInt(1, toInsert.getRoomID());
             insertRoom.setString(2, toInsert.getRoomTypeID());
             insertRoom.setInt(3, toInsert.getNoOfBeds());
-            insertRoom.setDouble(4, toInsert.getExtraCharge());
-            insertRoom.setDouble(5, toInsert.getTotalCharge());
             insertRoom.executeUpdate();
 
             insertRoom.close();

@@ -30,11 +30,11 @@ public class EditBillingDialogController implements Initializable {
     @FXML
     private Label refCodeLabel;
     @FXML
-    private Label amountPaidLabel;
+    public Label amountPaidLabel;
     @FXML
-    private Label amountDueLabel;
+    public Label amountDueLabel;
     @FXML
-    private TextField payField;
+    public TextField payField;
 
     @FXML
     private Button confirmButton;
@@ -62,9 +62,12 @@ public class EditBillingDialogController implements Initializable {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            billing.setAmountPaid(billing.getAmountPaid() + Integer.parseInt(payField.getText()));
-            billing.setAmountDue(billing.getAmountDue() - Integer.parseInt(payField.getText()));
-
+            TabBillingController tabBillingController = new TabBillingController();
+            int myRefCode = Integer.parseInt(refCodeLabel.getText());
+            double myPaymentAmount = Integer.parseInt(payField.getText());
+            
+            tabBillingController.billingQueries.updateBilling(myRefCode, myPaymentAmount);
+            
             confirmClicked = true;
             billingDialogStage.close();
         }

@@ -70,7 +70,7 @@ public class HotelOverviewController implements Initializable {
     
     public void refreshBookingTable() {
         tabBookingController.refreshTable();
-    }
+    }    
 
     public void initialize(URL url, ResourceBundle rb) {
 
