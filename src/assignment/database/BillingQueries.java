@@ -93,7 +93,7 @@ public class BillingQueries extends DatabaseQuery {
         closeConnection();
         return billings;
     }
-
+/*
     public double getCost(Provides toInsert) {
         double cost = 0;
         openConnection();
@@ -115,7 +115,7 @@ public class BillingQueries extends DatabaseQuery {
         }
         closeConnection();
         return cost;
-    }
+    }*/
 
     public double getAmountDue(Provides toInsert) {
         double amountDue = 0;
@@ -127,7 +127,6 @@ public class BillingQueries extends DatabaseQuery {
             rs = getBalance.executeQuery();
             while (rs.next()) {
                 amountDue = rs.getDouble("amountDue");
-                System.out.println("amountDue: " + amountDue);
             }
 
             getBalance.close();
@@ -150,7 +149,6 @@ public class BillingQueries extends DatabaseQuery {
             rs = getBalance.executeQuery();
             while (rs.next()) {
                 amountDue = rs.getDouble("amountDue");
-                System.out.println("amountDue: " + amountDue);
             }
 
             getBalance.close();
@@ -187,21 +185,15 @@ public class BillingQueries extends DatabaseQuery {
     }
 
     public void addCost(Provides toInsert) {
-        double myCost = getCost(toInsert);
         double myAmountDue = getAmountDue(toInsert);
 
         openConnection();
         try {
             addCostToBilling = conn.prepareStatement("update app.booking set amountdue=?"
                     + "where REFCODE=?", Statement.RETURN_GENERATED_KEYS);
-            addCostToBilling.setDouble(1, myCost + myAmountDue);
+            addCostToBilling.setDouble(1, myAmountDue);
             addCostToBilling.setInt(2, toInsert.getRefCode());
             addCostToBilling.executeUpdate();
-
-            System.out.println("NOW TESTING ADD");
-            System.out.println("myAmountDue: " + myAmountDue);
-            System.out.println("Cost of service: " + myCost);
-            System.out.println("balance after addind: " + (myAmountDue + myCost));
 
             addCostToBilling.close();
         } catch (SQLException ex) {
