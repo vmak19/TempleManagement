@@ -17,6 +17,11 @@ public class Assignment {
     public IntegerProperty roomID;
     public IntegerProperty numPeople;
     
+    public Assignment(int refCode, int roomID) {
+        this.refCode = new SimpleIntegerProperty(refCode);
+        this.roomID = new SimpleIntegerProperty(roomID);
+    }
+    
     public Assignment(int refCode, int roomID, int numPeople) {
         this.refCode = new SimpleIntegerProperty(refCode);
         this.roomID = new SimpleIntegerProperty(roomID);

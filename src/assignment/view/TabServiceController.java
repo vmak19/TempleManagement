@@ -178,11 +178,8 @@ public class TabServiceController implements Initializable {
                 double costToDeduct = (Double.parseDouble(costLabel.getText()));
                 int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
                 // Delete record in the database
-                providesQueries.deleteProvides(selectedSItem);
-                
-                //Deduct service cost
-                billingQueries.deductAmountDue(selectedSItem);
-                
+                providesQueries.deleteProvides(serviceTable.getSelectionModel().getSelectedItem());
+
                 // Delete record on the table
                 serviceTable.getItems().remove(selectedIndex);
 
@@ -197,7 +194,34 @@ public class TabServiceController implements Initializable {
                 logQueries.insertLog(log, hotelOverview.getUserID());
                 hotelOverview.refreshLogTable();
 
-            } else {
+            }
+        /*
+        try {
+            int selectedIndex = serviceTable.getSelectionModel().getSelectedIndex();
+            
+            if (selectedIndex >= 0) {
+                ServiceInfo selectedService = serviceTable.getSelectionModel().getSelectedItem();
+                ServiceInfo selectedSItem = serviceTable.getSelectionModel().getSelectedItem();
+                double costToDeduct = (Double.parseDouble(costLabel.getText()));
+                int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
+                // Delete record in the database
+                providesQueries.deleteProvides(selectedSItem);
+                
+                //Deduct service cost
+                billingQueries.deductAmountDue(selectedSItem);
+                
+                // Delete record on the table
+                serviceTable.getItems().remove(selectedIndex);
+
+                //Refreshes booking table
+                hotelOverview.refreshBookingTable();
+                
+                Log log = new Log("Deleted Service No." + selectedService.getServiceID()
+                        + " for Ref. Code " + selectedService.getRefCode());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
+
+            } */else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.initOwner(mainApp.getPrimaryStage());
@@ -289,4 +313,5 @@ public class TabServiceController implements Initializable {
         this.mainApp = mainApp;
         this.hotelOverview = hotelOverview;
     }
+}
 

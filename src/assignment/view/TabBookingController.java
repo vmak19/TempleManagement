@@ -37,31 +37,56 @@ import javafx.stage.Stage;
 
 public class TabBookingController implements Initializable {
 
-    @FXML TableView<BookingInfo> bookingTable;
-    @FXML private TableColumn<BookingInfo, Integer> refCodeColumn;
-    @FXML private TableColumn<BookingInfo, String> custFirstNameColumn;
-    @FXML private TableColumn<BookingInfo, String> custLastNameColumn;
+    @FXML
+    TableView<BookingInfo> bookingTable;
+    @FXML
+    private TableColumn<BookingInfo, Integer> refCodeColumn;
+    @FXML
+    private TableColumn<BookingInfo, String> custFirstNameColumn;
+    @FXML
+    private TableColumn<BookingInfo, String> custLastNameColumn;
 
-    @FXML private Label refCodeLabel;
-    @FXML private Label custFirstNameLabel;
-    @FXML private Label custLastNameLabel;
-    @FXML private Label numPeopleLabel;
-    @FXML private Label roomIDLabel;
-    @FXML private Label createdDateLabel;
-    @FXML private Label numBreakfastLabel;
-    @FXML private Label checkInLabel;
-    @FXML private Label checkOutLabel;
-    @FXML private Label earlyCheckInLabel;
-    @FXML private Label lateCheckOutLabel;
-    @FXML private Label amountPaidLabel;
-    @FXML private Label amountDueLabel;
+    @FXML
+    private Label refCodeLabel;
+    @FXML
+    private Label custFirstNameLabel;
+    @FXML
+    private Label custLastNameLabel;
+    @FXML
+    private Label numPeopleLabel;
+    @FXML
+    private Label roomIDLabel;
+    @FXML
+    private Label createdDateLabel;
+    @FXML
+    private Label numBreakfastLabel;
+    @FXML
+    private Label checkInLabel;
+    @FXML
+    private Label checkOutLabel;
+    @FXML
+    private Label earlyCheckInLabel;
+    @FXML
+    private Label lateCheckOutLabel;
+    @FXML
+    private Label amountPaidLabel;
+    @FXML
+    private Label amountDueLabel;
 
-    @FXML private Button addButton;
-    @FXML private Button editButton;
-    @FXML private Button deleteButton;
-    @FXML private Button payBillButton;
-    @FXML private Button genPdfButton;
-    
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button editButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button payBillButton;
+    @FXML
+    private Button genPdfButton;
+
+    @FXML
+    private TextField bookingFilterField;
+
     HotelOverviewController hotelOverview;
     MainApp mainApp;
     private Stage primaryStage;
@@ -72,8 +97,6 @@ public class TabBookingController implements Initializable {
     private LogQueries logQueries = new LogQueries();
     private AssignmentQueries assignmentQueries = new AssignmentQueries();
 
-    private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
-    
     public ObservableList<BookingInfo> getBookingData() {
         return bookingData;
     }
@@ -265,14 +288,14 @@ public class TabBookingController implements Initializable {
 
         if (confirmClicked) {
             bookingQueries.insertBooking(tempBooking);
-            for(RoomInfo room : tempRooms) {
+            for (RoomInfo room : tempRooms) {
                 assignmentQueries.insertAssignment(new Assignment(
                         bookingQueries.getLatestRefCode(), room.getRoomID(), room.getCapacity()));
             }
             refreshTable();
         }
     }
-    
+
     /**
      * Called when the user clicks the edit button. Opens a dialog to edit
      * details for the selected person.
@@ -338,7 +361,7 @@ public class TabBookingController implements Initializable {
             return false;
         }
     }
-    
+
     /**
      * Opens a dialog to edit details for the specified booking. If the user
      * clicks OK, the changes are saved into the provided booking object and
@@ -353,7 +376,7 @@ public class TabBookingController implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("EditBookingDialog.fxml"));
             AnchorPane page = (AnchorPane) loader.load();
-            
+
             // Create the dialog Stage.
             Stage bookingDialogStage = new Stage();
             bookingDialogStage.setTitle("Edit Booking");
@@ -366,7 +389,7 @@ public class TabBookingController implements Initializable {
             EditBookingDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
             controller.setEditBooking(booking);
-            
+
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
             return controller.isConfirmClicked();
@@ -375,7 +398,7 @@ public class TabBookingController implements Initializable {
             return false;
         }
     }
-    
+
     @FXML
     private void handlePayBilling() {
         List<Billing> billings = new ArrayList<Billing>();

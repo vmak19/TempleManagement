@@ -54,26 +54,6 @@ public class BillingQueries extends DatabaseQuery {
         closeConnection();
         return billings;
     }
-    /*
-     public Billing getSpecificBilling(int refCode) {
-     //Billing billings = new Billing();
-     openConnection();
-     try {
-     getSpecificBilling = conn.prepareStatement("select amountpaid, amountdue from app.BOOKING where refcode=?");
-     getSpecificBilling.setInt(1, refCode);
-     rs = getSpecificBilling.executeQuery();
-     while (rs.next()) {
-     Billing billings = new Billing(rs.getDouble("amountPaid"), rs.getDouble("amountDue"));
-     //new Billing(rs.getDouble("amountPaid"), rs.getDouble("amountDue"));
-     }
-     rs.close();
-     getSpecificBilling.close();
-     } catch (SQLException ex) {
-     System.out.println("getBillings() error!");
-     }
-     closeConnection();
-     return billings;
-     }*/
 
     public List<Billing> getSpecificBilling(int refCode) {
         billings = new ArrayList<Billing>();
@@ -138,7 +118,7 @@ public class BillingQueries extends DatabaseQuery {
         closeConnection();
         return amountDue;
     }
-    
+
     public double getAmountPaid(int myRefCode) {
         double amountPaid = 0;
         openConnection();
@@ -180,7 +160,30 @@ public class BillingQueries extends DatabaseQuery {
 
         closeConnection();
     }
+    
+    public void deductCost(int myRefCode, double costToDeduct) {
+        double myAmountDue = getAmountDue(myRefCode);
+        openConnection();
+        try {
+            deductCostToBilling = conn.prepareStatement("update app.booking set amountdue=?"
+                    + "where REFCODE=?", Statement.RETURN_GENERATED_KEYS);
+            deductCostToBilling.setDouble(1, myAmountDue - costToDeduct);
+            deductCostToBilling.setInt(2, myRefCode);
+            deductCostToBilling.executeUpdate();
+            System.out.println("NOW TESTING DEDUCT");
+            System.out.println("myAmountDue: " + myAmountDue);
+            System.out.println("costToDeduct: " + costToDeduct);
+            System.out.println("balance after deduction: " + (myAmountDue - costToDeduct));
 
+            deductCostToBilling.close();
+        } catch (SQLException ex) {
+            System.out.println("ERROR! deductCost() ERROR!");
+            ex.printStackTrace();
+        }
+
+        closeConnection();
+    }
+/*
     public void deductAmountDue(ServiceInfo toDeduct) {
         openConnection();
         try {
@@ -197,12 +200,12 @@ public class BillingQueries extends DatabaseQuery {
         }
 
         closeConnection();
-    }
+    }*/
 
     public void updateBilling(int refCode, double paymentAmount) {
         double myAmountPaid = getAmountPaid(refCode);
         double myAmountDue = getAmountDue(refCode);
-        
+
         openConnection();
         try {
             updateBilling = conn.prepareStatement("update app.booking set amountPaid =?, amountdue=?"
@@ -211,7 +214,7 @@ public class BillingQueries extends DatabaseQuery {
             updateBilling.setDouble(2, myAmountDue - paymentAmount);
             updateBilling.setInt(3, refCode);
             updateBilling.executeUpdate();
-            
+
             updateBilling.close();
         } catch (SQLException ex) {
             System.out.println("ERROR! updateBilling() ERROR!");
