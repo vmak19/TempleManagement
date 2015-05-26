@@ -169,6 +169,7 @@ public class DatabaseSetup extends DatabaseQuery {
                         "CREATE TABLE APP.ASSIGNMENT ("
                         + "\"REFCODE\" INT, "
                         + "\"ROOMID\" INT, "
+                        + "\"NUMPEOPLE\" INT, "
                         + "FOREIGN KEY (REFCODE) REFERENCES BOOKING(REFCODE), "
                         + "FOREIGN KEY (ROOMID) REFERENCES ROOM(ROOMID))");
                 createAssignmentTable.execute();
@@ -409,12 +410,14 @@ public class DatabaseSetup extends DatabaseQuery {
                 String s = scanner.nextLine();
                 String[] refCode = s.split(",");
                 String[] roomID = s.split(",");
+                String[] numPeople = s.split(",");
 
                 AssignmentQueries assignmentQueries = new AssignmentQueries();
 
                 assignmentQueries.insertAssignment(new Assignment(
                         Integer.parseInt(refCode[0]),
-                        Integer.parseInt(roomID[1])));
+                        Integer.parseInt(roomID[1]),
+                        Integer.parseInt(numPeople[2])));
             }
 
             // Close the file

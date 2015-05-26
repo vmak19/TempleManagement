@@ -9,7 +9,7 @@
 
 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="561.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.TabBookingController">
    <children>
-      <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -97,7 +97,7 @@
                   <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <children>
                         <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewBooking" prefWidth="100.0" text="New..." />
-                        <Button mnemonicParsing="false" prefWidth="100.0" text="Edit..." />
+                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditBooking" prefWidth="100.0" text="Edit..." />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteBooking" prefWidth="100.0" text="Delete" />
                      </children>
                   </HBox>

@@ -10,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.LoginScreenController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0" styleClass="background" stylesheets="@Testing.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.LoginScreenController">
    <children>
       <Label layoutX="288.0" layoutY="147.0" text="Welcome! Please enter your username and password:">
          <font>
@@ -24,18 +24,4 @@
       <Button fx:id="loginBtn" layoutX="500.0" layoutY="364.0" mnemonicParsing="false" onAction="#checkPassword" text="Log in" />
       <Button fx:id="loginBtnOverride" layoutX="500.0" layoutY="416.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Override" />
    </children>
-   <styleClass>
-      <String fx:value="item-title" />
-      <String fx:value="value-pane" />
-      <String fx:value="down-arrow" />
-      <String fx:value="up-arrow" />
-      <String fx:value="list-spinner" />
-      <String fx:value="background" />
-      <String fx:value="header" />
-      <String fx:value="track-background" />
-   </styleClass>
-   <stylesheets>
-      <URL value="@JMetroLightTheme.css" />
-      <URL value="@MainTheme.css" />
-   </stylesheets>
 </AnchorPane>

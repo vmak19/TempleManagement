@@ -8,6 +8,6 @@ and open the template in the editor.
     Author     : SONY
 */
 .background{
-    -fx-background-image: url('http://www.siorravittoria.com/images/background_suites.jpg');
-    -fx-background-repeat: stretch;
+    -fx-background-image: url("file:resources/images/about-background.jpg");
+    -fx-background-size: stretch;
 }

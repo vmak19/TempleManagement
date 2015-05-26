@@ -15,10 +15,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 public class Assignment {
     public IntegerProperty refCode;
     public IntegerProperty roomID;
+    public IntegerProperty numPeople;
     
-    public Assignment(int refCode, int roomID) {
+    public Assignment(int refCode, int roomID, int numPeople) {
         this.refCode = new SimpleIntegerProperty(refCode);
         this.roomID = new SimpleIntegerProperty(roomID);
+        this.numPeople = new SimpleIntegerProperty(numPeople);
     }
     
     public int getRefCode() {
@@ -35,5 +37,13 @@ public class Assignment {
     
     public void setRoomID(int roomID) {
         this.roomID.set(roomID);
+    }
+    
+    public int getNumPeople() {
+        return numPeople.get();
+    }
+    
+    public void setNumPeople(int numPeople) {
+        this.numPeople.set(numPeople);
     }
 }

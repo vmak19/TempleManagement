@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 public class HotelOverviewController implements Initializable {
 
@@ -27,6 +28,7 @@ public class HotelOverviewController implements Initializable {
 
     MainApp mainApp;
     private int userID;
+    private Stage primaryStage;
 
     @FXML
     private void switchToLoginScreen(ActionEvent event) throws IOException {
@@ -83,5 +85,9 @@ public class HotelOverviewController implements Initializable {
     
     public void initialize(URL url, ResourceBundle rb) {
 
+    }
+    
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 }

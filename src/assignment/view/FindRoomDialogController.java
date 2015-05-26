@@ -7,12 +7,10 @@ package assignment.view;
 
 import assignment.MainApp;
 import assignment.database.RoomQueries;
-import assignment.model.AvailableRoom;
 import assignment.model.Booking;
 import assignment.model.Employee;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
-import assignment.util.DateUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -38,6 +36,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -57,10 +56,11 @@ public class FindRoomDialogController implements Initializable {
     @FXML private TableView selectedRoomTable;
     @FXML private TableColumn<RoomInfo, String> selectedRoomTypeColumn;
     @FXML private TableColumn<RoomInfo, Double> selectedCostColumn;
-    @FXML private TableColumn<Booking, Integer> selectedNumPeopleColumn;
+    @FXML private TableColumn<RoomInfo, Integer> selectedNumPeopleColumn;
     
     @FXML public DatePicker checkInField;
     @FXML public DatePicker checkOutField;
+    @FXML private TextField numPeopleField;
     
     @FXML private CheckBox singleBox;
     @FXML private CheckBox doubleBox;
@@ -77,16 +77,19 @@ public class FindRoomDialogController implements Initializable {
     @FXML private Button removeButton;
     @FXML private Button bookButton;
     @FXML private Button cancelButton;
+    @FXML private Button plusNumPeopleButton;
+    @FXML private Button minusNumPeopleButton;
     
     private ObservableList<RoomInfo> availableRoomData = FXCollections.observableArrayList();
-    private ObservableList<RoomInfo> selectedRoomData;
+    private ObservableList<RoomInfo> selectedRoomData = FXCollections.observableArrayList();
     
-    private RoomQueries availableRoomQueries = new RoomQueries();
+    private RoomQueries roomQueries = new RoomQueries();
     private Stage bookingDialogStage;
     private boolean confirmClicked = false;
     private final LocalDate today = LocalDate.now();
     MainApp mainApp;
     private Booking booking;
+    private EditBookingDialogController editBooking;
     
     public FindRoomDialogController() {}
     
@@ -100,8 +103,14 @@ public class FindRoomDialogController implements Initializable {
         setDatePickerFormat();
         setDisableDatePicker();
         
-        // Clear the both tables whenever the checkInDate or checkOutDate is modified
-        checkInField.focusedProperty().addListener(
+        plusNumPeopleButton.setDisable(true);
+        minusNumPeopleButton.setDisable(true);
+        numPeopleField.setDisable(true);
+        
+        checkOutField.setValue(checkInField.getValue().plusDays(1));
+        
+        // Clear selected room table whenever the checkInDate or checkOutDate or sepcial request is modified
+        checkInField.valueProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     // Clear selected room list and update the table
                     selectedRoomData.clear();
@@ -115,11 +124,77 @@ public class FindRoomDialogController implements Initializable {
                     }
                 });
         
-        checkOutField.focusedProperty().addListener(
+        checkOutField.valueProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     // Clear selected room list and update the table
                     selectedRoomData.clear();
                     selectedRoomTable.setItems(selectedRoomData);});
+        
+        // Clear selected room list and update the table when early check in is modified
+        earlyCheckInBox.selectedProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    selectedRoomData.clear();
+                    selectedRoomTable.setItems(selectedRoomData);});
+        
+        // Clear selected room list and update the table when late check out is modified
+        lateCheckOutBox.selectedProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    // Clear selected room list and update the table
+                    selectedRoomData.clear();
+                    selectedRoomTable.setItems(selectedRoomData);});
+        
+        selectedRoomTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    
+                    // Display value of capacity on text field.
+                    if (!selectedRoomData.isEmpty()) {
+                        numPeopleField.setDisable(false);
+                        int selectedIndex = selectedRoomTable.getSelectionModel().getSelectedIndex();
+                        RoomInfo selectedRoom = selectedRoomData.get(selectedIndex);
+                        numPeopleField.setText(Integer.toString(selectedRoom.getCapacity()));
+                        
+                    // Disable the add/minus buttons and text field when the list is empty
+                    } else {
+                        numPeopleField.setText("");
+                        numPeopleField.setDisable(true);
+                        plusNumPeopleButton.setDisable(true);
+                        minusNumPeopleButton.setDisable(true);
+                    }
+                });
+        
+        numPeopleField.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (!numPeopleField.getText().isEmpty()) {
+                        
+                        int selectedIndex = selectedRoomTable.getSelectionModel().getSelectedIndex();
+                        RoomInfo selectedRoom = selectedRoomData.get(selectedIndex);
+                        int capacity = roomQueries.getCapacityByRoomTypeID(selectedRoom.getRoomTypeID());
+                        
+                        try {
+                            int numPeople = Integer.parseInt(numPeopleField.getText());
+                            selectedRoom.setCapacity(Integer.parseInt(newValue));
+                            
+                            // Disable the buttons when number people reach maximum
+                            if (numPeople < capacity) {
+                                plusNumPeopleButton.setDisable(false);
+                            } else {
+                                plusNumPeopleButton.setDisable(true);
+                                numPeopleField.setText(Integer.toString(capacity));
+                            }
+                            
+                            // Disable the buttons when number people reach minimum
+                            if (numPeople > 1) {
+                                minusNumPeopleButton.setDisable(false);
+                            } else {
+                                minusNumPeopleButton.setDisable(true);
+                                numPeopleField.setText("1");
+                            }
+                        } catch (NumberFormatException e) {
+                            // Display maximum num of people when character is entered
+                            selectedRoom.setCapacity(capacity);
+                        }
+                    }
+                });
         
     }
     
@@ -134,7 +209,7 @@ public class FindRoomDialogController implements Initializable {
     public void handleSearch() {
         if (isInputValidToSearch()) {
             availableRoomData.clear();
-            Set<RoomInfo> roomData = availableRoomQueries.getAvailableRoomsByType(
+            Set<RoomInfo> roomData = roomQueries.getAvailableRoomsByType(
                     checkInField.getValue(), checkOutField.getValue(), 
                     getSearchRoomType(), getSearchEarlyCheckIn(), 
                     getSearchLateCheckOut(), selectedRoomData);
@@ -179,7 +254,7 @@ public class FindRoomDialogController implements Initializable {
             
             // Refresh available table
             availableRoomData.clear();
-            Set<RoomInfo> roomData = availableRoomQueries.getAvailableRoomsByType(
+            Set<RoomInfo> roomData = roomQueries.getAvailableRoomsByType(
                     checkInField.getValue(), checkOutField.getValue(), 
                     getSearchRoomType(), getSearchEarlyCheckIn(), 
                     getSearchLateCheckOut(), selectedRoomData);
@@ -190,23 +265,17 @@ public class FindRoomDialogController implements Initializable {
                     cellData -> cellData.getValue().roomTypeIDProperty());
             selectedCostColumn.setCellValueFactory(
                     cellData -> cellData.getValue().baseRateProperty().asObject());
+            selectedNumPeopleColumn.setCellValueFactory(
+                    cellData -> cellData.getValue().capacityProperty().asObject());
             
             
-            
-            selectedRoomTypeColumn.setCellFactory(TextFieldTableCell.<RoomInfo>forTableColumn());
+            /*selectedRoomTypeColumn.setCellFactory(TextFieldTableCell.<RoomInfo>forTableColumn());
             selectedRoomTypeColumn.setOnEditCommit(
                     /*(CellEditEvent<RoomInfo, String> t) -> {
                         ((RoomInfo) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setRoomTypeID(t.getNewValue());
-                    });*/
-            new EventHandler<CellEditEvent<RoomInfo, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<RoomInfo, String> t) {
-                        ((RoomInfo) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())).setRoomTypeID(t.getNewValue());
-                    }
-                }
-            );
+                    });
+            */
             
         }
     }
@@ -221,12 +290,32 @@ public class FindRoomDialogController implements Initializable {
             
             // Refresh available table
             availableRoomData.clear();
-            Set<RoomInfo> roomData = availableRoomQueries.getAvailableRoomsByType(
+            Set<RoomInfo> roomData = roomQueries.getAvailableRoomsByType(
                     checkInField.getValue(), checkOutField.getValue(), 
                     getSearchRoomType(), getSearchEarlyCheckIn(), 
                     getSearchLateCheckOut(), selectedRoomData);
             availableRoomData.addAll(roomData);
         }
+    }
+    
+    @FXML
+    public void handlePlus() {
+        int selectedIndex = selectedRoomTable.getSelectionModel().getSelectedIndex();
+        RoomInfo selectedRoom = selectedRoomData.get(selectedIndex);
+        int numPeople = selectedRoom.getCapacity();
+        
+        numPeopleField.setText(Integer.toString(numPeople + 1));
+        selectedRoom.setCapacity(numPeople + 1);
+    }
+    
+    @FXML
+    public void handleMinus() {
+        int selectedIndex = selectedRoomTable.getSelectionModel().getSelectedIndex();
+        RoomInfo selectedRoom = selectedRoomData.get(selectedIndex);
+        int numPeople = selectedRoom.getCapacity();
+        
+        numPeopleField.setText(Integer.toString(numPeople - 1));
+        selectedRoom.setCapacity(numPeople - 1);
     }
     
     /**
@@ -242,7 +331,7 @@ public class FindRoomDialogController implements Initializable {
                 loader.setLocation(MainApp.class.getResource("view/EditBookingDialog.fxml"));
                 AnchorPane editBookingDialog = (AnchorPane) loader.load();
                 EditBookingDialogController controller = loader.getController();
-                controller.setFoundRoom(this);
+                controller.setFoundRoom(this, editBooking);
                 controller.setBookingDialogStage(bookingDialogStage);
                 controller.setBooking(booking, selectedRoomData);
                 Scene scene = new Scene(editBookingDialog);
@@ -325,33 +414,6 @@ public class FindRoomDialogController implements Initializable {
             return false;
         }
     }
-    
-    /**
-     * Validates number of selected room in the selected room table view.
-     * 
-     * @return true if the selection is valid
-     *
-    private boolean isSelectedRoomDataFull() {
-        String errorMessage = "";
-        
-        if (selectedRoomData.size() == 5) {
-            errorMessage = "You can only book 5 rooms at once\n";
-        }
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
-            // Show the error message.
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(bookingDialogStage);
-            alert.setTitle("Full list");
-            alert.setHeaderText("Selected room list is full!");
-            alert.setContentText(errorMessage);
-
-            alert.showAndWait();
-
-            return false;
-        }
-    }*/
     
     /**
      * Validates the user selection in the selected room table view.
@@ -557,14 +619,36 @@ public class FindRoomDialogController implements Initializable {
     /**
      * Is called by edit booking dialog controller to set back found room data.
      */
-    public void setFoundRoomData(FindRoomDialogController foundRoom) {
+    public void setFoundRoomData(FindRoomDialogController foundRoom, EditBookingDialogController editBooking) {
         checkInField.setValue(foundRoom.checkInField.getValue());
         checkOutField.setValue(foundRoom.checkOutField.getValue());
         
         earlyCheckInBox.setSelected(foundRoom.getSearchEarlyCheckIn());
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
+        System.out.println("Selected Room Data: " + foundRoom.getSelectedRoomData());
         selectedRoomData = foundRoom.getSelectedRoomData();
+        /*for (RoomInfo room : foundRoom.getSelectedRoomData()) {
+            System.out.println("Room: " + room);
+            selectedRoomData.add(room);
+        }*/
+        System.out.println("SelectedRoomTable's size (before): " + selectedRoomTable.getItems().size());
         selectedRoomTable.setItems(selectedRoomData);
+        System.out.println("SelectedRoomTable's size (after): " + selectedRoomTable.getItems().size());
+        
+        this.editBooking = editBooking;
     }
+    
+    public void setEditFoundRoomData(FindRoomDialogController foundRoom, EditBookingDialogController editBooking) {
+        this.editBooking = editBooking;
+        
+        checkInField.setValue(editBooking.getCheckIn());
+        checkOutField.setValue(editBooking.getCheckOut());
+        
+        earlyCheckInBox.setSelected(editBooking.getSearchEarlyCheckIn());
+        lateCheckOutBox.setSelected(editBooking.getSearchLateCheckOut());
+        
+        selectedRoomData = editBooking.getSelectedRoomData();
+    }
+
 }

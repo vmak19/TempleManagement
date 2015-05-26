@@ -44,7 +44,7 @@ public class BookingQueries extends DatabaseQuery{
         openConnection();
         try {
             getAllBookings = conn.prepareStatement("select distinct app.BOOKING.REFCODE, "
-                    + "CUSTFIRSTNAME, CUSTLASTNAME, ROOMID, "
+                    + "CUSTFIRSTNAME, CUSTLASTNAME, NUMPEOPLE, ROOMID, "
                     + "CREATEDDATE, NUMBREAKFAST, CHECKIN, CHECKOUT, "
                     + "EARLYCHECKIN, LATECHECKOUT, AMOUNTPAID, AMOUNTDUE "
                     + "from app.BOOKING "
@@ -58,23 +58,31 @@ public class BookingQueries extends DatabaseQuery{
             while (rs.next()) {
                 ResultSet rsRooms = getAllSameRefCodeRoom.executeQuery();
                 List<Integer> roomIDList = new ArrayList<Integer>();
+                List<Integer> numPeopleList = new ArrayList<Integer>();
                 
                 // Group roomID with the same ref. code into one
                 while (rsRooms.next()) {
-                    if (rs.getInt("refCode") == rsRooms.getInt("refCode")/* && rs.getInt("roomID") != currentRoomID*/) {
+                    if (rs.getInt("refCode") == rsRooms.getInt("refCode")) {
                         roomIDList.add(rsRooms.getInt("roomID"));
+                        numPeopleList.add(rsRooms.getInt("NUMPEOPLE"));
                     }
                 }
                 
                 // Add bookings with different ref. code
-                if (bookings.isEmpty() || bookings.get(bookings.size()-1).getRefCode() != rs.getInt("refCode")) {
+                if (bookings.isEmpty() || bookings.get(
+                        bookings.size()-1).getRefCode() != rs.getInt("refCode")) {
                     bookings.add(
-                            new BookingInfo(rs.getInt("refCode"), rs.getString("custFirstName"),
-                                    rs.getString("custLastName"), roomIDList,
-                                    rs.getDate("createdDate").toLocalDate(),
-                                    rs.getInt("numBreakfast"), rs.getDate("checkIn").toLocalDate(),
-                                    rs.getDate("checkOut").toLocalDate(), rs.getBoolean("earlyCheckIn"),
-                                    rs.getBoolean("lateCheckOut"), rs.getDouble("amountPaid"),
+                            new BookingInfo(rs.getInt("refCode"), 
+                                    rs.getString("custFirstName"), 
+                                    rs.getString("custLastName"), numPeopleList, 
+                                    roomIDList, 
+                                    rs.getDate("createdDate").toLocalDate(), 
+                                    rs.getInt("numBreakfast"), 
+                                    rs.getDate("checkIn").toLocalDate(), 
+                                    rs.getDate("checkOut").toLocalDate(), 
+                                    rs.getBoolean("earlyCheckIn"),
+                                    rs.getBoolean("lateCheckOut"), 
+                                    rs.getDouble("amountPaid"), 
                                     rs.getDouble("amountDue")));
                 }
                 rsRooms.close();

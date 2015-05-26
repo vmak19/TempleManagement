@@ -71,6 +71,7 @@ public class TabServiceController implements Initializable {
 
     private LogQueries logQueries = new LogQueries();
     
+    private Stage primaryStage;
     HotelOverviewController hotelOverview;
     MainApp mainApp;
 
@@ -155,7 +156,7 @@ public class TabServiceController implements Initializable {
             costLabel.setText(Double.toString(service.getCost()));
             dateLabel.setText(DateUtil.format(service.getCreatedDate()));
         } else {
-            // Person is null, remove all the text.
+            // Service is null, remove all the text.
             refCodeLabel.setText("");
             roomIDLabel.setText("");
             serviceDescLabel.setText("");
@@ -164,7 +165,9 @@ public class TabServiceController implements Initializable {
         }
     }
 
-    // Called when the user clicks on the delete button.
+    /**
+     * Called when the user clicks on the delete button.
+     */
     @FXML
     private void handleDeleteService() {
         try {
@@ -175,8 +178,11 @@ public class TabServiceController implements Initializable {
                 double costToDeduct = (Double.parseDouble(costLabel.getText()));
                 int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
                 // Delete record in the database
-                providesQueries.deleteProvides(serviceTable.getSelectionModel().getSelectedItem());
-
+                providesQueries.deleteProvides(selectedSItem);
+                
+                //Deduct service cost
+                billingQueries.deductAmountDue(selectedSItem);
+                
                 // Delete record on the table
                 serviceTable.getItems().remove(selectedIndex);
 
@@ -256,7 +262,7 @@ public class TabServiceController implements Initializable {
             Stage editProvideDialogStage = new Stage();
             editProvideDialogStage.setTitle("Edit Service");
             editProvideDialogStage.initModality(Modality.WINDOW_MODAL);
-            //bookingDialogStage.initOwner(primaryStage);
+            editProvideDialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             editProvideDialogStage.setScene(scene);
 
@@ -284,4 +290,3 @@ public class TabServiceController implements Initializable {
         this.hotelOverview = hotelOverview;
     }
 
-}

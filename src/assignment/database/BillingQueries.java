@@ -7,6 +7,7 @@ package assignment.database;
 
 import assignment.model.Billing;
 import assignment.model.Provides;
+import assignment.model.ServiceInfo;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -180,23 +181,18 @@ public class BillingQueries extends DatabaseQuery {
         closeConnection();
     }
 
-    public void deductCost(int myRefCode, double costToDeduct) {
-        double myAmountDue = getAmountDue(myRefCode);
+    public void deductAmountDue(ServiceInfo toDeduct) {
         openConnection();
         try {
-            deductCostToBilling = conn.prepareStatement("update app.booking set amountdue=?"
-                    + "where REFCODE=?", Statement.RETURN_GENERATED_KEYS);
-            deductCostToBilling.setDouble(1, myAmountDue - costToDeduct);
-            deductCostToBilling.setInt(2, myRefCode);
+            deductCostToBilling = conn.prepareStatement("update app.booking "
+                    + "set AMOUNTDUE=AMOUNTDUE-? where REFCODE=?");
+            deductCostToBilling.setDouble(1, toDeduct.getCost());
+            deductCostToBilling.setInt(2, toDeduct.getRefCode());
             deductCostToBilling.executeUpdate();
-            System.out.println("NOW TESTING DEDUCT");
-            System.out.println("myAmountDue: " + myAmountDue);
-            System.out.println("costToDeduct: " + costToDeduct);
-            System.out.println("balance after deduction: " + (myAmountDue - costToDeduct));
 
             deductCostToBilling.close();
         } catch (SQLException ex) {
-            System.out.println("ERROR! deductCost() ERROR!");
+            System.out.println("ERROR! deductAmountDue() ERROR!");
             ex.printStackTrace();
         }
 

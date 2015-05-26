@@ -30,10 +30,14 @@ public class RoomQueries extends DatabaseQuery {
     PreparedStatement getAllRooms = null;
     PreparedStatement getAllAvailableRooms = null;
     PreparedStatement getAllSameTypeRooms = null;
+    PreparedStatement getCapactityByRoomTypeID = null;
+    PreparedStatement getTypeRateByRoomID = null;
     ResultSet rs = null;
     List<RoomInfo> rooms;
     List<RoomInfo> availableRooms;
-
+    int capacity;
+    RoomInfo room;
+    
     public List<RoomInfo> getRooms() {
         rooms = new ArrayList<RoomInfo>();
         openConnection();
@@ -162,7 +166,56 @@ public class RoomQueries extends DatabaseQuery {
         closeConnection();
         return availableRooms;
     }
-
+    
+    public int getCapacityByRoomTypeID(String roomType) {
+        capacity = -1;
+        openConnection();
+        try {
+            getCapactityByRoomTypeID = conn.prepareStatement("select CAPACITY "
+                    + "from app.ROOMTYPE where ROOMTYPEID=?");
+            getCapactityByRoomTypeID.setString(1, roomType);
+            rs = getCapactityByRoomTypeID.executeQuery();
+            while (rs.next()) {
+                capacity = rs.getInt("capacity");
+            }
+            
+            rs.close();
+            getCapactityByRoomTypeID.close();
+        } catch (SQLException ex) {
+            System.out.println("getCapacityByRoomTypeID() error!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+        return capacity;
+    }
+    
+    public RoomInfo getRoomInfoByRoomID(int roomID) {
+        room = null;
+        openConnection();
+        try {
+            getTypeRateByRoomID = conn.prepareStatement("select roomID, "
+                    + "app.ROOM.roomTypeID, baseRate "
+                    + "from app.ROOM "
+                    + "inner join app.ROOMTYPE "
+                    + "on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+                    + "where ROOMID=?");
+            getTypeRateByRoomID.setInt(1, roomID);
+            rs = getTypeRateByRoomID.executeQuery();
+            while (rs.next()) {
+                room = new RoomInfo(rs.getInt("roomID"), 
+                        rs.getString("roomTypeID"), rs.getDouble("baseRate"));
+            }
+            
+            rs.close();
+            getTypeRateByRoomID.close();
+        } catch (SQLException ex) {
+            System.out.println("getTypeRateByRoomID() error!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+        return room;
+    }
+            
     public void insertRoom(Room toInsert) {
         openConnection();
 

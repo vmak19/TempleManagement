@@ -24,10 +24,11 @@ public class AssignmentQueries extends DatabaseQuery{
         
         try {                
             insertAssignment = conn.prepareStatement("insert into app.assignment "
-                    + "(refCode, roomID) "
-                    + "values (?, ?)");
+                    + "(refCode, roomID, numPeople) "
+                    + "values (?, ?, ?)");
             insertAssignment.setInt(1, toInsert.getRefCode());  
             insertAssignment.setInt(2, toInsert.getRoomID());
+            insertAssignment.setInt(3, toInsert.getNumPeople());
             insertAssignment.executeUpdate();
             
             insertAssignment.close();
