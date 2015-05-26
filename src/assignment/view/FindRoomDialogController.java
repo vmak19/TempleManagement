@@ -9,6 +9,7 @@ import assignment.MainApp;
 import assignment.database.RoomQueries;
 import assignment.model.AvailableRoom;
 import assignment.model.Booking;
+import assignment.model.Employee;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
@@ -23,6 +24,7 @@ import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -190,14 +192,22 @@ public class FindRoomDialogController implements Initializable {
                     cellData -> cellData.getValue().baseRateProperty().asObject());
             
             
-            /*
+            
             selectedRoomTypeColumn.setCellFactory(TextFieldTableCell.<RoomInfo>forTableColumn());
             selectedRoomTypeColumn.setOnEditCommit(
-                    (CellEditEvent<RoomInfo, String> t) -> {
+                    /*(CellEditEvent<RoomInfo, String> t) -> {
                         ((RoomInfo) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setRoomTypeID(t.getNewValue());
-                    });
-            */
+                    });*/
+            new EventHandler<CellEditEvent<RoomInfo, String>>() {
+                    @Override
+                    public void handle(CellEditEvent<RoomInfo, String> t) {
+                        ((RoomInfo) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setRoomTypeID(t.getNewValue());
+                    }
+                }
+            );
+            
         }
     }
     

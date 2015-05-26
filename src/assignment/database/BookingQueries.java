@@ -7,6 +7,7 @@ package assignment.database;
 
 import assignment.model.Booking;
 import assignment.model.BookingInfo;
+import assignment.model.RoomType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,11 +29,14 @@ public class BookingQueries extends DatabaseQuery{
     PreparedStatement getAllBookings = null;
     PreparedStatement getAllSameRefCodeRoom = null;
     PreparedStatement getAllBookingsByRoom = null;
+    PreparedStatement getRoomCost = null;
     PreparedStatement updateBooking = null;
+    PreparedStatement deleteAssignment = null;
     PreparedStatement deleteBooking = null;
     ResultSet rs = null;
     List<BookingInfo> bookings;
     List<BookingInfo> bookingsByRoom;
+    List<RoomType> myCost;
     int latestRefCode;
     
     public List<BookingInfo> getBookings() {
@@ -132,6 +136,32 @@ public class BookingQueries extends DatabaseQuery{
         return bookingsByRoom;
     }
     
+    public List<RoomType> getRoomCost(int refCode) {
+        myCost = new ArrayList<RoomType>();
+        openConnection();
+        try {
+            getRoomCost = conn.prepareStatement("select BASERATE from app.ROOMTYPE "
+                    + "join app.ROOM on app.ROOM.ROOMTYPEID = app.ROOMTYPE.ROOMTYPEID "
+                    + "join app.ASSIGNMENT on app.ASSIGNMENT.ROOMID = app.ROOM.ROOMID "
+                    + "join app.BOOKING on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE "
+                    + "where app.BOOKING.REFCODE = ?");
+            getRoomCost.setInt(1, refCode);
+            //getRoomCost.setInt(2, roomID);
+            rs = getRoomCost.executeQuery();
+            while (rs.next()) {
+                myCost.add(
+                        new RoomType(rs.getInt("baseRate")));
+            }
+            rs.close();
+            getRoomCost.close();
+        } catch (SQLException ex) {
+            System.out.println("getRoomCost() error!");
+            ex.printStackTrace();
+        }
+        closeConnection();
+        return myCost;
+    }
+    
     public int insertBooking(Booking toInsert) {
         int returnValue = -1;
         openConnection();
@@ -153,7 +183,7 @@ public class BookingQueries extends DatabaseQuery{
             insertBooking.setDouble(10, toInsert.getAmountDue());
             insertBooking.executeUpdate();
 
-            System.out.println("record inserted");
+            //System.out.println("record inserted");
             rs = insertBooking.getGeneratedKeys();
             rs.next();
             returnValue = rs.getInt(1);
@@ -216,12 +246,16 @@ public class BookingQueries extends DatabaseQuery{
     public void deleteBooking(BookingInfo toDelete) {
         openConnection();
         try {
+            deleteAssignment = conn.prepareStatement("delete from app.assignment "
+                    + "where refCode = ?");
+            deleteAssignment.setInt(1, toDelete.getRefCode());
+            deleteAssignment.execute();
+            
             deleteBooking = conn.prepareStatement("delete from app.booking "
-                    + "left join app.assignment "
-                    + "on app.booking.refCode = app.assignment.refCode "
-                    + "where refcode = ?");
+                    + "where refCode = ?");
             deleteBooking.setInt(1, toDelete.getRefCode());
             deleteBooking.execute();
+            
             System.out.println("deleted");
         } catch (SQLException ex) {
             System.out.println("ERROR! deleteBooking()!");

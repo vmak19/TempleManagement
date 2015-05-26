@@ -7,8 +7,10 @@ package assignment.view;
 
 import assignment.MainApp;
 import assignment.database.BillingQueries;
+import assignment.database.LogQueries;
 import assignment.database.ProvidesQueries;
 import assignment.model.BookingInfo;
+import assignment.model.Log;
 import assignment.model.Provides;
 import assignment.model.ServiceInfo;
 import assignment.util.DateUtil;
@@ -67,6 +69,8 @@ public class TabServiceController implements Initializable {
     @FXML
     private TextField serviceFilterField;
 
+    private LogQueries logQueries = new LogQueries();
+    
     HotelOverviewController hotelOverview;
     MainApp mainApp;
 
@@ -95,7 +99,7 @@ public class TabServiceController implements Initializable {
 
                     // Compare ref. code, service desc. and date of every service with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
-                    
+
                     if (Integer.toString(service.getRefCode()).contains(lowerCaseFilter)) {
                         return true; // Filter matches ref. code.
                     } else if (service.getServiceDesc().toLowerCase().contains(lowerCaseFilter)) {
@@ -165,7 +169,9 @@ public class TabServiceController implements Initializable {
     private void handleDeleteService() {
         try {
             int selectedIndex = serviceTable.getSelectionModel().getSelectedIndex();
+            
             if (selectedIndex >= 0) {
+                ServiceInfo selectedService = serviceTable.getSelectionModel().getSelectedItem();
                 double costToDeduct = (Double.parseDouble(costLabel.getText()));
                 int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
                 // Delete record in the database
@@ -177,9 +183,13 @@ public class TabServiceController implements Initializable {
                 //Deduct service cost
                 billingQueries.deductCost(myRefCode, costToDeduct);
 
-                //Refresh billings table
-                TabBillingController tabBillingController = new TabBillingController();
-                tabBillingController.refreshTable();
+                //Refreshes booking table
+                hotelOverview.refreshBookingTable();
+                
+                Log log = new Log("Deleted Service No." + selectedService.getServiceID()
+                        + " for Ref. Code " + selectedService.getRefCode());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
 
             } else {
                 // Nothing selected.
@@ -193,6 +203,7 @@ public class TabServiceController implements Initializable {
             }
         } catch (Exception e) {
             System.out.println("Error! handleDeleteService()!");
+            e.printStackTrace();
         }
     }
 
@@ -210,17 +221,18 @@ public class TabServiceController implements Initializable {
             //Add service cost
             billingQueries.addCost(tempProvide);
 
-            //Refresh billings table
-            TabBillingController tabBillingController = new TabBillingController();
-            tabBillingController.refreshTable();
-
             // Refesh service table
             serviceData.clear();
             serviceData.addAll(providesQueries.getServices());
 
-           // Refresh booking table
-            //TabBookingController tabBooking = new TabBookingController();
+            // Refresh booking table
             hotelOverview.refreshBookingTable();
+
+            // Generate new log record
+            Log log = new Log("Added Service No." + tempProvide.getServiceID()
+                    + " for Ref. Code " + tempProvide.getRefCode());
+            logQueries.insertLog(log, hotelOverview.getUserID());
+            hotelOverview.refreshLogTable();
         }
 
     }
@@ -267,15 +279,9 @@ public class TabServiceController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp) {
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
         this.mainApp = mainApp;
-    }
-
-    /**
-     * Is called by hotel overview controller to give a reference back to
-     * itself.
-     */
-    public void setHotelOverviewController(HotelOverviewController hotelOverview) {
         this.hotelOverview = hotelOverview;
     }
+
 }

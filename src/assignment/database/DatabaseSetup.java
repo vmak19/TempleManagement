@@ -95,7 +95,6 @@ public class DatabaseSetup extends DatabaseQuery {
                 createRoomTypeTable.execute();
 
                 getRoomTypesFromFile();
-                System.out.println("created Table ROOMTYPE");
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOMTYPE error!");
@@ -120,7 +119,6 @@ public class DatabaseSetup extends DatabaseQuery {
                 createRoomTable.execute();
 
                 getRoomsFromFile();
-                System.out.println("created Table ROOM");
             }
         } catch (SQLException ex) {
             System.out.println("databaseSetup() for Table ROOM error!");
@@ -238,7 +236,6 @@ public class DatabaseSetup extends DatabaseQuery {
 
     private void createLogTable() {
         try {
-
             // Determine if the LOG table already exists or not
             DatabaseMetaData dbmd = conn.getMetaData();
             rs = dbmd.getTables(null, "APP", "LOG", null);
@@ -254,8 +251,6 @@ public class DatabaseSetup extends DatabaseQuery {
                         + "\"EMPLASTNAME\" VARCHAR(100), "
                         + "\"DATEMOD\" DATE, "
                         + "\"ITEMMODIFIED\" VARCHAR(200))");
-                        //+ "\"ITEMMODIFIED\" VARCHAR(200), "
-                        //+ "FOREIGN KEY (USERID) REFERENCES EMPLOYEE(USERID))");
                 createLogTable.execute();
                 getLogsFromFile();
             }
@@ -476,7 +471,7 @@ public class DatabaseSetup extends DatabaseQuery {
 
                 LogQueries logQueries = new LogQueries();
 
-                logQueries.insertLog(new Log(
+                logQueries.insertLogFromFile(new Log(
                         Integer.parseInt(logID[0]),
                         Integer.parseInt(userID[1]),
                         fname[2],

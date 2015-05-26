@@ -21,13 +21,12 @@ public class HotelOverviewController implements Initializable {
     @FXML
     TabServiceController tabServiceController;
     @FXML
-    TabBillingController tabBillingController;
-    @FXML
     TabLogController tabLogController;
     @FXML
     private Button logoutBtn;
 
     MainApp mainApp;
+    private int userID;
 
     @FXML
     private void switchToLoginScreen(ActionEvent event) throws IOException {
@@ -54,14 +53,12 @@ public class HotelOverviewController implements Initializable {
         try {
             this.mainApp = mainApp;
 
-            tabBookingController.setMainApp(mainApp);
-            tabEmployeeController.setMainApp(mainApp);
-            tabBillingController.setMainApp(mainApp);
-            tabLogController.setMainApp(mainApp);
-            tabRoomController.setMainApp(mainApp);
-            tabServiceController.setMainApp(mainApp);
+            tabBookingController.setMainApp(mainApp, this);
+            tabEmployeeController.setMainApp(mainApp, this);
+            tabLogController.setMainApp(mainApp, this);
+            tabRoomController.setMainApp(mainApp, this);
+            tabServiceController.setMainApp(mainApp, this);
             
-            tabServiceController.setHotelOverviewController(this);
         } catch (Exception e) {
             System.out.println("ERROR! setMainApp!");
             e.printStackTrace();
@@ -71,7 +68,19 @@ public class HotelOverviewController implements Initializable {
     public void refreshBookingTable() {
         tabBookingController.refreshTable();
     }    
+    
+    public void refreshLogTable() {
+        tabLogController.refreshTable();
+    }    
 
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+    
+    public int getUserID() {
+        return userID;
+    }
+    
     public void initialize(URL url, ResourceBundle rb) {
 
     }

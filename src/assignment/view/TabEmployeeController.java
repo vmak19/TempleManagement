@@ -73,16 +73,20 @@ public class TabEmployeeController implements Initializable {
     private Button newBtn;
     @FXML
     private Button deleteBtn;
-    @FXML private TextField employeeFilterField;
+    @FXML
+    private TextField employeeFilterField;
 
+    HotelOverviewController hotelOverview;
     MainApp mainApp;
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
     private EmployeeQueries employeeQueries = new EmployeeQueries();
+    private LogQueries logQueries = new LogQueries();
+    private LoginScreenController loginScreenController = new LoginScreenController();
 
     public ObservableList<Employee> getEmployeeData() {
         return employeeData;
     }
-    
+
     /**
      * The constructor. The constructor is called before the initialize()
      * method.
@@ -94,11 +98,18 @@ public class TabEmployeeController implements Initializable {
     private void handleDeleteEmployee() {
         try {
             int selectedIndex = employeeTable.getSelectionModel().getSelectedIndex();
+            Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
+
             if (selectedIndex >= 0) {
                 // Delete record in the database
                 employeeQueries.deleteEmployee(employeeTable.getSelectionModel().getSelectedItem());
                 // Delete record on the table
                 employeeTable.getItems().remove(selectedIndex);
+                // Generate new log record
+                Log log = new Log("Deleted Employee: " + selectedEmployee.getEmpFirstName()
+                        + " " + selectedEmployee.getEmpLastName());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -122,33 +133,45 @@ public class TabEmployeeController implements Initializable {
             employeeQueries.insertEmployee(tempEmployee);
             employeeTable.getItems().add(tempEmployee);
         }
-        //ADD LOG GEN CODE:
+        // Generate new log record
+        Log log = new Log("Added New Employee: " + tempEmployee.getEmpFirstName()
+                + " " + tempEmployee.getEmpLastName());
+        logQueries.insertLog(log, hotelOverview.getUserID());
+        hotelOverview.refreshLogTable();
     }
 
     @FXML
     private void handleEditEmployee() {
-        Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
-        if (selectedEmployee != null) {
-            boolean okClicked = showEditEmployeeDialog(selectedEmployee);
-            if (okClicked) {               
-                employeeQueries.updateEmployee(selectedEmployee);
-                employeeTable.getItems().add(selectedEmployee);
-                refreshTable(selectedEmployee);
-            }            
-            //ADD LOG GEN CODE:
-            
-        } else {
-            // Nothing selected.
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No Selection");
-            alert.setHeaderText("No Employee Selected");
-            alert.setContentText("Please select an employee in the table.");
+        try {
+            Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
 
-            alert.showAndWait();
+            if (selectedEmployee != null) {
+                boolean okClicked = showEditEmployeeDialog(selectedEmployee);
+                if (okClicked) {
+                    employeeQueries.updateEmployee(selectedEmployee);
+                    hotelOverview.refreshLogTable();
+                }
+                //Generate new log record
+                Log log = new Log("Edited Employee of userID " + selectedEmployee.getUserID());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
+            } else {
+                // Nothing selected.
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Selection");
+                alert.setHeaderText("No Employee Selected");
+                alert.setContentText("Please select an employee in the table.");
+
+                alert.showAndWait();
+            }
+
+        } catch (Exception e) {
+            System.out.println("handleEditEmployee() error");
         }
+
     }
-    
+
     /**
      * To refresh the table.
      */
@@ -182,7 +205,7 @@ public class TabEmployeeController implements Initializable {
             if (controller.isConfirmClicked()) {
                 controller.getUpdatedEmployeeDetails();
             }
-            
+
             return controller.isConfirmClicked();
         } catch (IOException e) {
             e.printStackTrace();
@@ -243,7 +266,6 @@ public class TabEmployeeController implements Initializable {
             administratorBox.setSelected(false);
         }
     }
-    
 
     /**
      * Initializes the controller class.
@@ -265,7 +287,7 @@ public class TabEmployeeController implements Initializable {
 
                     // Compare user ID, first name and last name of every booking with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
-                    
+
                     if (Integer.toString(employee.getUserID()).contains(lowerCaseFilter)) {
                         return true; // Filter matches user ID.
                     } else if (employee.getEmpFirstName().toLowerCase().contains(lowerCaseFilter)) {
@@ -287,7 +309,7 @@ public class TabEmployeeController implements Initializable {
                 // Add sorted (and filtered) data to the table.
                 employeeTable.setItems(sortedData);
             });
-            
+
             employeeData.addAll(employeeQueries.getEmployees());
             employeeTable.setItems(employeeData);
 
@@ -306,7 +328,12 @@ public class TabEmployeeController implements Initializable {
         }
     }
 
-    public void setMainApp(MainApp mainApp) {
+    /**
+     * Is called by hotel overview controller to give a reference back to the
+     * main application.
+     */
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
         this.mainApp = mainApp;
+        this.hotelOverview = hotelOverview;
     }
 }

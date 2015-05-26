@@ -29,8 +29,8 @@
                                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                   </columnResizePolicy>
                                   <columns>
-                                      <TableColumn fx:id="logIDColumn" prefWidth="75.0" text="Log ID" />
-                                      <TableColumn fx:id="userIDColumn" prefWidth="75.0" text="User ID" />
+                                      <TableColumn fx:id="logIDColumn" maxWidth="1000.0" prefWidth="83.0" text="Log ID" />
+                                      <TableColumn fx:id="userIDColumn" maxWidth="1000.0" prefWidth="147.0" text="User ID" />
                                       <TableColumn fx:id="activityColumn" prefWidth="75.0" text="Activity" />
                                   </columns>
                               </TableView>

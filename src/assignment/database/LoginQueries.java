@@ -24,18 +24,16 @@ public class LoginQueries extends DatabaseQuery {
     PreparedStatement getLoginDetails = null;
     ResultSet rs = null;
     List<Employee> loginDetails;
-    LoginScreenController loginScreenController;
 
-    public List<Employee> getLoginDetails() {
+    public List<Employee> getLoginDetails(int userID, String password) {
         loginDetails = new ArrayList<Employee>();
         openConnection();
         try {
-            System.out.println(loginScreenController.getUserID() + loginScreenController.getPassword());
             getLoginDetails = conn.prepareStatement("select USERID, PASSWORD from app.EMPLOYEE "
              + "where (USERID = ? AND PASSWORD = ?)");
             
-            getLoginDetails.setString(1, loginScreenController.getUserID());
-            getLoginDetails.setString(2, loginScreenController.getPassword());
+            getLoginDetails.setInt(1, userID);
+            getLoginDetails.setString(2, password);
             rs = getLoginDetails.executeQuery();
             while (rs.next()) {
                 loginDetails.add(
@@ -49,9 +47,5 @@ public class LoginQueries extends DatabaseQuery {
         }
         closeConnection();        
         return loginDetails;
-    }
-    
-    public void setLoginScreenController(LoginScreenController loginScreenController){
-        this.loginScreenController = loginScreenController;
-    }
+    }    
 }

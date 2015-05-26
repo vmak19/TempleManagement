@@ -73,7 +73,7 @@
                   </GridPane>
                   <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <children>
-                        <Button fx:id="findAvailableRoomBtn" mnemonicParsing="false" onAction="#showRoomDialog" text="Find Available Room..." />
+                        <Button fx:id="findAvailableRoomBtn" mnemonicParsing="false" onAction="#handleFindAvailableRoom" text="Find Available Room..." />
                      </children>
                   </HBox>
                </children>

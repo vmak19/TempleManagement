@@ -27,11 +27,6 @@
                   <fx:include fx:id="tabService" source="TabService.fxml" />
                </content>
             </Tab>
-            <Tab text="Billing">
-               <content>
-                  <fx:include fx:id="tabBilling" source="TabBilling.fxml" />
-               </content>
-            </Tab>
             <Tab text="Employee">
                <content>
                   <fx:include fx:id="tabEmployee" source="TabEmployee.fxml" />

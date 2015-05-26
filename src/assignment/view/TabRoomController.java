@@ -6,8 +6,13 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.AssignmentQueries;
+import assignment.database.BookingQueries;
+import assignment.database.LogQueries;
 import assignment.database.RoomQueries;
+import assignment.model.Assignment;
 import assignment.model.Booking;
+import assignment.model.Log;
 import assignment.model.Room;
 import assignment.model.RoomInfo;
 import assignment.model.RoomType;
@@ -66,14 +71,79 @@ public class TabRoomController implements Initializable {
     @FXML
     private TextField roomFilterField;
     
-    
+    HotelOverviewController hotelOverview;
     MainApp mainApp;
     private ObservableList<RoomInfo> roomData = FXCollections.observableArrayList();
+    private BookingQueries bookingQueries = new BookingQueries();
+    private AssignmentQueries assignmentQueries = new AssignmentQueries();
     private RoomQueries roomQueries = new RoomQueries();
+    private LogQueries logQueries = new LogQueries();
 
     public ObservableList<RoomInfo> getRoomData() {
         return roomData;
     }
+    
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new person.
+     */
+    @FXML
+    private void handleFindAvailableRoom() {
+        Booking tempBooking = new Booking();
+        ObservableList<RoomInfo> tempRooms = FXCollections.observableArrayList();
+        boolean confirmClicked = showFindRoomDialog(tempBooking, tempRooms);
+
+        if (confirmClicked) {
+            bookingQueries.insertBooking(tempBooking);
+            for (RoomInfo room : tempRooms) {
+                assignmentQueries.insertAssignment(new Assignment(bookingQueries.getLatestRefCode(), room.getRoomID()));
+            }
+            hotelOverview.refreshBookingTable();
+
+            // Generate new log record
+            Log log = new Log("Added New Booking for Ref. Code: " + bookingQueries.getLatestRefCode());
+            logQueries.insertLog(log, hotelOverview.getUserID());
+            hotelOverview.refreshLogTable();
+        }
+    }
+    
+    /**
+     * Opens a dialog to edit details for the specified booking. If the user
+     * clicks OK, the changes are saved into the provided booking object and
+     * true is returned.
+     *
+     * @param booking the booking object to be edited
+     * @return true if the user clicked OK, false otherwise.
+     */
+    public boolean showFindRoomDialog(Booking booking, ObservableList<RoomInfo> rooms) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("FindRoomDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage bookingDialogStage = new Stage();
+            bookingDialogStage.setTitle("Find Room");
+            bookingDialogStage.initModality(Modality.WINDOW_MODAL);
+            //bookingDialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            bookingDialogStage.setScene(scene);
+
+            // Set the person into the controller.
+            FindRoomDialogController controller = loader.getController();
+            controller.setBookingDialogStage(bookingDialogStage);
+            controller.setBooking(booking, rooms);
+
+            // Show the dialog and wait until the user closes it
+            bookingDialogStage.showAndWait();
+            return controller.isConfirmClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     
     @FXML
     public void showRoomDialog() {
@@ -96,44 +166,6 @@ public class TabRoomController implements Initializable {
             e.printStackTrace();
         }
     }
-    
-    /**
-     * Opens a dialog to edit details for the specified booking. If the user
-     * clicks OK, the changes are saved into the provided booking object and
-     * true is returned.
-     *
-     * @param booking the booking object to be edited
-     * @return true if the user clicked OK, false otherwise.
-     *
-    public boolean showFindRoomDialog(Booking booking) {
-        try {
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("FindRoomDialog.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-
-            // Create the dialog Stage.
-            Stage bookingDialogStage = new Stage();
-            bookingDialogStage.setTitle("Find Room");
-            bookingDialogStage.initModality(Modality.WINDOW_MODAL);
-            //bookingDialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            bookingDialogStage.setScene(scene);
-
-            // Set the person into the controller.
-            FindRoomDialogController controller = loader.getController();
-            controller.setBookingDialogStage(bookingDialogStage);
-            controller.setBooking(booking);
-            
-            // Show the dialog and wait until the user closes it
-            bookingDialogStage.showAndWait();
-            System.out.println("Check confirm: " + controller.isConfirmClicked());
-            return controller.isConfirmClicked();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }*/
 
     /**
      * Initializes the controller class.
@@ -222,7 +254,6 @@ public class TabRoomController implements Initializable {
         //Booking tempBooking = new Booking();
         boolean confirmClicked = showFindRoomDialog(tempBooking);
         if (confirmClicked) {
-           System.out.println("Print out first Name: " + tempBooking.getCustFirstName());
            bookingQueries.insertBooking(tempBooking);           
            
         }        
@@ -232,7 +263,8 @@ public class TabRoomController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp) {
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
         this.mainApp = mainApp;
+        this.hotelOverview = hotelOverview;
     }
 }

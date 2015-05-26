@@ -14,30 +14,31 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.*;
+import java.util.Calendar;
+import javafx.fxml.FXMLLoader;
+
 /**
  *
  * @author Mak
  */
-public class LogQueries extends DatabaseQuery{
-    
+public class LogQueries extends DatabaseQuery {
+
     PreparedStatement insertLog = null;
     PreparedStatement getAllLogs = null;
     PreparedStatement getSessionInfo = null;
     ResultSet rs = null;
     List<Log> logs;
     List<Log> sessionDetail;
-    LoginScreenController loginScreenController;
-    
-    public List<Log> getSessionDetails() {
+    //LoginScreenController loginScreenController;
+
+    public List<Log> getSessionDetails(int userID) {
         sessionDetail = new ArrayList<Log>();
         openConnection();
         try {
-            //System.out.println(loginScreenController.getUserID() + loginScreenController.getPassword());
             getSessionInfo = conn.prepareStatement("select USERID, EMPFIRSTNAME, EMPLASTNAME from app.EMPLOYEE "
-             + "where (USERID = ? AND PASSWORD = ?)");
-            
-            getSessionInfo.setString(1, loginScreenController.getUserID());
-            getSessionInfo.setString(2, loginScreenController.getPassword());
+                    + "where (USERID = ?)");
+            getSessionInfo.setInt(1, userID);
             rs = getSessionInfo.executeQuery();
             while (rs.next()) {
                 sessionDetail.add(
@@ -49,10 +50,10 @@ public class LogQueries extends DatabaseQuery{
             System.out.println("getLoginDetails() error!");
             ex.printStackTrace();
         }
-        closeConnection();        
+        closeConnection();
         return sessionDetail;
     }
-    
+
     public List<Log> getLogs() {
         logs = new ArrayList<Log>();
         openConnection();
@@ -61,12 +62,12 @@ public class LogQueries extends DatabaseQuery{
             rs = getAllLogs.executeQuery();
             while (rs.next()) {
                 logs.add(
-                    new Log(rs.getInt("logID"), 
-                            rs.getInt("userID"),
-                            rs.getString("empFirstName"), 
-                            rs.getString("empLastName"), 
-                            rs.getDate("dateMod").toLocalDate(), 
-                            rs.getString("itemModified")));
+                        new Log(rs.getInt("logID"),
+                                rs.getInt("userID"),
+                                rs.getString("empFirstName"),
+                                rs.getString("empLastName"),
+                                rs.getDate("dateMod").toLocalDate(),
+                                rs.getString("itemModified")));
             }
             rs.close();
             getAllLogs.close();
@@ -76,8 +77,40 @@ public class LogQueries extends DatabaseQuery{
         closeConnection();
         return logs;
     }
+
+    public int insertLog(Log itemModified, int userID) {
+        sessionDetail = getSessionDetails(userID);
+
+        Calendar calendar = Calendar.getInstance();
+        java.sql.Timestamp timestampObject = new java.sql.Timestamp(calendar.getTime().getTime());
+
+        int returnValue = -1;
+        openConnection();
+        try {
+            insertLog = conn.prepareStatement("insert into app.LOG "
+                    + "(userID, empFirstName, empLastName, dateMod, itemModified)"
+                    + "values (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            insertLog.setInt(1, userID);
+            insertLog.setString(2, sessionDetail.get(0).getEmpFirstName());
+            insertLog.setString(3, sessionDetail.get(0).getEmpLastName());
+            insertLog.setTimestamp(4, timestampObject);
+            insertLog.setString(5, itemModified.getItemModified());
+            insertLog.executeUpdate();
+
+            rs = insertLog.getGeneratedKeys();
+            rs.next();
+            returnValue = rs.getInt(1);
+            rs.close();
+            insertLog.close();
+        } catch (SQLException ex) {
+            System.out.println("insertLog() ERROR!");
+        }
+
+        closeConnection();
+        return returnValue;
+    }
     
-    public int insertLog(Log toInsert) {
+     public int insertLogFromFile(Log toInsert) {
         int returnValue = -1;
         openConnection();
         try {            

@@ -5,7 +5,11 @@
  */
 package assignment.view;
 
+import assignment.database.BookingQueries;
+import assignment.database.ProvidesQueries;
 import assignment.model.BookingInfo;
+import assignment.model.RoomType;
+import assignment.model.ServiceInfo;
 import assignment.util.DateUtil;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
@@ -16,6 +20,8 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.*;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -27,6 +33,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +44,8 @@ import java.util.logging.Logger;
  */
 public class PdfReport {
 
+    BookingQueries bookingQueries = new BookingQueries();
+    ProvidesQueries providesQueries = new ProvidesQueries();
     private static final String filename = "Purchases and Costs Report.pdf";
 
     /**
@@ -62,8 +72,8 @@ public class PdfReport {
             document.open();
             //LOGO
             //Image logo = Image.getInstance("logo.png");
-            //logo.setAbsolutePosition(500f, 650f);
-            //document.add(logo);            
+           // logo.setAbsolutePosition(500f, 650f);
+           // document.add(logo);
 
             //FOOTER           
             //Create grey font
@@ -132,32 +142,51 @@ public class PdfReport {
             table.addCell(cell5);
 
             //Charging for room
+            List<RoomType> myCost = new ArrayList<RoomType>();
+            myCost = bookingQueries.getRoomCost(toInsert.getRefCode());
+            double thisCost = myCost.get(0).getBaseRate();
+
+            double balance = thisCost - toInsert.getAmountPaid();
+
             PdfPCell valueCell1 = new PdfPCell(new Paragraph((DateUtil.format(toInsert.getCheckIn()))));
             PdfPCell valueCell2 = new PdfPCell(new Paragraph("Room Charge"));
-            PdfPCell valueCell3 = new PdfPCell(new Paragraph("Charges: roomCost"));
+            PdfPCell valueCell3 = new PdfPCell(new Paragraph(Double.toString(thisCost)));
             PdfPCell valueCell4 = new PdfPCell(new Paragraph(Double.toString(toInsert.getAmountPaid())));
-            PdfPCell valueCell5 = new PdfPCell(new Paragraph("charge- " + Double.toString(toInsert.getAmountPaid())));
+            PdfPCell valueCell5 = new PdfPCell(new Paragraph(Double.toString(balance)));
             //Add header columns to table
             table.addCell(valueCell1);
             table.addCell(valueCell2);
             table.addCell(valueCell3);
             table.addCell(valueCell4);
             table.addCell(valueCell5);
-            
+
             //Charging for service
-            PdfPCell serviceCell1 = new PdfPCell(new Paragraph((DateUtil.format(toInsert.getCheckIn()))));
-            PdfPCell serviceCell2 = new PdfPCell(new Paragraph("Service Charge"));
-            PdfPCell serviceCell3 = new PdfPCell(new Paragraph("Charges: roomCost"));
-            PdfPCell serviceCell4 = new PdfPCell(new Paragraph(Double.toString(toInsert.getAmountPaid())));
-            PdfPCell serviceCell5 = new PdfPCell(new Paragraph("charge- " + Double.toString(toInsert.getAmountPaid())));
-            //Add header columns to table
-            table.addCell(serviceCell1);
-            table.addCell(serviceCell2);
-            table.addCell(serviceCell3);
-            table.addCell(serviceCell4);
-            table.addCell(serviceCell5);
-            
-            
+            //Get services provided for this booking
+            List<ServiceInfo> servicesProvided = new ArrayList<ServiceInfo>();
+            servicesProvided = providesQueries.getServicesProvided(toInsert.getRefCode());
+
+            int size = servicesProvided.size();
+            //Loops through array containing service provided for this booking and adds them to table
+            if (size >= 0) {
+                for (int i = 0; i < size; i++) {
+                    double serviceCost = servicesProvided.get(i).getCost();
+                    String serviceDescript = servicesProvided.get(i).getServiceDesc();
+                    double serviceBalance = serviceCost + balance;
+
+                    PdfPCell serviceCell1 = new PdfPCell(new Paragraph((DateUtil.format(toInsert.getCheckIn()))));
+                    PdfPCell serviceCell2 = new PdfPCell(new Paragraph("Service Charge: " + serviceDescript));
+                    PdfPCell serviceCell3 = new PdfPCell(new Paragraph(Double.toString(serviceCost)));
+                    PdfPCell serviceCell4 = new PdfPCell(new Paragraph("0"));
+                    PdfPCell serviceCell5 = new PdfPCell(new Paragraph(Double.toString(serviceBalance)));
+                    //Add header columns to table
+                    table.addCell(serviceCell1);
+                    table.addCell(serviceCell2);
+                    table.addCell(serviceCell3);
+                    table.addCell(serviceCell4);
+                    table.addCell(serviceCell5);
+                }
+            }
+
             //Format spacing
             table.setSpacingBefore(20);
             table.setSpacingAfter(20);
@@ -176,12 +205,12 @@ public class PdfReport {
             //Balance
             double paid = toInsert.getAmountPaid();
             double due = toInsert.getAmountDue();
-            double myBalance = due - paid;
-            Paragraph balance = new Paragraph("Balance:         " + "$" + myBalance);
-            balance.setSpacingAfter(50);
-            balance.setAlignment(Element.ALIGN_RIGHT);
-            document.add(new Paragraph(balance));
-            
+            double endBalance = due - paid;
+            Paragraph endBalancePara = new Paragraph("Balance:         " + "$" + endBalance);
+            endBalancePara.setSpacingAfter(50);
+            endBalancePara.setAlignment(Element.ALIGN_RIGHT);
+            document.add(new Paragraph(endBalancePara));
+
             //Signature
             Paragraph signatureLine = new Paragraph("-----------------                                                                          --------------------");
             invoice.setSpacingAfter(10);
@@ -189,7 +218,7 @@ public class PdfReport {
             Paragraph signature = new Paragraph("Cashier                                                                                Guest Signature");
             signature.setSpacingAfter(50);
             document.add(new Paragraph(signature));
-            
+
             //End notice
             Paragraph notice = new Paragraph("PLEASE RETURN YOUR ROOM KEY CARD TO THE FRONT DESK.");
             notice.setSpacingAfter(50);

@@ -53,6 +53,7 @@ public class TabLogController implements Initializable {
     @FXML
     private TextField logFilterField;
 
+    HotelOverviewController hotelOverview;
     MainApp mainApp;
     private ObservableList<Log> logData = FXCollections.observableArrayList();
     private ObservableList<Log> sessionData = FXCollections.observableArrayList();
@@ -71,15 +72,6 @@ public class TabLogController implements Initializable {
      * method.
      */
     public TabLogController() {
-    }
-
-    // WORK IN PROGRESS:
-    public void generateLog() {
-        logQueries = new LogQueries();
-        sessionData.addAll(logQueries.getSessionDetails());
-        System.out.println("session details: " + sessionData);
-
-       // logQueries.insertLog(sessionData);
     }
 
     private void showLogDetails(Log log) {
@@ -163,8 +155,21 @@ public class TabLogController implements Initializable {
         }
     }
 
-    public void setMainApp(MainApp mainApp) {
+    /**
+     * To refresh the table.
+     */
+    public void refreshTable() {
+        logData.clear();
+        logData.addAll(logQueries.getLogs());
+    }
+    
+    /**
+     * Is called by hotel overview controller to give a reference back to the
+     * main application.
+     */
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
         this.mainApp = mainApp;
+        this.hotelOverview = hotelOverview;
     }
 
 }

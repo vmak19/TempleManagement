@@ -4,6 +4,7 @@ import assignment.MainApp;
 import assignment.database.AssignmentQueries;
 import assignment.database.BillingQueries;
 import assignment.database.BookingQueries;
+import assignment.database.LogQueries;
 import assignment.model.Assignment;
 import assignment.model.Billing;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import assignment.model.Booking;
 import assignment.model.BookingInfo;
+import assignment.model.Log;
 import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
@@ -76,21 +78,22 @@ public class TabBookingController implements Initializable {
     @FXML
     private Button deleteButton;
     @FXML
-    private Button payBillButton;    
+    private Button payBillButton;
     @FXML
     private Button genPdfButton;
+
+    @FXML
+    private TextField bookingFilterField;
     
-    @FXML private TextField bookingFilterField;
-
+    HotelOverviewController hotelOverview;
     MainApp mainApp;
-
-    private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
-
+    
     private BookingQueries bookingQueries = new BookingQueries();
+    private LogQueries logQueries = new LogQueries();
     private AssignmentQueries assignmentQueries = new AssignmentQueries();
 
-    private TabBillingController tabBillingController = new TabBillingController();
-
+    private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
+    
     public ObservableList<BookingInfo> getBookingData() {
         return bookingData;
     }
@@ -119,7 +122,7 @@ public class TabBookingController implements Initializable {
 
                     // Compare ref. code, first name and last name of every booking with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
-                    
+
                     if (Integer.toString(booking.getRefCode()).contains(lowerCaseFilter)) {
                         return true; // Filter matches ref. code.
                     } else if (booking.getCustFirstName().toLowerCase().contains(lowerCaseFilter)) {
@@ -144,7 +147,7 @@ public class TabBookingController implements Initializable {
 
             bookingData.addAll(bookingQueries.getBookings());
             bookingTable.setItems(bookingData);
-            
+
             // Initialize the booking table with the three columns.
             refCodeColumn.setCellValueFactory(cellData -> cellData.getValue().refCodeProperty().asObject());
             custFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().custFirstNameProperty());
@@ -210,17 +213,19 @@ public class TabBookingController implements Initializable {
     }
 
     @FXML
-    public void handleGenPdf() { 
+    public void handleGenPdf() {
         BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
         if (selectedBooking != null) {
             PdfReport pdfReport = new PdfReport();
             pdfReport.main(selectedBooking);
-            //ADD LOG GEN CODE:
+            // Generate log record
+            Log log = new Log("Generated PDF for Booking Ref. Code: " + selectedBooking.getRefCode());
+            logQueries.insertLog(log, hotelOverview.getUserID());
+            hotelOverview.refreshLogTable();
 
         } else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            System.out.println("mainapp: "+mainApp);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
             alert.setHeaderText("No Booking Selected");
@@ -229,11 +234,12 @@ public class TabBookingController implements Initializable {
             alert.showAndWait();
         }
     }
-    
+
     // Called when the user clicks on the delete button.
     @FXML
     private void handleDeleteBooking() {
         try {
+            BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
             int selectedIndex = bookingTable.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
                 // Delete record in the database
@@ -241,6 +247,11 @@ public class TabBookingController implements Initializable {
 
                 // Delete record on the table
                 bookingTable.getItems().remove(selectedIndex);
+
+                // Generate new log record
+                Log log = new Log("Deleted Booking for Ref. Code: " + selectedBooking.getRefCode());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -265,16 +276,19 @@ public class TabBookingController implements Initializable {
         Booking tempBooking = new Booking();
         ObservableList<RoomInfo> tempRooms = FXCollections.observableArrayList();
         boolean confirmClicked = showFindRoomDialog(tempBooking, tempRooms);
-        
+
         if (confirmClicked) {
             bookingQueries.insertBooking(tempBooking);
-            for(RoomInfo room : tempRooms) {
+            for (RoomInfo room : tempRooms) {
                 assignmentQueries.insertAssignment(new Assignment(bookingQueries.getLatestRefCode(), room.getRoomID()));
             }
-           
             refreshTable();
-        }
 
+            // Generate new log record
+            Log log = new Log("Added New Booking for Ref. Code: " + bookingQueries.getLatestRefCode());
+            logQueries.insertLog(log, hotelOverview.getUserID());
+            hotelOverview.refreshLogTable();
+        }
     }
 
     /**
@@ -304,7 +318,7 @@ public class TabBookingController implements Initializable {
             FindRoomDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
             controller.setBooking(booking, rooms);
-            
+
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
             return controller.isConfirmClicked();
@@ -321,28 +335,34 @@ public class TabBookingController implements Initializable {
         TabBookingController tabBookingController = new TabBookingController();
         int selectedIndex = -1;
         selectedIndex = bookingTable.getSelectionModel().getSelectedIndex();
-        int myRefCode = refCodeColumn.getCellData(selectedIndex);
-        double myAmountPaid = Double.parseDouble(amountPaidLabel.getText());
-        double myAmountDue = Double.parseDouble(amountDueLabel.getText());
 
-        BillingQueries billingQueries = new BillingQueries();
-        billings = billingQueries.getSpecificBilling(myRefCode);
+        BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
+        if (selectedBooking != null) {
+            int myRefCode = refCodeColumn.getCellData(selectedIndex);
 
-        Billing billing = new Billing(myRefCode, myAmountPaid, myAmountDue);
+            double myAmountPaid = Double.parseDouble(amountPaidLabel.getText());
+            double myAmountDue = Double.parseDouble(amountDueLabel.getText());
 
-        if (selectedIndex != -1) {
-            boolean okClicked = showPayBillingDialog(billing);
-            if (okClicked) {
-               //Refresh billing table
-                tabBillingController.refreshTable();
+            BillingQueries billingQueries = new BillingQueries();
+            billings = billingQueries.getSpecificBilling(myRefCode);
 
-                //Refresh booking table
-                refreshTable();
+            Billing billing = new Billing(myRefCode, myAmountPaid, myAmountDue);
+
+            if (selectedIndex != -1) {
+                boolean okClicked = showPayBillingDialog(billing);
+                if (okClicked) {
+                    // Generate new log record
+                    Log log = new Log("Paid" + " amount for Ref. Code: " + selectedBooking.getRefCode());
+                    logQueries.insertLog(log, hotelOverview.getUserID());
+                    hotelOverview.refreshLogTable();
+
+                    //Refresh booking table
+                    refreshTable();
+                }
             }
         } else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            System.out.println("Mainapp is: " + mainApp);             //SIM TESTING            
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
             alert.setHeaderText("No Booking Selected");
@@ -397,18 +417,19 @@ public class TabBookingController implements Initializable {
     }
 
     /**
-     * Is called by hotel overview controller to give a reference back to the
-     * main application.
-     */
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    /**
      * To refresh the table.
      */
     public void refreshTable() {
         bookingData.clear();
         bookingData.addAll(bookingQueries.getBookings());
+    }
+
+    /**
+     * Is called by hotel overview controller to give a reference back to the
+     * main application.
+     */
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
+        this.mainApp = mainApp;
+        this.hotelOverview = hotelOverview;
     }
 }

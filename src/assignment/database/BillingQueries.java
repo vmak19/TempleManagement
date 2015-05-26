@@ -93,29 +93,6 @@ public class BillingQueries extends DatabaseQuery {
         closeConnection();
         return billings;
     }
-/*
-    public double getCost(Provides toInsert) {
-        double cost = 0;
-        openConnection();
-        try {
-            getCost = conn.prepareStatement("select cost from SERVICE "
-                    + "join PROVIDES using (serviceID) "
-                    + "where refcode=?", Statement.RETURN_GENERATED_KEYS);
-            getCost.setInt(1, toInsert.getRefCode());
-            rs = getCost.executeQuery();
-            while (rs.next()) {
-                cost = rs.getDouble("cost");
-                System.out.println("cost of service: " + cost);
-            }
-
-            getCost.close();
-        } catch (SQLException ex) {
-            System.out.println("getCost() ERROR!");
-            ex.printStackTrace();
-        }
-        closeConnection();
-        return cost;
-    }*/
 
     public double getAmountDue(Provides toInsert) {
         double amountDue = 0;
@@ -171,7 +148,6 @@ public class BillingQueries extends DatabaseQuery {
             rs = getBalance.executeQuery();
             while (rs.next()) {
                 amountPaid = rs.getDouble("amountPaid");
-                System.out.println("amountPaid: " + amountPaid);
             }
 
             getBalance.close();

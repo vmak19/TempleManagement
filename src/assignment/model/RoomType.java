@@ -23,6 +23,10 @@ public class RoomType {
     private DoubleProperty baseRate;
     private IntegerProperty capacity;
 
+    public RoomType(double baseRate) {
+        this.baseRate = new SimpleDoubleProperty(baseRate);
+    }
+    
     public RoomType(String description, double baseRate) {
         this.description = new SimpleStringProperty(description);
         this.baseRate = new SimpleDoubleProperty(baseRate);

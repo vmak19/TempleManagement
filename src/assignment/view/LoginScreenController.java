@@ -6,6 +6,7 @@
 package assignment.view;
 
 import assignment.MainApp;
+import assignment.database.LogQueries;
 import assignment.database.LoginQueries;
 import assignment.model.Employee;
 import java.io.IOException;
@@ -55,24 +56,29 @@ public class LoginScreenController implements Initializable {
     private MainApp mainApp;
     
     private LoginQueries loginQueries;
+    private LogQueries logQueries = new LogQueries();
+    private LoginScreenController loginScreenController;
+    
+    int myUser;
+    String myPassword;
 
 
-    public String getUserID() {
-        String myUser = userIDField.getText();
+    public int getUserID() {
         return myUser;
     }    
 
     public String getPassword() {
-        String myPassword = passwordField.getText();
         return myPassword;
-    }
-
+    }   
+    
     @FXML
     private void checkPassword(ActionEvent event) throws IOException {
 
         loginQueries = new LoginQueries();
-        loginQueries.setLoginScreenController(this);
-        if (!loginQueries.getLoginDetails().isEmpty()) {
+        myUser = Integer.parseInt(userIDField.getText());
+        myPassword = passwordField.getText(); 
+        //loginQueries.setLoginScreenController(this);
+        if (!loginQueries.getLoginDetails(myUser, myPassword).isEmpty()) {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
             //load up OTHER FXML document
             showHotelOverview();
@@ -99,20 +105,6 @@ public class LoginScreenController implements Initializable {
             showHotelOverview();
         }
     }
-    /*if (event.getSource() == loginBtn) {
-     //TODO change FXML fxid reference from switchTOMainPage to checkPassword
-     String x = tf.getText();
-     String y = pf.getText();
-            
-     if (x.equals(rec.getString("users_name"))) {
-     if (y.equals(rec.getString("users_password"))  {
-     //get reference to the button's stage         
-     primaryStage = (Stage) loginBtn.getScene().getWindow();
-     //load up OTHER FXML document
-     showHotelOverview();
-     }
-     //else 
-     }*/
 
     public void showHotelOverview() {
         try {
@@ -120,13 +112,11 @@ public class LoginScreenController implements Initializable {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader();
-            loader
-                    .setLocation(MainApp.class
-                            .getResource("view/HotelOverview.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
             hotelOverview = (AnchorPane) loader.load();
 
             HotelOverviewController controller = loader.getController();
-
+            controller.setUserID(myUser);
             controller.setMainApp(mainApp);
 
             Scene scene = new Scene(hotelOverview);

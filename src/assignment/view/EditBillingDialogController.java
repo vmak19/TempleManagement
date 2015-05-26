@@ -42,6 +42,7 @@ public class EditBillingDialogController implements Initializable {
     private Button cancelButton;
 
     private Billing billing;
+    BillingQueries billingQueries = new BillingQueries();
     private boolean confirmClicked = false;
     private Stage billingDialogStage;
 
@@ -62,11 +63,10 @@ public class EditBillingDialogController implements Initializable {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            TabBillingController tabBillingController = new TabBillingController();
             int myRefCode = Integer.parseInt(refCodeLabel.getText());
             double myPaymentAmount = Integer.parseInt(payField.getText());
             
-            tabBillingController.billingQueries.updateBilling(myRefCode, myPaymentAmount);
+            billingQueries.updateBilling(myRefCode, myPaymentAmount);
             
             confirmClicked = true;
             billingDialogStage.close();
@@ -132,7 +132,6 @@ public class EditBillingDialogController implements Initializable {
      */
     public void setBilling(Billing billing) {
         this.billing = billing;
-        System.out.println("Get billing: "+billing);
         setData();
     }
         

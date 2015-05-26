@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
-Mon May 25 00:48:27 AEST 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-014d-8665-79be-0000067fbb68 
-on database directory G:\toMerge2\code\hotelDB  with class loader sun.misc.Launcher$AppClassLoader@4e25154f 
-Loaded from file:/G:/toMerge2/code/lib/derby.jar
+Tue May 26 14:28:12 AEST 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-014d-8e7a-5698-0000067e8e60 
+on database directory G:\tryMerge\code8 serviceDone TODO addLogoPdf\hotelDB  with class loader sun.misc.Launcher$AppClassLoader@4e25154f 
+Loaded from file:/G:/tryMerge/code8%20serviceDone%20TODO%20addLogoPdf/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_40-b26
-user.dir=G:\toMerge2\code
+user.dir=G:\tryMerge\code8 serviceDone TODO addLogoPdf
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
