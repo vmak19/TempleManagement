@@ -54,18 +54,11 @@ public class TabBookingController implements Initializable {
     @FXML private Label amountPaidLabel;
     @FXML private Label amountDueLabel;
 
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button payBillButton;    
-    @FXML
-    private Button genPdfButton;
     @FXML private Button addButton;
     @FXML private Button editButton;
     @FXML private Button deleteButton;
     @FXML private Button payBillButton;
+    @FXML private Button genPdfButton;
     
     @FXML private TextField bookingFilterField;
 
