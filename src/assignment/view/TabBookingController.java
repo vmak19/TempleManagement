@@ -54,6 +54,14 @@ public class TabBookingController implements Initializable {
     @FXML private Label amountPaidLabel;
     @FXML private Label amountDueLabel;
 
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button payBillButton;    
+    @FXML
+    private Button genPdfButton;
     @FXML private Button addButton;
     @FXML private Button editButton;
     @FXML private Button deleteButton;
@@ -195,6 +203,27 @@ public class TabBookingController implements Initializable {
         }
     }
 
+    @FXML
+    public void handleGenPdf() { 
+        BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
+        if (selectedBooking != null) {
+            PdfReport pdfReport = new PdfReport();
+            pdfReport.main(selectedBooking);
+            //ADD LOG GEN CODE:
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            System.out.println("mainapp: "+mainApp);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Booking Selected");
+            alert.setContentText("Please select a booking in the table.");
+
+            alert.showAndWait();
+        }
+    }
+    
     // Called when the user clicks on the delete button.
     @FXML
     private void handleDeleteBooking() {

@@ -102,6 +102,7 @@
                      </children>
                   </HBox>
                   <Button fx:id="payBillButton" layoutX="564.0" layoutY="10.0" mnemonicParsing="false" onAction="#handlePayBilling" prefWidth="100.0" text="Pay Bill..." AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
+                  <Button fx:id="genPdfButton" layoutX="127.0" layoutY="529.0" mnemonicParsing="false" onAction="#handleGenPdf" prefWidth="100.0" text="Generate PDF..." />
                </children>
             </AnchorPane>
          </items>

@@ -23,13 +23,19 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="First Name" />
+                        <Label text="First Name">
+                           <graphic>
+                              <Label text="*" textFill="#eb2121" />
+                           </graphic></Label>
                         <TextField fx:id="firstNameField" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane hgap="100.0">
                      <children>
-                        <Label text="Last Name" />
+                        <Label text="Last Name">
+                           <graphic>
+                              <Label text="*" textFill="#eb2121" />
+                           </graphic></Label>
                         <TextField fx:id="lastNameField" GridPane.rowIndex="1" />
                      </children>
                      <columnConstraints>
@@ -42,7 +48,10 @@
                   </GridPane>
                   <GridPane hgap="100.0">
                      <children>
-                        <Label text="No. of Breakfast Date" />
+                        <Label text="No. of Breakfast Date">
+                           <graphic>
+                              <Label text="*" textFill="#eb2121" />
+                           </graphic></Label>
                         <TextField fx:id="numBreakfastField" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets />
@@ -78,7 +87,10 @@
                   </GridPane>
                   <GridPane hgap="100.0">
                      <children>
-                        <Label text="Deposit" />
+                        <Label text="Deposit">
+                           <graphic>
+                              <Label text="*" textFill="#eb2121" />
+                           </graphic></Label>
                         <Label text="Amount Due" GridPane.columnIndex="1" />
                         <TextField fx:id="amountPaidField" GridPane.rowIndex="1" />
                         <TextField fx:id="amountDueField" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
