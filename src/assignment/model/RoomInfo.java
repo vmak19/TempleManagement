@@ -31,7 +31,7 @@ public class RoomInfo {
     private IntegerProperty noOfBeds;
 
     /**
-     * Is called by getAvailableRoomsByType().
+     * Is used by selectedRoomData.
      */
     public RoomInfo(int roomID, String roomTypeID, double baseRate, int capacity) {
         this.roomID = new SimpleIntegerProperty(roomID);
@@ -63,6 +63,12 @@ public class RoomInfo {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
+    }
+    
+    public RoomInfo(int roomID, String roomTypeID, double baseRate) {
+        this.roomID = new SimpleIntegerProperty(roomID);
+        this.roomTypeID = new SimpleStringProperty(roomTypeID);
+        this.baseRate = new SimpleDoubleProperty(baseRate);
     }
 
     public int getRoomID() {
@@ -112,7 +118,11 @@ public class RoomInfo {
     public int getCapacity() {
         return capacity.get();
     }
-
+    
+    public void setCapacity(int capacity) {
+        this.capacity.set(capacity);
+    }
+    
     public IntegerProperty capacityProperty() {
         return capacity;
     }
@@ -131,6 +141,6 @@ public class RoomInfo {
 
     @Override
     public String toString() {
-        return "Room { RoomID=" + roomID + " Description=" + description + " }";
+        return "Room { RoomID=" + roomID + " RoomType=" + roomTypeID + " }";
     }
 }

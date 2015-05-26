@@ -67,6 +67,7 @@ public class TabServiceController implements Initializable {
     @FXML
     private TextField serviceFilterField;
 
+    private Stage primaryStage;
     HotelOverviewController hotelOverview;
     MainApp mainApp;
 
@@ -151,7 +152,7 @@ public class TabServiceController implements Initializable {
             costLabel.setText(Double.toString(service.getCost()));
             dateLabel.setText(DateUtil.format(service.getCreatedDate()));
         } else {
-            // Person is null, remove all the text.
+            // Service is null, remove all the text.
             refCodeLabel.setText("");
             roomIDLabel.setText("");
             serviceDescLabel.setText("");
@@ -160,27 +161,23 @@ public class TabServiceController implements Initializable {
         }
     }
 
-    // Called when the user clicks on the delete button.
+    /**
+     * Called when the user clicks on the delete button.
+     */
     @FXML
     private void handleDeleteService() {
         try {
             int selectedIndex = serviceTable.getSelectionModel().getSelectedIndex();
+            ServiceInfo selectedSItem = serviceTable.getSelectionModel().getSelectedItem();
             if (selectedIndex >= 0) {
-                double costToDeduct = (Double.parseDouble(costLabel.getText()));
-                int myRefCode = (Integer.parseInt(refCodeLabel.getText()));
                 // Delete record in the database
-                providesQueries.deleteProvides(serviceTable.getSelectionModel().getSelectedItem());
-
+                providesQueries.deleteProvides(selectedSItem);
+                
+                //Deduct service cost
+                billingQueries.deductAmountDue(selectedSItem);
+                
                 // Delete record on the table
                 serviceTable.getItems().remove(selectedIndex);
-
-                //Deduct service cost
-                billingQueries.deductCost(myRefCode, costToDeduct);
-
-                //Refresh billings table
-                TabBillingController tabBillingController = new TabBillingController();
-                tabBillingController.refreshTable();
-
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -218,8 +215,7 @@ public class TabServiceController implements Initializable {
             serviceData.clear();
             serviceData.addAll(providesQueries.getServices());
 
-           // Refresh booking table
-            //TabBookingController tabBooking = new TabBookingController();
+            // Refresh booking table
             hotelOverview.refreshBookingTable();
         }
 
@@ -244,7 +240,7 @@ public class TabServiceController implements Initializable {
             Stage editProvideDialogStage = new Stage();
             editProvideDialogStage.setTitle("Edit Service");
             editProvideDialogStage.initModality(Modality.WINDOW_MODAL);
-            //bookingDialogStage.initOwner(primaryStage);
+            editProvideDialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             editProvideDialogStage.setScene(scene);
 
@@ -267,8 +263,9 @@ public class TabServiceController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp) {
+    public void setMainApp(MainApp mainApp, Stage primaryStage) {
         this.mainApp = mainApp;
+        this.primaryStage = primaryStage;
     }
 
     /**

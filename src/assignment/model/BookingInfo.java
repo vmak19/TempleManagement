@@ -28,6 +28,7 @@ public class BookingInfo {
     private IntegerProperty refCode;
     private StringProperty custFirstName;
     private StringProperty custLastName;
+    private ObjectProperty<List<Integer>> numPeopleList; 
     private IntegerProperty roomID;
     private ObjectProperty<List<Integer>> roomIDList; 
     private ObjectProperty<LocalDate> createdDate;
@@ -81,12 +82,14 @@ public class BookingInfo {
      * Constructor is called by getBookings(). 
      */
     public BookingInfo(int refCode, String custFirstName, String custLastName, 
-            List<Integer> roomIDList, LocalDate createdDate, int numBreakfast, 
-            LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
-            boolean lateCheckOut, double amountPaid, double amountDue) {
+            List<Integer> numPeopleList, List<Integer> roomIDList, 
+            LocalDate createdDate, int numBreakfast, LocalDate checkIn, 
+            LocalDate checkOut, boolean earlyCheckIn, boolean lateCheckOut, 
+            double amountPaid, double amountDue) {
         this.refCode = new SimpleIntegerProperty(refCode);
         this.custFirstName = new SimpleStringProperty(custFirstName);
         this.custLastName = new SimpleStringProperty(custLastName);
+        this.numPeopleList = new SimpleObjectProperty(numPeopleList);
         this.roomIDList = new SimpleObjectProperty(roomIDList);
         this.createdDate = new SimpleObjectProperty(createdDate);
         this.numBreakfast = new SimpleIntegerProperty(numBreakfast);
@@ -123,6 +126,10 @@ public class BookingInfo {
 
     public StringProperty custLastNameProperty() {
         return custLastName;
+    }
+    
+    public List<Integer> getNumPeopleList() {
+        return numPeopleList.get();
     }
     
     // Room Number

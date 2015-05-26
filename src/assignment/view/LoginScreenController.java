@@ -120,19 +120,15 @@ public class LoginScreenController implements Initializable {
             primaryStage = (Stage) loginBtn.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader();
-            loader
-                    .setLocation(MainApp.class
-                            .getResource("view/HotelOverview.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/HotelOverview.fxml"));
             hotelOverview = (AnchorPane) loader.load();
-
+            
             HotelOverviewController controller = loader.getController();
-
+            controller.setPrimaryStage(primaryStage);
             controller.setMainApp(mainApp);
-
+            
             Scene scene = new Scene(hotelOverview);
-
             primaryStage.setScene(scene);
-
             primaryStage.show();
         } catch (IOException e) {
             System.out.println("showHotelOverview() Error!");
@@ -142,7 +138,7 @@ public class LoginScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
     }
 
     public void setMainApp(MainApp mainApp) {

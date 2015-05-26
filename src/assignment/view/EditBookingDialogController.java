@@ -7,8 +7,10 @@ package assignment.view;
 
 import assignment.MainApp;
 import assignment.database.AssignmentQueries;
+import assignment.database.RoomQueries;
 import assignment.model.Assignment;
 import assignment.model.Booking;
+import assignment.model.BookingInfo;
 import assignment.model.RoomInfo;
 import assignment.util.DateUtil;
 import java.io.IOException;
@@ -41,7 +43,7 @@ public class EditBookingDialogController implements Initializable {
     @FXML private TableView selectedRoomTable;
     @FXML private TableColumn<RoomInfo, String> selectedRoomTypeColumn;
     @FXML private TableColumn<RoomInfo, Double> selectedCostColumn;
-    @FXML private TableColumn<Booking, Integer> selectedNumPeopleColumn;
+    @FXML private TableColumn<RoomInfo, Integer> selectedNumPeopleColumn;
     
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
@@ -61,14 +63,69 @@ public class EditBookingDialogController implements Initializable {
     @FXML private Label createdDateLabel;
     
     private Booking booking;
+    private BookingInfo editBooking;
     private Assignment assignment;
     private boolean confirmClicked = false;
     private FindRoomDialogController foundRoom;
     private Stage bookingDialogStage;
-    private ObservableList<RoomInfo> selectedRoomData;
+    private ObservableList<RoomInfo> selectedRoomData = FXCollections.observableArrayList();;
     private AssignmentQueries assignmentQueries = new AssignmentQueries();
+    private RoomQueries roomQueries = new RoomQueries();
     
+    public ObservableList<RoomInfo> getSelectedRoomData() {
+        return selectedRoomData;
+    }
     
+    public String getFirstName() {
+        return firstNameField.getText();
+    }
+    
+    public String getLastName() {
+        return lastNameField.getText();
+    }
+    
+    public String getNumBreakfast() {
+        return numBreakfastField.getText();
+    }
+    
+    public String getAmountPaid() {
+        return amountPaidField.getText();
+    }
+    
+    public Double getOtherFee() {
+        double roomCost = 0;
+        double amountDue = Double.parseDouble(amountDueField.getText());
+        for (RoomInfo room : selectedRoomData) {
+            roomCost += room.getBaseRate();
+        }
+        if (amountDue > roomCost) {
+            return amountDue - roomCost;
+        } else {
+            return 0.0;
+        }
+    }
+    
+    public LocalDate getCheckIn() {
+        return DateUtil.parse(checkInField.getText());
+    }
+    
+    public LocalDate getCheckOut() {
+        return DateUtil.parse(checkOutField.getText());
+    }
+    
+    /**
+     * Check if the user choose early check-in.
+     */
+    public boolean getSearchEarlyCheckIn() {
+        return earlyCheckInBox.isSelected();
+    }
+    
+    /**
+     * Check if the user choose late check-out.
+     */
+    public boolean getSearchLateCheckOut() {
+        return lateCheckOutBox.isSelected();
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -77,6 +134,10 @@ public class EditBookingDialogController implements Initializable {
                 cellData -> cellData.getValue().roomTypeIDProperty());
         selectedCostColumn.setCellValueFactory(
                 cellData -> cellData.getValue().baseRateProperty().asObject());
+        selectedNumPeopleColumn.setCellValueFactory(
+                cellData -> cellData.getValue().capacityProperty().asObject());
+        
+        selectedRoomTable.setItems(selectedRoomData);
     }
     
     /**
@@ -100,7 +161,11 @@ public class EditBookingDialogController implements Initializable {
                 AnchorPane findRoomDialog = (AnchorPane) loader.load();
                 
                 FindRoomDialogController controller = loader.getController();
-                controller.setFoundRoomData(foundRoom);
+                if (foundRoom != null) {
+                    controller.setFoundRoomData(foundRoom, this);
+                } else {
+                    controller.setEditFoundRoomData(foundRoom, this);
+                }
                 controller.setBookingDialogStage(bookingDialogStage);
                 controller.setBooking(booking, selectedRoomData);
                 Scene scene = new Scene(findRoomDialog);
@@ -202,25 +267,7 @@ public class EditBookingDialogController implements Initializable {
     }
         
     public void setRoomData() {
-        checkInField.setText(DateUtil.format(foundRoom.checkInField.getValue()));
-        checkOutField.setText(DateUtil.format(foundRoom.checkOutField.getValue()));
         
-        earlyCheckInBox.setSelected(foundRoom.getSearchEarlyCheckIn());
-        lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
-        
-        selectedRoomData = foundRoom.getSelectedRoomData();
-        selectedRoomTable.setItems(selectedRoomData);
-        
-        double amountDue = 0;
-        for(RoomInfo room : selectedRoomData) {
-            amountDue += room.getBaseRate();
-        }
-        amountDueField.setText(Double.toString(amountDue));
-        amountPaidField.setText(Double.toString(amountDue * 0.5));
-        
-        if (createdDateLabel.getText().matches("Label")) {
-            createdDateLabel.setText(LocalDate.now().toString());
-        }
     }
     
     /**
@@ -228,9 +275,35 @@ public class EditBookingDialogController implements Initializable {
      * 
      * @param foundRoom 
      */
-    public void setFoundRoom(FindRoomDialogController foundRoom) {
+    public void setFoundRoom(FindRoomDialogController foundRoom, EditBookingDialogController editBooking) {
         this.foundRoom = foundRoom;
-        setRoomData();
+        
+        checkInField.setText(DateUtil.format(foundRoom.checkInField.getValue()));
+        checkOutField.setText(DateUtil.format(foundRoom.checkOutField.getValue()));
+        
+        earlyCheckInBox.setSelected(foundRoom.getSearchEarlyCheckIn());
+        lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
+        
+        selectedRoomData = foundRoom.getSelectedRoomData();
+        
+        double amountDue = 0;
+        for(RoomInfo room : selectedRoomData) {
+            amountDue += room.getBaseRate();
+        }
+        amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+        amountPaidField.setText(Double.toString(amountDue * 0.5));
+        
+        if (createdDateLabel.getText().matches("Label")) {
+            createdDateLabel.setText(LocalDate.now().toString());
+        }
+        
+        // Set any information on editBooking that user previously entered
+        if (editBooking != null) {
+            firstNameField.setText(editBooking.getFirstName());
+            lastNameField.setText(editBooking.getLastName());
+            numBreakfastField.setText(editBooking.getNumBreakfast());
+            amountPaidField.setText(editBooking.getAmountPaid());
+        }
     }
     
     /**
@@ -248,5 +321,29 @@ public class EditBookingDialogController implements Initializable {
     public void setBooking(Booking booking, ObservableList<RoomInfo> rooms) {
         this.booking = booking;
         this.selectedRoomData = rooms;
+    }
+    
+    public void setEditBooking(BookingInfo editBooking) {
+        this.editBooking = editBooking;
+        
+        firstNameField.setText(editBooking.getCustFirstName());
+        lastNameField.setText(editBooking.getCustLastName());
+        numBreakfastField.setText(Integer.toString(editBooking.getNumBreakfast()));
+        createdDateLabel.setText(editBooking.getCreatedDate().toString());
+        checkInField.setText(editBooking.getCheckIn().toString());
+        checkOutField.setText(editBooking.getCheckOut().toString());
+        amountPaidField.setText(Double.toString(editBooking.getAmountPaid()));
+        amountDueField.setText(Double.toString(editBooking.getAmountDue()));
+        earlyCheckInBox.setSelected(editBooking.getEarlyCheckIn());
+        lateCheckOutBox.setSelected(editBooking.getLateCheckOut());
+        
+        for (int i=0; i<editBooking.getRoomIDList().size(); i++) {
+            int currentRoomID = editBooking.getRoomIDList().get(i);
+            int numPeople = editBooking.getNumPeopleList().get(i);
+            RoomInfo room = roomQueries.getRoomInfoByRoomID(currentRoomID);
+            
+            selectedRoomData.add(new RoomInfo(currentRoomID, room.getRoomTypeID(),
+                    room.getBaseRate(), numPeople));
+        }
     }
 }

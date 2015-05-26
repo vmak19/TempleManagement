@@ -35,52 +35,34 @@ import javafx.stage.Stage;
 
 public class TabBookingController implements Initializable {
 
-    @FXML
-    TableView<BookingInfo> bookingTable;
-    @FXML
-    private TableColumn<BookingInfo, Integer> refCodeColumn;
-    @FXML
-    private TableColumn<BookingInfo, String> custFirstNameColumn;
-    @FXML
-    private TableColumn<BookingInfo, String> custLastNameColumn;
+    @FXML TableView<BookingInfo> bookingTable;
+    @FXML private TableColumn<BookingInfo, Integer> refCodeColumn;
+    @FXML private TableColumn<BookingInfo, String> custFirstNameColumn;
+    @FXML private TableColumn<BookingInfo, String> custLastNameColumn;
 
-    @FXML
-    private Label refCodeLabel;
-    @FXML
-    private Label custFirstNameLabel;
-    @FXML
-    private Label custLastNameLabel;
-    @FXML
-    private Label numPeopleLabel;
-    @FXML
-    private Label roomIDLabel;
-    @FXML
-    private Label createdDateLabel;
-    @FXML
-    private Label numBreakfastLabel;
-    @FXML
-    private Label checkInLabel;
-    @FXML
-    private Label checkOutLabel;
-    @FXML
-    private Label earlyCheckInLabel;
-    @FXML
-    private Label lateCheckOutLabel;
-    @FXML
-    private Label amountPaidLabel;
-    @FXML
-    private Label amountDueLabel;
+    @FXML private Label refCodeLabel;
+    @FXML private Label custFirstNameLabel;
+    @FXML private Label custLastNameLabel;
+    @FXML private Label numPeopleLabel;
+    @FXML private Label roomIDLabel;
+    @FXML private Label createdDateLabel;
+    @FXML private Label numBreakfastLabel;
+    @FXML private Label checkInLabel;
+    @FXML private Label checkOutLabel;
+    @FXML private Label earlyCheckInLabel;
+    @FXML private Label lateCheckOutLabel;
+    @FXML private Label amountPaidLabel;
+    @FXML private Label amountDueLabel;
 
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button payBillButton;
+    @FXML private Button addButton;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button payBillButton;
     
     @FXML private TextField bookingFilterField;
 
     MainApp mainApp;
+    private Stage primaryStage;
 
     private ObservableList<BookingInfo> bookingData = FXCollections.observableArrayList();
 
@@ -169,6 +151,11 @@ public class TabBookingController implements Initializable {
             refCodeLabel.setText(Integer.toString(booking.getRefCode()));
             custFirstNameLabel.setText(booking.getCustFirstName());
             custLastNameLabel.setText(booking.getCustLastName());
+            int numPeople = 0;
+            for (int i : booking.getNumPeopleList()) {
+                numPeople += i;
+            }
+            numPeopleLabel.setText(Integer.toString(numPeople));
             String roomID = "";
             for (int i : booking.getRoomIDList()) {
                 roomID += Integer.toString(i) + " ";
@@ -195,6 +182,7 @@ public class TabBookingController implements Initializable {
             refCodeLabel.setText("");
             custFirstNameLabel.setText("");
             custLastNameLabel.setText("");
+            numPeopleLabel.setText("");
             roomIDLabel.setText("");
             createdDateLabel.setText("");
             numBreakfastLabel.setText("");
@@ -246,12 +234,36 @@ public class TabBookingController implements Initializable {
         if (confirmClicked) {
             bookingQueries.insertBooking(tempBooking);
             for(RoomInfo room : tempRooms) {
-                assignmentQueries.insertAssignment(new Assignment(bookingQueries.getLatestRefCode(), room.getRoomID()));
+                assignmentQueries.insertAssignment(new Assignment(
+                        bookingQueries.getLatestRefCode(), room.getRoomID(), room.getCapacity()));
             }
-           
             refreshTable();
         }
+    }
+    
+    /**
+     * Called when the user clicks the edit button. Opens a dialog to edit
+     * details for the selected person.
+     */
+    @FXML
+    private void handleEditBooking() {
+        BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
+        if (selectedBooking != null) {
+            boolean okClicked = showEditBookingDialog(selectedBooking);
+            if (okClicked) {
+                showBookingDetails(selectedBooking);
+            }
 
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No booking Selected");
+            alert.setContentText("Please select a booking in the table.");
+
+            alert.showAndWait();
+        }
     }
 
     /**
@@ -273,11 +285,11 @@ public class TabBookingController implements Initializable {
             Stage bookingDialogStage = new Stage();
             bookingDialogStage.setTitle("Find Room");
             bookingDialogStage.initModality(Modality.WINDOW_MODAL);
-            //bookingDialogStage.initOwner(primaryStage);
+            bookingDialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             bookingDialogStage.setScene(scene);
 
-            // Set the person into the controller.
+            // Set the booking into the controller.
             FindRoomDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
             controller.setBooking(booking, rooms);
@@ -290,7 +302,44 @@ public class TabBookingController implements Initializable {
             return false;
         }
     }
+    
+    /**
+     * Opens a dialog to edit details for the specified booking. If the user
+     * clicks OK, the changes are saved into the provided booking object and
+     * true is returned.
+     *
+     * @param booking the booking object to be edited
+     * @return true if the user clicked OK, false otherwise.
+     */
+    public boolean showEditBookingDialog(BookingInfo booking) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("EditBookingDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            
+            // Create the dialog Stage.
+            Stage bookingDialogStage = new Stage();
+            bookingDialogStage.setTitle("Edit Booking");
+            bookingDialogStage.initModality(Modality.WINDOW_MODAL);
+            bookingDialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            bookingDialogStage.setScene(scene);
 
+            // Set the booking into the controller.
+            EditBookingDialogController controller = loader.getController();
+            controller.setBookingDialogStage(bookingDialogStage);
+            controller.setEditBooking(booking);
+            
+            // Show the dialog and wait until the user closes it
+            bookingDialogStage.showAndWait();
+            return controller.isConfirmClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     @FXML
     private void handlePayBilling() {
         List<Billing> billings = new ArrayList<Billing>();
@@ -341,6 +390,7 @@ public class TabBookingController implements Initializable {
             Stage billingDialogStage = new Stage();
             billingDialogStage.setTitle("Edit Billing");
             billingDialogStage.initModality(Modality.WINDOW_MODAL);
+            billingDialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             billingDialogStage.setScene(scene);
 
@@ -377,8 +427,9 @@ public class TabBookingController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp) {
+    public void setMainApp(MainApp mainApp, Stage primaryStage) {
         this.mainApp = mainApp;
+        this.primaryStage = primaryStage;
     }
 
     /**

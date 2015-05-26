@@ -229,6 +229,7 @@ public class TabEmployeeController implements Initializable {
             passwordLabel.setText(employee.getPassword());
             empFirstNameLabel.setText(employee.getEmpFirstName());
             empLastNameLabel.setText(employee.getEmpLastName());
+            administratorBox.setVisible(true);
             if (employee.getIsAdministrator()) {
                 administratorBox.setSelected(true);
             } else {
@@ -240,7 +241,7 @@ public class TabEmployeeController implements Initializable {
             passwordLabel.setText("");
             empFirstNameLabel.setText("");
             empLastNameLabel.setText("");
-            administratorBox.setSelected(false);
+            administratorBox.setVisible(false);
         }
     }
     
