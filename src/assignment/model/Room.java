@@ -5,6 +5,7 @@
  */
 package assignment.model;
 
+import java.util.Objects;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -20,7 +21,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author z5018077
  */
-public class Room /*extends RoomType*/ {
+public class Room {
 
     private IntegerProperty roomID;
     private StringProperty roomTypeID;
@@ -40,6 +41,36 @@ public class Room /*extends RoomType*/ {
     public Room(String roomTypeID) {
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 4;
+        hash = 49 * hash + Objects.hashCode(this.roomID);
+        hash = 49 * hash + Objects.hashCode(this.roomTypeID);
+        hash = 49 * hash + Objects.hashCode(this.noOfBeds);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Room other = (Room) obj;
+        if (this.roomID != other.roomID) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" + "roomID=" + roomID + ", roomTypeID=" + roomTypeID + ", noOfBeds=" + noOfBeds + '}';
+    }
+    
 
     public int getRoomID() {
         return roomID.get();
