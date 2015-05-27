@@ -614,6 +614,10 @@ public class FindRoomDialogController implements Initializable {
     
     public void setConfirmClicked(Boolean confirmClicked) {
         this.confirmClicked = confirmClicked;
+        
+        if (editBooking != null) {
+            editBooking.setConfirmClicked(confirmClicked);
+        }
     }
     
     /**
@@ -649,6 +653,7 @@ public class FindRoomDialogController implements Initializable {
         lateCheckOutBox.setSelected(editBooking.getSearchLateCheckOut());
         
         selectedRoomData = editBooking.getSelectedRoomData();
+        selectedRoomTable.setItems(selectedRoomData);
     }
 
 }

@@ -279,18 +279,20 @@ public class TabBookingController implements Initializable {
     @FXML
     private void handleEditBooking() {
         BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
+        Booking tempBooking = new Booking();
         
         if (selectedBooking != null) {
-            boolean okClicked = showEditBookingDialog(selectedBooking);
+            boolean okClicked = showEditBookingDialog(selectedBooking, tempBooking);
             if (okClicked) {
                 showBookingDetails(selectedBooking);
-              //  bookingQueries.updateBooking(selectedBooking);
+                bookingQueries.updateBooking(tempBooking);
+
+                hotelOverview.refreshBookingTable();
+                // Generate new log record            
+                Log log = new Log("Edited Booking for Ref. Code: " + selectedBooking.getRefCode());
+                logQueries.insertLog(log, hotelOverview.getUserID());
+                hotelOverview.refreshLogTable();
             }
-            hotelOverview.refreshBookingTable();
-            // Generate new log record            
-            Log log = new Log("Edited Booking for Ref. Code: " + selectedBooking.getRefCode());
-            logQueries.insertLog(log, hotelOverview.getUserID());
-            hotelOverview.refreshLogTable();
         } else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -348,7 +350,7 @@ public class TabBookingController implements Initializable {
      * @param booking the booking object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showEditBookingDialog(BookingInfo booking) {
+    public boolean showEditBookingDialog(BookingInfo booking, Booking tempBooking) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -366,7 +368,7 @@ public class TabBookingController implements Initializable {
             // Set the booking into the controller.
             EditBookingDialogController controller = loader.getController();
             controller.setBookingDialogStage(bookingDialogStage);
-            controller.setEditBooking(booking);
+            controller.setEditBooking(booking, tempBooking);
 
             // Show the dialog and wait until the user closes it
             bookingDialogStage.showAndWait();
@@ -478,8 +480,9 @@ public class TabBookingController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview, Stage primaryStage) {
         this.mainApp = mainApp;
         this.hotelOverview = hotelOverview;
+        this.primaryStage = primaryStage;
     }
 }
