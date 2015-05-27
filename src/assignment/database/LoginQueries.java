@@ -22,8 +22,10 @@ import java.util.List;
 public class LoginQueries extends DatabaseQuery {
 
     PreparedStatement getLoginDetails = null;
+    PreparedStatement getAdminDetails = null;
     ResultSet rs = null;
     List<Employee> loginDetails;
+    List<Employee> adminDetail;
 
     public List<Employee> getLoginDetails(int userID, String password) {
         loginDetails = new ArrayList<Employee>();
@@ -48,4 +50,27 @@ public class LoginQueries extends DatabaseQuery {
         closeConnection();        
         return loginDetails;
     }    
+    
+    public List<Employee> getAdminDetails(int userID) {
+        adminDetail = new ArrayList<Employee>();
+        openConnection();
+        try {
+            getAdminDetails = conn.prepareStatement("select ISADMINISTRATOR from app.EMPLOYEE "
+             + "where (USERID = ?)");
+            
+            getAdminDetails.setInt(1, userID);
+            rs = getAdminDetails.executeQuery();
+            while (rs.next()) {
+                adminDetail.add(
+                         new Employee(rs.getBoolean("isAdministrator")));
+            }
+            rs.close();
+            getAdminDetails.close();
+        } catch (SQLException ex) {
+            System.out.println("getAdminDetails() error!");
+            ex.printStackTrace();
+        }
+        closeConnection();        
+        return adminDetail;
+    }  
 }

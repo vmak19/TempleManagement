@@ -26,6 +26,10 @@ public class Employee {
 
     //public Employee() {}
 
+    public Employee(boolean isAdministrator) {
+        this.userID = new SimpleIntegerProperty(-1);
+        this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
+    }
     
     public Employee(int userID, String password) { //, boolean isAdministrator
         this.userID = new SimpleIntegerProperty(userID);

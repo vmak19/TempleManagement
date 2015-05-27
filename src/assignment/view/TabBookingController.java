@@ -279,14 +279,16 @@ public class TabBookingController implements Initializable {
     @FXML
     private void handleEditBooking() {
         BookingInfo selectedBooking = bookingTable.getSelectionModel().getSelectedItem();
+        
         if (selectedBooking != null) {
             boolean okClicked = showEditBookingDialog(selectedBooking);
             if (okClicked) {
                 showBookingDetails(selectedBooking);
+              //  bookingQueries.updateBooking(selectedBooking);
             }
-
-            // Generate new log record
-            Log log = new Log("Added New Booking for Ref. Code: " + bookingQueries.getLatestRefCode());
+            hotelOverview.refreshBookingTable();
+            // Generate new log record            
+            Log log = new Log("Edited Booking for Ref. Code: " + selectedBooking.getRefCode());
             logQueries.insertLog(log, hotelOverview.getUserID());
             hotelOverview.refreshLogTable();
         } else {
