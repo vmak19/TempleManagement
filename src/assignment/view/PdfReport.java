@@ -125,8 +125,6 @@ public class PdfReport {
             //Create 5 number of columns
             PdfPTable table = new PdfPTable(5); // 5 columns.
             table.setWidthPercentage(100);
-            //float[] columnWidths = {1, 1, 1, 1, 1};
-            //table.setWidths(columnWidths);
 
             //Create header columns
             PdfPCell cell1 = new PdfPCell(new Paragraph("Date"));
