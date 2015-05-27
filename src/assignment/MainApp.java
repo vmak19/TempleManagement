@@ -25,10 +25,12 @@ import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /*
@@ -76,7 +78,15 @@ public class MainApp extends Application {
             controller.setMainApp(this);
             
             Scene scene = new Scene(loginScreen);
-            //MainApp.setUserAgentStylesheet("file:src/assignment/view/Testing.css");
+            
+            // Maximize the window
+            /*Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
+            primaryStage.setX(bounds.getMinX());
+            primaryStage.setY(bounds.getMinY());
+            primaryStage.setWidth(bounds.getWidth());
+            primaryStage.setHeight(bounds.getHeight());
+            */
             primaryStage.getIcons().add(new Image("file:resources/images/hotel_icon.png"));
             primaryStage.setScene(scene);
             primaryStage.show();

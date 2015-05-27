@@ -136,8 +136,6 @@ public class EditBookingDialogController implements Initializable {
                 cellData -> cellData.getValue().baseRateProperty().asObject());
         selectedNumPeopleColumn.setCellValueFactory(
                 cellData -> cellData.getValue().capacityProperty().asObject());
-        
-        selectedRoomTable.setItems(selectedRoomData);
     }
     
     /**
@@ -184,6 +182,9 @@ public class EditBookingDialogController implements Initializable {
     @FXML
     private void handleConfirm() {
         if (isInputValid()) {
+            if (booking == null) {
+                booking = new Booking();
+            }
             
             booking.setCustFirstName(firstNameField.getText());
             booking.setCustLastName(lastNameField.getText());
@@ -196,8 +197,9 @@ public class EditBookingDialogController implements Initializable {
             booking.setAmountPaid(Double.parseDouble(amountPaidField.getText()));
             booking.setAmountDue(Double.parseDouble(amountDueField.getText()));
             
-            foundRoom.setConfirmClicked(true);
-            
+            if (foundRoom != null) {
+                foundRoom.setConfirmClicked(true);
+            }
             bookingDialogStage.close();
         }
     }
@@ -285,12 +287,17 @@ public class EditBookingDialogController implements Initializable {
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
         selectedRoomData = foundRoom.getSelectedRoomData();
+        selectedRoomTable.setItems(selectedRoomData);
         
         double amountDue = 0;
         for(RoomInfo room : selectedRoomData) {
             amountDue += room.getBaseRate();
         }
-        amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+        if (editBooking !=null) {
+            amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+        } else {
+            amountDueField.setText(Double.toString(amountDue));
+        }
         amountPaidField.setText(Double.toString(amountDue * 0.5));
         
         if (createdDateLabel.getText().matches("Label")) {
@@ -345,5 +352,6 @@ public class EditBookingDialogController implements Initializable {
             selectedRoomData.add(new RoomInfo(currentRoomID, room.getRoomTypeID(),
                     room.getBaseRate(), numPeople));
         }
+        selectedRoomTable.setItems(selectedRoomData);
     }
 }
