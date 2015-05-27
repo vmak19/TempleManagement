@@ -74,12 +74,16 @@ public class TabEmployeeController implements Initializable {
     @FXML
     private Button deleteBtn;
     @FXML
+    private Button adminBtn;
+    @FXML
     private TextField employeeFilterField;
 
     HotelOverviewController hotelOverview;
     MainApp mainApp;
     private ObservableList<Employee> employeeData = FXCollections.observableArrayList();
+    private List<Employee> isAdmin;
     private EmployeeQueries employeeQueries = new EmployeeQueries();
+    private LoginQueries loginQueries = new LoginQueries();
     private LogQueries logQueries = new LogQueries();
     private LoginScreenController loginScreenController = new LoginScreenController();
 
@@ -92,6 +96,26 @@ public class TabEmployeeController implements Initializable {
      * method.
      */
     public TabEmployeeController() {
+    }
+
+    @FXML
+    private void showEmployeeBtns() {
+        isAdmin = loginQueries.getAdminDetails(hotelOverview.getUserID());
+        boolean adminStatus = isAdmin.get(0).getIsAdministrator();
+        if (adminStatus != false) {
+            editBtn.setVisible(true);
+            newBtn.setVisible(true);
+            deleteBtn.setVisible(true);
+            adminBtn.setVisible(false);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("Not An Administrator");
+            alert.setHeaderText("You do not have administrator privileges");
+            alert.setContentText("This option is unavailable to you.");
+
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -318,6 +342,11 @@ public class TabEmployeeController implements Initializable {
             userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
             empFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().empFirstNameProperty());
             empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
+
+            //Hide new, edit and delete buttons
+            editBtn.setVisible(false);
+            newBtn.setVisible(false);
+            deleteBtn.setVisible(false);
 
             // Clear employee details.
             showEmployeeDetails(null);
