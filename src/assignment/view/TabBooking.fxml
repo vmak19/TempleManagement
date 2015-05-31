@@ -51,7 +51,7 @@
                         <Label text="Created Date" GridPane.rowIndex="5" />
                         <Label text="Number of Breakfast Date" GridPane.rowIndex="6" />
                         <Label text="Check In" GridPane.rowIndex="7" />
-                        <Label text="Check Out" GridPane.rowIndex="8" />
+                        <Label text="Check Out" GridPane.rowIndex="9" />
                         <Label fx:id="refCodeLabel" text="Label" GridPane.columnIndex="1" />
                         <Label fx:id="custFirstNameLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="custLastNameLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -60,21 +60,23 @@
                         <Label fx:id="createdDateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label fx:id="numBreakfastLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <Label fx:id="checkInLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label fx:id="checkOutLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <Label text="Amount Paid" GridPane.rowIndex="9" />
-                        <Label text="Amount Due" GridPane.rowIndex="10" />
-                        <Label fx:id="amountPaidLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <Label fx:id="amountDueLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <Label fx:id="earlyCheckInLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <Label fx:id="checkOutLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label text="Amount Paid" GridPane.rowIndex="11" />
+                        <Label text="Amount Due" GridPane.rowIndex="12" />
+                        <Label fx:id="amountPaidLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label fx:id="amountDueLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Label fx:id="earlyCheckInLabel" text="Early Check-In" GridPane.rowIndex="8">
                            <GridPane.margin>
-                              <Insets left="180.0" />
+                              <Insets left="30.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label fx:id="lateCheckOutLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                        <Label fx:id="lateCheckOutLabel" text="Late Check-Out" GridPane.rowIndex="10">
                            <GridPane.margin>
-                              <Insets left="180.0" />
+                              <Insets left="30.0" />
                            </GridPane.margin>
                         </Label>
+                        <CheckBox fx:id="earlyChInBox" allowIndeterminate="true" disable="true" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <CheckBox fx:id="lateChOutBox" disable="true" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                      </children>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -92,17 +94,20 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                   </GridPane>
                   <HBox layoutX="425.0" layoutY="514.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                      <children>
-                        <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewBooking" prefWidth="100.0" text="New..." />
-                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#handleEditBooking" prefWidth="100.0" text="Edit..." />
-                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteBooking" prefWidth="100.0" text="Delete" />
+                        <Button mnemonicParsing="false" onAction="#handleNewBooking" prefWidth="100.0" text="New..." />
+                        <Button mnemonicParsing="false" onAction="#handleEditBooking" prefWidth="100.0" text="Edit..." />
+                        <Button mnemonicParsing="false" onAction="#handleDeleteBooking" prefWidth="100.0" text="Delete" />
                      </children>
                   </HBox>
-                  <Button fx:id="payBillButton" layoutX="564.0" layoutY="10.0" mnemonicParsing="false" onAction="#handlePayBilling" prefWidth="100.0" text="Pay Bill..." AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
-                  <Button fx:id="genPdfButton" layoutX="127.0" layoutY="529.0" mnemonicParsing="false" onAction="#handleGenPdf" prefWidth="100.0" text="Generate PDF..." />
+                  <Button layoutX="564.0" layoutY="10.0" mnemonicParsing="false" onAction="#handlePayBilling" prefWidth="100.0" text="Pay Bill..." AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
+                  <Button layoutX="127.0" layoutY="529.0" mnemonicParsing="false" onAction="#handleGenPdf" prefWidth="100.0" text="Generate PDF" />
                </children>
             </AnchorPane>
          </items>

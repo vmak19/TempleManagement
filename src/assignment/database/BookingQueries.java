@@ -108,7 +108,7 @@ public class BookingQueries extends DatabaseQuery{
                         + "from app.BOOKING "
                         + "inner join app.ASSIGNMENT "
                         + "on app.BOOKING.REFCODE = app.ASSIGNMENT.REFCODE "
-                        + "where ROOMID = ? and CHECKOUT <= ? and CHECKIN >= ?");
+                        + "where ROOMID = ? and CHECKOUT >= ? and CHECKIN <= ?");
                 
                 getAllBookingsByRoom.setInt(1, roomID);
                 getAllBookingsByRoom.setDate(2, Date.valueOf(LocalDate.now()));

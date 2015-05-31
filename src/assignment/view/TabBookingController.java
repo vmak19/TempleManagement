@@ -30,6 +30,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -37,55 +38,27 @@ import javafx.stage.Stage;
 
 public class TabBookingController implements Initializable {
 
-    @FXML
-    TableView<BookingInfo> bookingTable;
-    @FXML
-    private TableColumn<BookingInfo, Integer> refCodeColumn;
-    @FXML
-    private TableColumn<BookingInfo, String> custFirstNameColumn;
-    @FXML
-    private TableColumn<BookingInfo, String> custLastNameColumn;
+    @FXML TableView<BookingInfo> bookingTable;
+    @FXML private TableColumn<BookingInfo, Integer> refCodeColumn;
+    @FXML private TableColumn<BookingInfo, String> custFirstNameColumn;
+    @FXML private TableColumn<BookingInfo, String> custLastNameColumn;
 
-    @FXML
-    private Label refCodeLabel;
-    @FXML
-    private Label custFirstNameLabel;
-    @FXML
-    private Label custLastNameLabel;
-    @FXML
-    private Label numPeopleLabel;
-    @FXML
-    private Label roomIDLabel;
-    @FXML
-    private Label createdDateLabel;
-    @FXML
-    private Label numBreakfastLabel;
-    @FXML
-    private Label checkInLabel;
-    @FXML
-    private Label checkOutLabel;
-    @FXML
-    private Label earlyCheckInLabel;
-    @FXML
-    private Label lateCheckOutLabel;
-    @FXML
-    private Label amountPaidLabel;
-    @FXML
-    private Label amountDueLabel;
+    @FXML private Label refCodeLabel;
+    @FXML private Label custFirstNameLabel;
+    @FXML private Label custLastNameLabel;
+    @FXML private Label numPeopleLabel;
+    @FXML private Label roomIDLabel;
+    @FXML private Label createdDateLabel;
+    @FXML private Label numBreakfastLabel;
+    @FXML private Label checkInLabel;
+    @FXML private Label checkOutLabel;
+    @FXML private Label amountPaidLabel;
+    @FXML private Label amountDueLabel;
+    
+    @FXML private CheckBox earlyChInBox;
+    @FXML private CheckBox lateChOutBox;
 
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button editButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button payBillButton;
-    @FXML
-    private Button genPdfButton;
-
-    @FXML
-    private TextField bookingFilterField;
+    @FXML private TextField bookingFilterField;
 
     HotelOverviewController hotelOverview;
     MainApp mainApp;
@@ -162,6 +135,7 @@ public class TabBookingController implements Initializable {
             // Listen for selection changes and show the booking details when changed.
             bookingTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showBookingDetails(newValue));
+            
         } catch (Exception e) {
             System.out.println("Booking Initilize error!");
         }
@@ -191,15 +165,17 @@ public class TabBookingController implements Initializable {
             numBreakfastLabel.setText(Integer.toString(booking.getNumBreakfast()));
             checkInLabel.setText(DateUtil.format(booking.getCheckIn()));
             checkOutLabel.setText(DateUtil.format(booking.getCheckOut()));
+            earlyChInBox.setVisible(true);
+            lateChOutBox.setVisible(true);
             if (booking.getEarlyCheckIn()) {
-                earlyCheckInLabel.setText("Early Check In");
+                earlyChInBox.setSelected(true);
             } else {
-                earlyCheckInLabel.setText("");
+                earlyChInBox.setSelected(false);
             }
             if (booking.getLateCheckOut()) {
-                lateCheckOutLabel.setText("Late Check Out");
+                lateChOutBox.setSelected(true);
             } else {
-                lateCheckOutLabel.setText("");
+                lateChOutBox.setSelected(false);
             }
             amountPaidLabel.setText(Double.toString(booking.getAmountPaid()));
             amountDueLabel.setText(Double.toString(booking.getAmountDue()));
@@ -214,8 +190,8 @@ public class TabBookingController implements Initializable {
             numBreakfastLabel.setText("");
             checkInLabel.setText("");
             checkOutLabel.setText("");
-            earlyCheckInLabel.setText("");
-            lateCheckOutLabel.setText("");
+            earlyChInBox.setVisible(false);
+            lateChOutBox.setVisible(false);
             amountPaidLabel.setText("");
             amountDueLabel.setText("");
         }

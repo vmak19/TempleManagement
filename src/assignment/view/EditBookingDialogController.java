@@ -182,6 +182,9 @@ public class EditBookingDialogController implements Initializable {
     @FXML
     private void handleConfirm() {
         if (isInputValid()) {
+            if (booking == null) {
+                booking = new Booking();
+            }
             
             booking.setCustFirstName(firstNameField.getText());
             booking.setCustLastName(lastNameField.getText());
@@ -194,8 +197,9 @@ public class EditBookingDialogController implements Initializable {
             booking.setAmountPaid(Double.parseDouble(amountPaidField.getText()));
             booking.setAmountDue(Double.parseDouble(amountDueField.getText()));
             
-            foundRoom.setConfirmClicked(true);
-            
+            if (foundRoom != null) {
+                foundRoom.setConfirmClicked(true);
+            }
             bookingDialogStage.close();
         }
     }
@@ -292,7 +296,7 @@ public class EditBookingDialogController implements Initializable {
         if (editBooking !=null) {
             amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
         } else {
-             amountDueField.setText(Double.toString(amountDue));
+            amountDueField.setText(Double.toString(amountDue));
         }
         amountPaidField.setText(Double.toString(amountDue * 0.5));
         

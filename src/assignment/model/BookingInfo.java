@@ -180,7 +180,7 @@ public class BookingInfo {
     }
 
     public ObjectProperty<LocalDate> checkOutProperty() {
-        return checkIn;
+        return checkOut;
     }
     
     // Covert LocalDate to Date
