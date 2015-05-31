@@ -136,8 +136,6 @@ public class EditBookingDialogController implements Initializable {
                 cellData -> cellData.getValue().baseRateProperty().asObject());
         selectedNumPeopleColumn.setCellValueFactory(
                 cellData -> cellData.getValue().capacityProperty().asObject());
-        
-        selectedRoomTable.setItems(selectedRoomData);
     }
     
     /**
@@ -285,12 +283,17 @@ public class EditBookingDialogController implements Initializable {
         lateCheckOutBox.setSelected(foundRoom.getSearchLateCheckOut());
         
         selectedRoomData = foundRoom.getSelectedRoomData();
+        selectedRoomTable.setItems(selectedRoomData);
         
         double amountDue = 0;
         for(RoomInfo room : selectedRoomData) {
             amountDue += room.getBaseRate();
         }
-        amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+        if (editBooking !=null) {
+            amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+        } else {
+             amountDueField.setText(Double.toString(amountDue));
+        }
         amountPaidField.setText(Double.toString(amountDue * 0.5));
         
         if (createdDateLabel.getText().matches("Label")) {
@@ -345,5 +348,6 @@ public class EditBookingDialogController implements Initializable {
             selectedRoomData.add(new RoomInfo(currentRoomID, room.getRoomTypeID(),
                     room.getBaseRate(), numPeople));
         }
+        selectedRoomTable.setItems(selectedRoomData);
     }
 }
