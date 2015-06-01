@@ -69,6 +69,7 @@ public class Booking {
             LocalDate createdDate, int numBreakfast, 
             LocalDate checkIn, LocalDate checkOut, boolean earlyCheckIn, 
             boolean lateCheckOut, double amountPaid, double amountDue) {
+        this.refCode = new SimpleIntegerProperty(-1);
         this.custFirstName = new SimpleStringProperty(custFirstName);
         this.custLastName = new SimpleStringProperty(custLastName);
         this.createdDate = new SimpleObjectProperty(createdDate);

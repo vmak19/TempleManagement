@@ -186,6 +186,10 @@ public class EditBookingDialogController implements Initializable {
                 booking = new Booking();
             }
             
+            if (editBooking != null) {
+                System.out.println("Ref Code: " + editBooking.getRefCode());
+                booking.setRefCode(editBooking.getRefCode());
+            }
             booking.setCustFirstName(firstNameField.getText());
             booking.setCustLastName(lastNameField.getText());
             booking.setCreatedDate(DateUtil.parse(createdDateLabel.getText()));
@@ -197,9 +201,12 @@ public class EditBookingDialogController implements Initializable {
             booking.setAmountPaid(Double.parseDouble(amountPaidField.getText()));
             booking.setAmountDue(Double.parseDouble(amountDueField.getText()));
             
+            confirmClicked = true;
+            
             if (foundRoom != null) {
                 foundRoom.setConfirmClicked(true);
             }
+            
             bookingDialogStage.close();
         }
     }
@@ -330,7 +337,8 @@ public class EditBookingDialogController implements Initializable {
         this.selectedRoomData = rooms;
     }
     
-    public void setEditBooking(BookingInfo editBooking) {
+    public void setEditBooking(BookingInfo editBooking, Booking booking) {
+        this.booking = booking;
         this.editBooking = editBooking;
         
         firstNameField.setText(editBooking.getCustFirstName());
