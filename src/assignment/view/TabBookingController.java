@@ -480,8 +480,9 @@ public class TabBookingController implements Initializable {
      * Is called by hotel overview controller to give a reference back to the
      * main application.
      */
-    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview) {
+    public void setMainApp(MainApp mainApp, HotelOverviewController hotelOverview, Stage primaryStage) {
         this.mainApp = mainApp;
         this.hotelOverview = hotelOverview;
+        this.primaryStage = primaryStage;
     }
 }

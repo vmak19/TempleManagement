@@ -187,7 +187,6 @@ public class EditBookingDialogController implements Initializable {
             }
             
             if (editBooking != null) {
-                System.out.println("Ref Code: " + editBooking.getRefCode());
                 booking.setRefCode(editBooking.getRefCode());
             }
             booking.setCustFirstName(firstNameField.getText());
@@ -301,7 +300,7 @@ public class EditBookingDialogController implements Initializable {
             amountDue += room.getBaseRate();
         }
         if (editBooking !=null) {
-            amountDueField.setText(Double.toString(amountDue)+editBooking.getOtherFee());
+            amountDueField.setText(Double.toString(amountDue+editBooking.getOtherFee()));
         } else {
             amountDueField.setText(Double.toString(amountDue));
         }
@@ -361,5 +360,13 @@ public class EditBookingDialogController implements Initializable {
                     room.getBaseRate(), numPeople));
         }
         selectedRoomTable.setItems(selectedRoomData);
+    }
+    
+    public void setConfirmClicked(Boolean confirmClicked) {
+        this.confirmClicked = confirmClicked;
+        
+        if (foundRoom != null) {
+            foundRoom.setConfirmClicked(confirmClicked);
+        }
     }
 }

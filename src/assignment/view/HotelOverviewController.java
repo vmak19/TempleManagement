@@ -55,7 +55,7 @@ public class HotelOverviewController implements Initializable {
         try {
             this.mainApp = mainApp;
 
-            tabBookingController.setMainApp(mainApp, this);
+            tabBookingController.setMainApp(mainApp, this, primaryStage);
             tabEmployeeController.setMainApp(mainApp, this);
             tabLogController.setMainApp(mainApp, this);
             tabRoomController.setMainApp(mainApp, this);
