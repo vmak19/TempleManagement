@@ -9,7 +9,7 @@
 
 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="561.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.TabBookingController">
    <children>
-      <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" styleClass="background" stylesheets="@Testing.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -106,8 +106,12 @@
                         <Button mnemonicParsing="false" onAction="#handleDeleteBooking" prefWidth="100.0" text="Delete" />
                      </children>
                   </HBox>
-                  <Button layoutX="564.0" layoutY="10.0" mnemonicParsing="false" onAction="#handlePayBilling" prefWidth="100.0" text="Pay Bill..." AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
-                  <Button layoutX="127.0" layoutY="529.0" mnemonicParsing="false" onAction="#handleGenPdf" prefWidth="100.0" text="Generate PDF" />
+                  <HBox layoutX="62.0" layoutY="429.0" spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handlePayBilling" prefWidth="100.0" text="Pay Bill..." />
+                        <Button mnemonicParsing="false" onAction="#handleGenPdf" prefWidth="120.0" text="Generate PDF" />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
          </items>

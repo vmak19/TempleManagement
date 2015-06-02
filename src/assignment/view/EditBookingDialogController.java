@@ -160,8 +160,10 @@ public class EditBookingDialogController implements Initializable {
                 
                 FindRoomDialogController controller = loader.getController();
                 if (foundRoom != null) {
+                    System.out.println("found room wasn't null");
                     controller.setFoundRoomData(foundRoom, this);
                 } else {
+                    System.out.println("found room was null");
                     controller.setEditFoundRoomData(foundRoom, this);
                 }
                 controller.setBookingDialogStage(bookingDialogStage);

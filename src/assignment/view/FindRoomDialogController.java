@@ -644,6 +644,7 @@ public class FindRoomDialogController implements Initializable {
     }
     
     public void setEditFoundRoomData(FindRoomDialogController foundRoom, EditBookingDialogController editBooking) {
+        System.out.println("Setting edit found room data");
         this.editBooking = editBooking;
         
         checkInField.setValue(editBooking.getCheckIn());
