@@ -5,6 +5,7 @@
  */
 package assignment.model;
 
+import java.util.Objects;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -44,6 +45,35 @@ public class RoomType {
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
     }
+    
+    public int hashCode() {
+        int hash = 2;
+        hash = 2 * hash + Objects.hashCode(this.roomTypeID);
+        hash = 2 * hash + Objects.hashCode(this.description);
+        hash = 2 * hash + Objects.hashCode(this.baseRate);
+        hash = 2 * hash + Objects.hashCode(this.capacity);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RoomType other = (RoomType) obj;
+        if (this.roomTypeID != other.roomTypeID) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "RoomType{" + "roomTypeID=" + roomTypeID + ", description=" + description + ", baseRate=" + baseRate + ", capacity=" + capacity + '}';
+    }        
 
     // Room type
     public String getRoomTypeID() {
@@ -95,10 +125,5 @@ public class RoomType {
     
     public IntegerProperty capacityProperty() {
         return capacity;        
-    }
-    
-    @Override
-    public String toString() {
-        return "RoomType { RoomTypeID=" + roomTypeID + " Description=" + description + " }";
     }
 }

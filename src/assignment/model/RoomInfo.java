@@ -23,7 +23,7 @@ import javafx.beans.property.StringProperty;
 public class RoomInfo {
 
     private IntegerProperty roomID;
-    private ObjectProperty<List<Integer>> roomIDList; 
+    private ObjectProperty<List<Integer>> roomIDList;
     private StringProperty roomTypeID;
     private StringProperty description;
     private DoubleProperty baseRate;
@@ -39,7 +39,7 @@ public class RoomInfo {
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
     }
-    
+
     /**
      * Is called by getAvailableRoomsByType() (v2).
      */
@@ -64,11 +64,46 @@ public class RoomInfo {
         this.baseRate = new SimpleDoubleProperty(baseRate);
         this.capacity = new SimpleIntegerProperty(capacity);
     }
-    
+
     public RoomInfo(int roomID, String roomTypeID, double baseRate) {
         this.roomID = new SimpleIntegerProperty(roomID);
         this.roomTypeID = new SimpleStringProperty(roomTypeID);
         this.baseRate = new SimpleDoubleProperty(baseRate);
+    }
+
+    public int hashCode() {
+        int hash = 3;
+        hash = 39 * hash + Objects.hashCode(this.roomID);
+        hash = 39 * hash + Objects.hashCode(this.roomIDList);
+        hash = 39 * hash + Objects.hashCode(this.roomTypeID);
+        hash = 39 * hash + Objects.hashCode(this.description);
+        hash = 39 * hash + Objects.hashCode(this.baseRate);
+        hash = 39 * hash + Objects.hashCode(this.capacity);
+        hash = 39 * hash + Objects.hashCode(this.noOfBeds);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RoomInfo other = (RoomInfo) obj;
+        if (this.roomID != other.roomID) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" + "roomID=" + roomID + ", roomIDList=" + roomIDList
+                + ", " + "roomTypeID=" + roomTypeID + ", description="
+                + description + "baseRate=" + baseRate + ", capacity=" 
+                + capacity + ", noOfBeds=" + noOfBeds + '}';
     }
 
     public int getRoomID() {
@@ -78,11 +113,11 @@ public class RoomInfo {
     public IntegerProperty roomIDProperty() {
         return roomID;
     }
-    
+
     public List<Integer> getRoomIDList() {
         return roomIDList.get();
     }
-    
+
     public String getRoomTypeID() {
         return roomTypeID.get();
     }
@@ -118,11 +153,11 @@ public class RoomInfo {
     public int getCapacity() {
         return capacity.get();
     }
-    
+
     public void setCapacity(int capacity) {
         this.capacity.set(capacity);
     }
-    
+
     public IntegerProperty capacityProperty() {
         return capacity;
     }
@@ -137,10 +172,5 @@ public class RoomInfo {
 
     public IntegerProperty noOfBedsProperty() {
         return noOfBeds;
-    }
-
-    @Override
-    public String toString() {
-        return "Room { RoomID=" + roomID + " RoomType=" + roomTypeID + " }";
-    }
+    }    
 }

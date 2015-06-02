@@ -14,6 +14,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class DatabaseSetup extends DatabaseQuery {
@@ -292,7 +294,8 @@ public class DatabaseSetup extends DatabaseQuery {
         }
     }
 
-    public void getRoomsFromFile() {
+    public List<Room> getRoomsFromFile() {
+        List<Room> rooms = new ArrayList<Room>();
         try {
             // Open the file
             Scanner scanner = new Scanner(new File("resources/rooms.csv"));
@@ -319,6 +322,7 @@ public class DatabaseSetup extends DatabaseQuery {
             System.out.println("getRoomsFromFile() Error!");
             ex.printStackTrace();
         }
+        return rooms;
     }
 
     public void getEmployeesFromFile() {
