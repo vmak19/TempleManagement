@@ -9,9 +9,9 @@
 
 <AnchorPane minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.TabLogController">
     <children>
-        <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <SplitPane dividerPositions="0.35070140280561124" prefHeight="561.0" prefWidth="1000.0" styleClass="background" stylesheets="@Testing.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <AnchorPane maxWidth="500.0" minHeight="0.0" minWidth="350.0" prefHeight="160.0" prefWidth="100.0">
                     <children>
                   <VBox prefHeight="559.0" prefWidth="346.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -24,7 +24,7 @@
                               <Insets left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                              <TableView fx:id="logTable" VBox.vgrow="SOMETIMES">
+                              <TableView fx:id="logTable" maxWidth="500.0" minWidth="350.0" VBox.vgrow="SOMETIMES">
                                   <columnResizePolicy>
                                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                   </columnResizePolicy>
@@ -38,8 +38,9 @@
                   </VBox>
                     </children>
                 </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="559.0" prefWidth="623.0">
+                <AnchorPane fx:id="logAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="559.0" prefWidth="623.0">
                     <children>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@White_bg.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <Label layoutX="14.0" layoutY="14.0" text="Log Details:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
                         <GridPane layoutX="14.0" layoutY="46.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="40.0">
                             <children>
@@ -47,7 +48,7 @@
                                 <Label text="User ID" GridPane.rowIndex="1" />
                                 <Label text="First Name" GridPane.rowIndex="2" />
                                 <Label text="Last Name" GridPane.rowIndex="3" />
-                                <Label text="Date" GridPane.rowIndex="5" />
+                                <Label text="Date Modified" GridPane.rowIndex="5" />
                                 <Label text="Activity" GridPane.rowIndex="4" />
                                 <Label fx:id="logIDLabel" text="Label" GridPane.columnIndex="1" />
                                 <Label fx:id="userIDLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />

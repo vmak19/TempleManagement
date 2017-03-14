@@ -1,29 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment.view;
 
+//<editor-fold defaultstate="collapsed" desc="imports">
 import assignment.MainApp;
 import assignment.database.EmployeeQueries;
 import assignment.database.LogQueries;
 import assignment.database.LoginQueries;
 import assignment.model.Employee;
 import assignment.model.Log;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -31,15 +23,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+//</editor-fold>
 
 /**
  * FXML Controller class
@@ -48,6 +41,8 @@ import javafx.stage.Stage;
  */
 public class TabEmployeeController implements Initializable {
 
+    @FXML
+    AnchorPane empAnchorPane;
     @FXML
     TableView<Employee> employeeTable;
     @FXML
@@ -102,20 +97,13 @@ public class TabEmployeeController implements Initializable {
     private void showEmployeeBtns() {
         isAdmin = loginQueries.getAdminDetails(hotelOverview.getUserID());
         boolean adminStatus = isAdmin.get(0).getIsAdministrator();
-        if (adminStatus != false) {
+        if (adminStatus == true) {
             editBtn.setVisible(true);
             newBtn.setVisible(true);
             deleteBtn.setVisible(true);
-            adminBtn.setVisible(false);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("Not An Administrator");
-            alert.setHeaderText("You do not have administrator privileges");
-            alert.setContentText("This option is unavailable to you.");
-
-            alert.showAndWait();
         }
+        //For refocusing the selected don. later (because don. gets defocused when a btn is clicked)
+        employeeTable.getSelectionModel().select(employeeTable.getSelectionModel().getFocusedIndex());
     }
 
     @FXML
@@ -124,16 +112,27 @@ public class TabEmployeeController implements Initializable {
             int selectedIndex = employeeTable.getSelectionModel().getSelectedIndex();
             Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
 
-            if (selectedIndex >= 0) {
-                // Delete record in the database
-                employeeQueries.deleteEmployee(employeeTable.getSelectionModel().getSelectedItem());
-                // Delete record on the table
-                employeeTable.getItems().remove(selectedIndex);
-                // Generate new log record
-                Log log = new Log("Deleted Employee: " + selectedEmployee.getEmpFirstName()
-                        + " " + selectedEmployee.getEmpLastName());
-                logQueries.insertLog(log, hotelOverview.getUserID());
-                hotelOverview.refreshLogTable();
+            if (selectedIndex >= 0) { //A record is selected...
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Delete Record");
+                alert.setHeaderText("Delete Record");
+                alert.setContentText("Are you sure you want to delete this record?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    // ... user chose OK
+                    // Delete record in the database
+                    employeeQueries.deleteEmployee(employeeTable.getSelectionModel().getSelectedItem());
+                    // Delete record on the table
+                    employeeTable.getItems().remove(selectedIndex);
+                    // Generate new log record
+                    Log log = new Log("Deleted Employee: " + selectedEmployee.getEmpFirstName()
+                            + " " + selectedEmployee.getEmpLastName());
+                    logQueries.insertLog(log, hotelOverview.getUserID());
+                    hotelOverview.refreshLogTable();
+                } else {
+                    // ... user chose CANCEL or closed the dialog                    
+                }
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -147,6 +146,8 @@ public class TabEmployeeController implements Initializable {
         } catch (Exception e) {
             System.out.println("Error! handleDeleteEmployee()!");
         }
+        //For refocusing the selected don. later (because don. gets defocused when a btn is clicked)
+        employeeTable.getSelectionModel().select(employeeTable.getSelectionModel().getFocusedIndex());
     }
 
     @FXML
@@ -156,12 +157,15 @@ public class TabEmployeeController implements Initializable {
         if (okClicked) {
             employeeQueries.insertEmployee(tempEmployee);
             employeeTable.getItems().add(tempEmployee);
+
+            // Generate new log record
+            Log log = new Log("Added New Employee: " + tempEmployee.getEmpFirstName()
+                    + " " + tempEmployee.getEmpLastName());
+            logQueries.insertLog(log, hotelOverview.getUserID());
+            hotelOverview.refreshLogTable();
         }
-        // Generate new log record
-        Log log = new Log("Added New Employee: " + tempEmployee.getEmpFirstName()
-                + " " + tempEmployee.getEmpLastName());
-        logQueries.insertLog(log, hotelOverview.getUserID());
-        hotelOverview.refreshLogTable();
+        //For refocusing the selected don. later (because don. gets defocused when a btn is clicked)
+        employeeTable.getSelectionModel().select(employeeTable.getSelectionModel().getFocusedIndex());
     }
 
     @FXML
@@ -174,11 +178,11 @@ public class TabEmployeeController implements Initializable {
                 if (okClicked) {
                     employeeQueries.updateEmployee(selectedEmployee);
                     hotelOverview.refreshLogTable();
+                    //Generate new log record
+                    Log log = new Log("Edited Employee of userID " + selectedEmployee.getUserID());
+                    logQueries.insertLog(log, hotelOverview.getUserID());
+                    hotelOverview.refreshLogTable();
                 }
-                //Generate new log record
-                Log log = new Log("Edited Employee of userID " + selectedEmployee.getUserID());
-                logQueries.insertLog(log, hotelOverview.getUserID());
-                hotelOverview.refreshLogTable();
             } else {
                 // Nothing selected.
                 Alert alert = new Alert(AlertType.WARNING);
@@ -193,7 +197,8 @@ public class TabEmployeeController implements Initializable {
         } catch (Exception e) {
             System.out.println("handleEditEmployee() error");
         }
-
+        //For refocusing the selected don. later (because don. gets defocused when a btn is clicked)
+        employeeTable.getSelectionModel().select(employeeTable.getSelectionModel().getFocusedIndex());
     }
 
     /**
@@ -213,7 +218,7 @@ public class TabEmployeeController implements Initializable {
 
             // Create the dialog Stage.
             Stage employeeDialogStage = new Stage();
-            employeeDialogStage.setTitle("Edit Employee");
+            employeeDialogStage.setTitle("Edit User");
             employeeDialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(page);
             employeeDialogStage.setScene(scene);
@@ -246,7 +251,7 @@ public class TabEmployeeController implements Initializable {
 
             // Create the dialog Stage.
             Stage employeeDialogStage = new Stage();
-            employeeDialogStage.setTitle("Add New Employee");
+            employeeDialogStage.setTitle("Add New User");
             employeeDialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(page);
             employeeDialogStage.setScene(scene);
@@ -271,6 +276,7 @@ public class TabEmployeeController implements Initializable {
 
     private void showEmployeeDetails(Employee employee) {
         if (employee != null) {
+            empAnchorPane.setOpacity(100);
             // Fill the labels with info from the employee object.
             userIDLabel.setText(Integer.toString(employee.getUserID()));
             passwordLabel.setText(employee.getPassword());
@@ -344,17 +350,15 @@ public class TabEmployeeController implements Initializable {
             empLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().empLastNameProperty());
 
             //Hide new, edit and delete buttons
-            editBtn.setVisible(false);
-            newBtn.setVisible(false);
-            deleteBtn.setVisible(false);
-
-            // Clear employee details.
-            showEmployeeDetails(null);
+            //showEmployeeBtns();      
+            // Hide whole detail pane
+            empAnchorPane.setOpacity(0);
 
             employeeTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showEmployeeDetails(newValue));
         } catch (Exception e) {
             System.out.println("TabEmployee initilize error!");
+            e.printStackTrace();
         }
     }
 

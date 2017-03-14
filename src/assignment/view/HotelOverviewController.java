@@ -1,7 +1,6 @@
 package assignment.view;
 
 import assignment.MainApp;
-import assignment.model.Booking;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,15 +13,20 @@ import javafx.stage.Stage;
 public class HotelOverviewController implements Initializable {
 
     @FXML
-    TabBookingController tabBookingController;
+    TabMemberController tabMemberController;
+    @FXML
+    TabPaiWeiController tabPaiWeiController;    
+    @FXML
+    TabDonationController tabDonationController;
+    @FXML
+    TabAccommodationController tabAccommodationController;
+    @FXML
+    TabVolunteersController tabVolunteersController;
     @FXML
     TabEmployeeController tabEmployeeController;
     @FXML
-    TabRoomController tabRoomController;
-    @FXML
-    TabServiceController tabServiceController;
-    @FXML
     TabLogController tabLogController;
+    
     @FXML
     private Button logoutBtn;
 
@@ -36,10 +40,6 @@ public class HotelOverviewController implements Initializable {
         if (event.getSource() == logoutBtn) {
             //get reference to the button's stage  
             mainApp.showLoginScreen();
-
-           // primaryStage = (Stage) logoutBtn.getScene().getWindow();
-            //load up OTHER FXML document
-            // showLoginScreen();
         }
     }
 
@@ -55,25 +55,27 @@ public class HotelOverviewController implements Initializable {
         try {
             this.mainApp = mainApp;
 
-            tabBookingController.setMainApp(mainApp, this);
             tabEmployeeController.setMainApp(mainApp, this);
             tabLogController.setMainApp(mainApp, this);
-            tabRoomController.setMainApp(mainApp, this);
-            tabServiceController.setMainApp(mainApp, this);
+            tabMemberController.setMainApp(mainApp, this);
+            tabPaiWeiController.setMainApp(mainApp, this);
+            tabDonationController.setMainApp(mainApp, this);
+            //tabVolunteersController.setMainApp(mainApp, this);
+            //tabAccommodationController.setMainApp(mainApp, this);
             
         } catch (Exception e) {
             System.out.println("ERROR! setMainApp!");
             e.printStackTrace();
         }
     }
-    
-    public void refreshBookingTable() {
-        tabBookingController.refreshTable();
-    }    
-    
+        
+    public void refreshPaiWeiTable() {
+        tabPaiWeiController.refreshTable();
+    }
+        
     public void refreshLogTable() {
         tabLogController.refreshTable();
-    }    
+    }     
 
     public void setUserID(int userID) {
         this.userID = userID;

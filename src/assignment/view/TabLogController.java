@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment.view;
 
+//<editor-fold defaultstate="collapsed" desc="Imports">
 import assignment.MainApp;
 import assignment.database.LogQueries;
 import assignment.model.Log;
-import assignment.util.DateUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -21,14 +16,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+//</editor-fold>
 
-/**
- * FXML Controller class
- *
- * @author SONY
- */
 public class TabLogController implements Initializable {
 
+    @FXML
+    AnchorPane logAnchorPane;
     @FXML
     TableView<Log> logTable;
     @FXML
@@ -76,13 +70,14 @@ public class TabLogController implements Initializable {
 
     private void showLogDetails(Log log) {
         if (log != null) {
+            logAnchorPane.setOpacity(100);
             // Fill the labels with info from the log object.
             logIDLabel.setText(Integer.toString(log.getLogID()));
             userIDLabel.setText(Integer.toString(log.getUserID()));
             fNameLabel.setText(log.getEmpFirstName());
             lNameLabel.setText(log.getEmpLastName());
             activityLabel.setText(log.getItemModified());
-            dateLabel.setText(DateUtil.format(log.getDateMod()));
+            dateLabel.setText(log.getDateMod());
         } else {
             // Log is null, remove all the information.
             logIDLabel.setText("");
@@ -114,7 +109,7 @@ public class TabLogController implements Initializable {
 
                     // Compare log ID, user ID and activity of every log with filter text.
                     String lowerCaseFilter = newValue.toLowerCase();
-                    
+
                     if (Integer.toString(log.getLogID()).contains(lowerCaseFilter)) {
                         return true; // Filter matches log ID.
                     } else if (Integer.toString(log.getUserID()).toLowerCase().contains(lowerCaseFilter)) {
@@ -136,7 +131,7 @@ public class TabLogController implements Initializable {
                 // Add sorted (and filtered) data to the table.
                 logTable.setItems(sortedData);
             });
-            
+
             logData.addAll(logQueries.getLogs());
             logTable.setItems(logData);
 
@@ -145,8 +140,12 @@ public class TabLogController implements Initializable {
             userIDColumn.setCellValueFactory(cellData -> cellData.getValue().userIDProperty().asObject());
             activityColumn.setCellValueFactory(cellData -> cellData.getValue().itemModifiedProperty());
 
-            // Clear employee details.
-            showLogDetails(null);
+            //Set items to be shown descending, newest records at top
+            logIDColumn.setSortType(TableColumn.SortType.DESCENDING);
+            logTable.getSortOrder().add(logIDColumn);
+
+            // Hide whole detail pane
+            logAnchorPane.setOpacity(0);
 
             logTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showLogDetails(newValue));
@@ -162,7 +161,7 @@ public class TabLogController implements Initializable {
         logData.clear();
         logData.addAll(logQueries.getLogs());
     }
-    
+
     /**
      * Is called by hotel overview controller to give a reference back to the
      * main application.

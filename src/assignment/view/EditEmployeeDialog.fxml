@@ -6,11 +6,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="260.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.EditEmployeeDialogController">
+<AnchorPane id="AnchorPane" prefHeight="260.0" prefWidth="400.0" stylesheets="@Testing.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.EditEmployeeDialogController">
    <children>
       <GridPane vgap="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
-            <Label fx:id="newEmpLabel" text="New Employee:" />
+            <Label fx:id="newEmpLabel" text="New User:" />
             <Label text="Password" GridPane.rowIndex="1" />
             <Label text="First Name" GridPane.rowIndex="2" />
             <Label text="Last Name" GridPane.rowIndex="3" />

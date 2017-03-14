@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment.database;
 
 import assignment.model.Employee;
@@ -16,10 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author SONY
- */
 public class EmployeeQueries extends DatabaseQuery {
 
     PreparedStatement insertEmployee = null;
@@ -78,34 +69,7 @@ public class EmployeeQueries extends DatabaseQuery {
         closeConnection();
         return userGeneratedId;
     }
-/*
-    public int updateEmployee(Employee toInsert) {
-        int userGeneratedId = toInsert.getUserID();
-        openConnection();
-        try {
-            editEmployee = conn.prepareStatement("update app.employee set password=?, empFirstName=?, empLastName=?, isAdministrator=?"
-                    + "where USERID=?", Statement.RETURN_GENERATED_KEYS);
-            editEmployee.setString(1, toInsert.getPassword());
-            editEmployee.setString(2, toInsert.getEmpFirstName());
-            editEmployee.setString(3, toInsert.getEmpLastName());
-            editEmployee.setBoolean(4, toInsert.getIsAdministrator());
-            editEmployee.setInt(5, toInsert.getUserID());
-            editEmployee.executeUpdate();
-
-            rs = editEmployee.getGeneratedKeys();
-            rs.next();
-            userGeneratedId = rs.getInt(1);
-            toInsert.setUserID(userGeneratedId);
-            rs.close();
-            editEmployee.close();
-        } catch (SQLException ex) {
-            System.out.println("ERROR! editEmployee() ERROR!");
-            ex.printStackTrace();
-        }
-
-        closeConnection();
-        return userGeneratedId;
-    }*/
+    
     public void updateEmployee(Employee toInsert) {
         //int userGeneratedId = toInsert.getUserID();
         openConnection();
@@ -118,12 +82,6 @@ public class EmployeeQueries extends DatabaseQuery {
             editEmployee.setBoolean(4, toInsert.getIsAdministrator());
             editEmployee.setInt(5, toInsert.getUserID());
             editEmployee.executeUpdate();
-
-           // rs = editEmployee.getGeneratedKeys();
-            //rs.next();
-            //userGeneratedId = rs.getInt(1);
-           // toInsert.setUserID(userGeneratedId);
-            //rs.close();
             editEmployee.close();
         } catch (SQLException ex) {
             System.out.println("ERROR! editEmployee() ERROR!");
@@ -131,10 +89,8 @@ public class EmployeeQueries extends DatabaseQuery {
         }
 
         closeConnection();
-       // return userGeneratedId;
     }
     
-
     public void deleteEmployee(Employee toDelete) {
         openConnection();
         try {

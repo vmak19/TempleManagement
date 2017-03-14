@@ -10,18 +10,51 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0" styleClass="background" stylesheets="@Testing.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.LoginScreenController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0" styleClass="background" stylesheets="@White_bg.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.LoginScreenController">
    <children>
-      <Label layoutX="288.0" layoutY="147.0" text="Welcome! Please enter your username and password:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label layoutX="288.0" layoutY="246.0" text="Username" />
-      <Label layoutX="288.0" layoutY="299.0" text="Password" />      
-      <TextField fx:id="userIDField" layoutX="405.0" layoutY="242.0" />
-      <PasswordField fx:id="passwordField" layoutX="405.0" layoutY="295.0" />
-      <Button fx:id="loginBtn" layoutX="500.0" layoutY="364.0" mnemonicParsing="false" onAction="#checkPassword" text="Log in" />
-      <Button fx:id="loginBtnOverride" layoutX="500.0" layoutY="416.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Override" />
+      <VBox alignment="CENTER" layoutX="72.0" layoutY="180.0" prefHeight="200.0" prefWidth="100.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Welcome! Please enter your username and password: ">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Label text="DEMO PURPOSES: Enter username as 1 &amp; password as 1" textFill="#e84d39">
+               <font>
+                  <Font name="System Bold Italic" size="15.0" />
+               </font>
+            </Label>
+            <GridPane alignment="CENTER" hgap="40.0" vgap="40.0" VBox.vgrow="NEVER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="250.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="用戶名/ Username">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>      
+                  <TextField fx:id="userIDField" onKeyPressed="#buttonPressed" GridPane.columnIndex="1" />
+                  <Label text="密碼/ Password" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <PasswordField fx:id="passwordField" onKeyPressed="#buttonPressed" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <Button fx:id="loginBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#checkPassword" text="Log in">
+               <VBox.margin>
+                  <Insets left="300.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

@@ -11,23 +11,33 @@
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="assignment.view.HotelOverviewController">
    <children>
       <TabPane layoutX="64.0" layoutY="14.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <tabs>
-          <Tab text="Booking">
+        <tabs> 
+            <Tab text="Member">
                <content>
-                  <fx:include fx:id="tabBooking" source="TabBooking.fxml" />
+                  <fx:include fx:id="tabMember" source="TabMember.fxml" />
                </content>
-          </Tab>
-          <Tab text="Room">
+            </Tab>         
+            <Tab text="Pai Wei">
                <content>
-                  <fx:include fx:id="tabRoom" source="TabRoom.fxml" />
-               </content>
-          </Tab>
-            <Tab text="Service">
-               <content>
-                  <fx:include fx:id="tabService" source="TabService.fxml" />
+                  <fx:include fx:id="tabPaiWei" source="TabPaiWei.fxml" />
                </content>
             </Tab>
-            <Tab text="Employee">
+            <Tab text="Donation">
+               <content>
+                  <fx:include fx:id="tabDonation" source="TabDonation.fxml" />
+               </content>
+            </Tab>
+            <Tab text="Volunteering">
+               <content>
+                  <fx:include fx:id="tabVolunteers" source="TabVolunteers.fxml" />
+               </content>
+            </Tab>
+            <Tab text="Accomodation">
+               <content>
+                  <fx:include fx:id="tabAccomodation" source="TabAccomodation.fxml" />
+               </content>
+            </Tab>
+            <Tab text="User Accounts">
                <content>
                   <fx:include fx:id="tabEmployee" source="TabEmployee.fxml" />
                </content>

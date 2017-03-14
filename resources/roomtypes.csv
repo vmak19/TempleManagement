@@ -1,7 +1,0 @@
-Single,Assigned to one person with one or more beds.,200,1
-Double,Assigned to two people with one or more beds.,380,2
-Queen,Has a queen sized bed occupied by one or more people.,350,5
-King,Has a king sized bed occupied by one or more people.,370,5
-Twin,Has two twin beds occupied by one or more people.,380,2
-Double-double,Has two double beds occupied by one or more person.,680,5
-Suite,A parlour or living room  with to one or more bedrooms.,1800,5

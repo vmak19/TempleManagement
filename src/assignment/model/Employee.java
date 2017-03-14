@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment.model;
 
 import java.util.Objects;
@@ -13,10 +8,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- *
- * @author SONY
- */
 public class Employee {
 
     private IntegerProperty userID;
@@ -25,16 +16,14 @@ public class Employee {
     private StringProperty empLastName;
     private BooleanProperty isAdministrator;
 
-    //public Employee() {}
     public Employee(boolean isAdministrator) {
         this.userID = new SimpleIntegerProperty(-1);
         this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
     }
 
-    public Employee(int userID, String password) { //, boolean isAdministrator
+    public Employee(int userID, String password) {
         this.userID = new SimpleIntegerProperty(userID);
         this.password = new SimpleStringProperty(password);
-        //this.isAdministrator = new SimpleBooleanProperty(isAdministrator);
     }
 
     public Employee(int userID, String password,

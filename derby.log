@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
-Fri May 29 21:12:30 AEST 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-014d-9f5f-9019-0000067d6138 
-on database directory G:\backup\todelete code9 with junit and after merge\hotelDB  with class loader sun.misc.Launcher$AppClassLoader@4e25154f 
-Loaded from file:/G:/backup/todelete%20code9%20with%20junit%20and%20after%20merge/lib/derby.jar
+Mon Mar 13 12:03:42 AEDT 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-015a-c531-39a5-0000067ff6c8 
+on database directory C:\code\templeDB  with class loader sun.misc.Launcher$AppClassLoader@14dad5dc 
+Loaded from file:/C:/code/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_40-b26
-user.dir=G:\backup\todelete code9 with junit and after merge
+user.dir=C:\code
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

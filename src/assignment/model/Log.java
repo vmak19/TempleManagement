@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment.model;
 
 import java.sql.Date;
@@ -14,17 +9,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- *
- * @author Mak
- */
 public class Log {
 
     private IntegerProperty logID;
     private IntegerProperty userID;
     private StringProperty empFirstName;
     private StringProperty empLastName;
-    private ObjectProperty<LocalDate> dateMod;
+    //private ObjectProperty<LocalDate> dateMod;
+    private StringProperty dateMod;
     private StringProperty itemModified;    //REF vase toString
 
     public Log(String itemModified) {
@@ -32,6 +24,7 @@ public class Log {
         this.itemModified = new SimpleStringProperty(itemModified);
     }
     
+    //For LogQueries getSessionDetails()
     public Log(int userID, String empFirstName, String empLastName) {
         this.logID = new SimpleIntegerProperty(-1);
         this.userID = new SimpleIntegerProperty(userID);
@@ -39,12 +32,12 @@ public class Log {
         this.empLastName = new SimpleStringProperty(empLastName);
     }
     
-    public Log(int logID, int userID, String empFirstName, String empLastName, LocalDate dateMod, String itemModified) {
+    public Log(int logID, int userID, String empFirstName, String empLastName, String dateMod, String itemModified) {
         this.logID = new SimpleIntegerProperty(logID);
         this.userID = new SimpleIntegerProperty(userID);
         this.empFirstName = new SimpleStringProperty(empFirstName);
         this.empLastName = new SimpleStringProperty(empLastName);
-        this.dateMod = new SimpleObjectProperty(dateMod);
+        this.dateMod = new SimpleStringProperty(dateMod);
         this.itemModified = new SimpleStringProperty(itemModified);
     }
 
@@ -96,29 +89,23 @@ public class Log {
         return empLastName;
     }
 
-    public LocalDate getDateMod() {
+    public String getDateMod() {
         return dateMod.get();
     }
 
-    public void setDateMod(LocalDate dateMod) {
+    public void setDateMod(String dateMod) {
         this.dateMod.set(dateMod);
     }
 
-    public ObjectProperty<LocalDate> dateModProperty() {
+    public StringProperty dateModProperty() {
         return dateMod;
     }
 
-    // Covert LocalDate to Date
-    public Date getDateModToDate() {
+    /*public Date getDateModToDate() {
         LocalDate localDate = getDateMod();
-        if (localDate == null) {
-            System.out.println("null");
-        } else {
-            System.out.println(localDate);
-        }
         Date date = Date.valueOf(localDate);
         return date;
-    }
+    }*/
 
     public String getItemModified() {
         return itemModified.get();
