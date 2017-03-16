@@ -1,5 +1,5 @@
 =======================================
-Quick Startup Guide for Temple App v1.0
+Quick Startup Guide for Temple App v1.1
 =======================================
 
 Double click on "Temple App v1.0" to start. A database folder will be generated.
@@ -22,10 +22,3 @@ Following modules does not work fully:
 1. Donation
 2. Volunteers
 3. Accommodation
-
-
-=============
-Other Notes
-=============
-
-If any problem comes up with the program, please don't hesitate to contact me via email: v.mak@hotmail.com
