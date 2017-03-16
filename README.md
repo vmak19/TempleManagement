@@ -22,7 +22,7 @@ Here's a preview of what the main member tab pane looks like:
 
 (Will require Java Runtime Environment installed.)
 
-Download the 'dist' folder and double click 'Temple App v1.1' JAR file.
+Download the 'TempleManagement' folder and double click 'Temple App v1.1' JAR file.
 
 
 
